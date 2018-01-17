@@ -3,13 +3,17 @@
   "version": "0.1.0",
   "private": true,
   "dependencies": {
+    "@parity/api": "^2.1.16",
+    "@parity/shared": "^2.2.21",
     "@parity/ui": "^3.0.22",
+    "lodash": "^4.17.4",
     "mobx": "^3.4.1",
     "mobx-react": "^4.3.5",
     "react": "^16.2.0",
     "react-dom": "^16.2.0",
     "react-intl": "^2.4.0",
-    "react-scripts": "1.1.0"
+    "react-scripts": "1.1.0",
+    "store": "^2.0.12"
   },
   "scripts": {
     "start": "react-scripts start",

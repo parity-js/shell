@@ -10,7 +10,7 @@
     js-sha3 "0.5.5"
     utf8 "^2.1.2"
 
-"@parity/api@2.1.x":
+"@parity/api@2.1.x", "@parity/api@^2.1.16":
   version "2.1.16"
   resolved "https://registry.yarnpkg.com/@parity/api/-/api-2.1.16.tgz#e120bd5c65d8593694ed331b0264e81052e94c05"
   dependencies:
@@ -58,7 +58,7 @@
   dependencies:
     "@parity/ledger" "^2.1.2"
 
-"@parity/shared@2.2.x":
+"@parity/shared@2.2.x", "@parity/shared@^2.2.21":
   version "2.2.21"
   resolved "https://registry.yarnpkg.com/@parity/shared/-/shared-2.2.21.tgz#c9324e9068aa969400ca00a2400f29a036006d3f"
   dependencies:
@@ -4236,9 +4236,9 @@ jsprim@^1.2.2:
     json-schema "0.2.3"
     verror "1.10.0"
 
-"jsqr@git+https://github.com/cozmo/jsQR.git":
+"jsqr@https://github.com/cozmo/jsQR.git":
   version "1.0.0"
-  resolved "git+https://github.com/cozmo/jsQR.git#5d6e0f3d7e9417957435afff4e4d5a3c49f43aa3"
+  resolved "https://github.com/cozmo/jsQR.git#5d6e0f3d7e9417957435afff4e4d5a3c49f43aa3"
 
 jsx-ast-utils@^1.4.0:
   version "1.4.1"
@@ -6537,7 +6537,7 @@ sockjs@0.3.18:
     faye-websocket "^0.10.0"
     uuid "^2.0.2"
 
-"solc@github:ngotchac/solc-js":
+"solc@github:ngotchac/solc-js", solc@ngotchac/solc-js:
   version "0.4.4"
   resolved "https://codeload.github.com/ngotchac/solc-js/tar.gz/04eb38cc3003fba8cb3656653a7941ed36408818"
   dependencies:

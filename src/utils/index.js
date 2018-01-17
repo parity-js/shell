@@ -14,21 +14,6 @@
 // You should have received a copy of the GNU General Public License
 // along with Parity.  If not, see <http://www.gnu.org/licenses/>.
 
-import React from 'react';
-import ReactDOM from 'react-dom';
+import retrieveToken from './retrieveToken';
 
-import App from './App';
-import ContextProvider from '@parity/ui/lib/ContextProvider';
-import registerServiceWorker from './registerServiceWorker';
-import { retrieveToken } from './utils';
-import SecureApi from './secureApi';
-
-const api = new SecureApi(window.location.host, retrieveToken());
-
-ReactDOM.render(
-  <ContextProvider api={api}>
-    <App />
-  </ContextProvider>,
-  document.getElementById('root')
-);
-registerServiceWorker();
+export { retrieveToken };
