@@ -14,22 +14,23 @@
 // You should have received a copy of the GNU General Public License
 // along with Parity.  If not, see <http://www.gnu.org/licenses/>.
 
-import React, { Component } from 'react';
+import DappRequests from './DappRequests';
+import Store from './store';
+import shellMiddleware from '../shellMiddleware';
 
-import DappRequests from '../DappRequests';
-import StatusBar from '../StatusBar';
-import SyncWarning from '../SyncWarning';
+import { extendShell } from '../ShellExtend';
 
-class App extends Component {
-  render() {
-    return (
-      <div>
-        <StatusBar />
-        <SyncWarning />
-        <DappRequests />
-      </div>
-    );
-  }
+function setupProviderFilters(provider) {
+  const store = Store.create(provider);
+
+  extendShell({
+    type: 'interceptor',
+    middleware: shellMiddleware
+  });
+
+  return store;
 }
 
-export default App;
+export default DappRequests;
+
+export { Store, setupProviderFilters };
