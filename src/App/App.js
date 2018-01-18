@@ -16,17 +16,21 @@
 
 import React, { Component } from 'react';
 
+import Dapp from '../Dapp';
 import DappRequests from '../DappRequests';
 import StatusBar from '../StatusBar';
 import SyncWarning from '../SyncWarning';
 
+import styles from './App.css';
+
 class App extends Component {
   render() {
     return (
-      <div>
+      <div className={styles.app}>
         <StatusBar />
         <SyncWarning />
         <DappRequests />
+        <Dapp />
       </div>
     );
   }

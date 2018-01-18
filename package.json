@@ -3,6 +3,7 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
+    "electron": "electron src/index.electron.js",
     "start": "react-scripts start",
     "build": "react-scripts build",
     "test": "react-scripts test --env=jsdom",
@@ -24,6 +25,7 @@
     "store": "^2.0.12"
   },
   "devDependencies": {
+    "electron": "^1.7.10",
     "parity-react-scripts": "github:paritytech/parity-react-scripts"
   }
 }

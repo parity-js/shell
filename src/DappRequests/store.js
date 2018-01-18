@@ -294,7 +294,10 @@ export default class Store {
     return Store.instance;
   }
 
-  static get() {
+  static get(provider) {
+    if (!Store.instance) {
+      return Store.create(provider);
+    }
     return Store.instance;
   }
 }
