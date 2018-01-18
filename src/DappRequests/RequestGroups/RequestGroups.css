@@ -15,17 +15,14 @@
 /* along with Parity.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-$backgroundOne: #f80;
-$backgroundTwo: #e57a00;
-
-.requestGroups {
-  background: $backgroundOne;
-  background: linear-gradient($backgroundOne, $backgroundTwo);
+:local(.requestGroups) {
+  background: #f80;
+  background: linear-gradient(#f80, #e57a00);
   padding: 0.5em;
   text-align: right;
   color: white;
+}
 
-  > span {
-    margin-right: 30px;
-  }
+:local(.requestGroups) > span {
+  margin-right: 30px;
 }

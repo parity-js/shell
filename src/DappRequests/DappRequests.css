@@ -15,7 +15,7 @@
 /* along with Parity.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-.requests {
+:local(.requests) {
   position: fixed;
   left: 0;
   right: 0;
