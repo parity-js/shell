@@ -2,6 +2,12 @@
   "name": "shell",
   "version": "0.1.0",
   "private": true,
+  "scripts": {
+    "start": "react-scripts start",
+    "build": "react-scripts build",
+    "test": "react-scripts test --env=jsdom",
+    "eject": "react-scripts eject"
+  },
   "dependencies": {
     "@parity/api": "^2.1.16",
     "@parity/shared": "^2.2.21",
@@ -14,12 +20,10 @@
     "react-intl": "^2.4.0",
     "react-scripts": "1.1.0",
     "semantic-ui-css": "^2.2.12",
+    "semantic-ui-react": "^0.77.2",
     "store": "^2.0.12"
   },
-  "scripts": {
-    "start": "react-scripts start",
-    "build": "react-scripts build",
-    "test": "react-scripts test --env=jsdom",
-    "eject": "react-scripts eject"
+  "devDependencies": {
+    "parity-react-scripts": "github:paritytech/parity-react-scripts"
   }
 }

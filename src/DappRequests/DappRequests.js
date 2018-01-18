@@ -16,8 +16,8 @@
 
 import { observer } from 'mobx-react';
 import React, { Component } from 'react';
+import methodGroups from '@parity/mobx/lib/methodGroups';
 
-import methodGroups from './methodGroups';
 import RequestGroups from './RequestGroups';
 import Store from './store';
 import styles from './DappRequests.css';

@@ -14,61 +14,65 @@
 // You should have received a copy of the GNU General Public License
 // along with Parity.  If not, see <http://www.gnu.org/licenses/>.
 
-import { action, computed, observable } from 'mobx';
+import { extendObservable, action, computed, observable } from 'mobx';
 import store from 'store';
-
+import { methodGroupFromMethod } from '@parity/mobx/lib/methodGroups';
 import { sha3 } from '@parity/api/lib/util/sha3';
-
-import { methodGroupFromMethod } from './methodGroups';
 
 const LS_PERMISSIONS = '_parity::dapps::methods';
 
 export default class Store {
-  @observable requests = {}; // Maps requestId to request
+  // @observable requests = {}; // Maps requestId to request
 
   middleware = [];
   permissions = {}; // Maps `${method}:${appId}` to true/false
   sources = {}; // Maps requestId to a postMessage source
   tokens = {}; // Maps token to appId
 
-  constructor (provider) {
+  constructor(provider) {
     this.provider = provider;
     this.permissions = store.get(LS_PERMISSIONS) || {};
+
+    // TODO Use @decorators
+    extendObservable(this, {
+      requests: {},
+      get hasRequests() {
+        return Object.keys(this.requests).length !== 0;
+      },
+      get groupedRequests() {
+        // Group by appId on top level, and by methodGroup on 2nd level
+        return Object.keys(this.requests).reduce((accumulator, requestId) => {
+          const { data } = this.requests[requestId];
+          const appId = this.tokens[data.token];
+          const method = this.getMethodFromRequest(requestId);
+          const methodGroup = methodGroupFromMethod[method]; // Get the methodGroup the current request belongs to
+
+          accumulator[appId] = accumulator[appId] || {};
+          accumulator[appId][methodGroup] =
+            accumulator[appId][methodGroup] || [];
+          accumulator[appId][methodGroup].push({ data, requestId }); // Push request & append the requestId field in the request object
+
+          return accumulator;
+        }, {});
+      }
+    });
 
     // With IPC we don't need the following line
     // window.addEventListener('message', this.receiveMessage, false);
   }
 
-  @computed get hasRequests () {
-    return Object.keys(this.requests).length !== 0;
-  }
-
-  @computed get groupedRequests () {
-    // Group by appId on top level, and by methodGroup on 2nd level
-    return Object.keys(this.requests).reduce((accumulator, requestId) => {
-      const { data } = this.requests[requestId];
-      const appId = this.tokens[data.token];
-      const method = this.getMethodFromRequest(requestId);
-      const methodGroup = methodGroupFromMethod[method]; // Get the methodGroup the current request belongs to
-
-      accumulator[appId] = accumulator[appId] || {};
-      accumulator[appId][methodGroup] = accumulator[appId][methodGroup] || [];
-      accumulator[appId][methodGroup].push({ data, requestId }); // Push request & append the requestId field in the request object
-
-      return accumulator;
-    }, {});
-  }
-
-  @action queueRequest = (requestId, { data, source }) => {
+  // @action
+  queueRequest = action((requestId, { data, source }) => {
     this.sources[requestId] = source;
     // Create a new this.requests object to update mobx store
     this.requests = {
       ...this.requests,
       [requestId]: { data }
     };
-  };
+  });
 
-  @action approveRequest = requestId => {
+  // @action
+  approveRequest = action(requestId => {
     const { data } = this.requests[requestId];
     const method = this.getMethodFromRequest(requestId);
     const appId = this.tokens[data.token];
@@ -82,23 +86,25 @@ export default class Store {
     } else {
       this.executeMethodCall(data, source);
     }
-  };
+  });
 
-  @action rejectRequest = requestId => {
+  // @action
+  rejectRequest = action(requestId => {
     const { data } = this.requests[requestId];
     const source = this.sources[requestId];
 
     this.removeRequest(requestId);
     this.rejectMessage(source, data);
-  };
+  });
 
-  @action removeRequest = requestId => {
+  // @action
+  removeRequest = action(requestId => {
     delete this.requests[requestId];
     delete this.sources[requestId];
 
     // Create a new object to update mobx store
     this.requests = { ...this.requests };
-  };
+  });
 
   getPermissionId = (method, appId) => `${method}:${appId}`; // Create an id to identify permissions based on method and appId
 
@@ -106,14 +112,15 @@ export default class Store {
     const { data: { method, params } } = this.requests[requestId];
 
     return method || params[0];
-  }
+  };
 
   rejectMessage = (source, { id, from, method, token }) => {
     if (!source) {
       return;
     }
 
-    this.webview.send('PARITY_IPC_CHANNEL',
+    this.webview.send(
+      'PARITY_IPC_CHANNEL',
       {
         error: `Method ${method} not allowed`,
         id,
@@ -141,7 +148,7 @@ export default class Store {
     return true;
   };
 
-  addMiddleware (middleware) {
+  addMiddleware(middleware) {
     if (!middleware || typeof middleware !== 'function') {
       throw new Error('Interceptor middleware does not implement a function');
     }
@@ -191,13 +198,13 @@ export default class Store {
     };
   };
 
-  setIpcListener = (webview) => {
+  setIpcListener = webview => {
     this.webview = webview;
     // Listen to IPC messages from webview
-    webview.addEventListener('ipc-message', (event) => {
+    webview.addEventListener('ipc-message', event => {
       this.receiveMessage(...event.args);
     });
-  }
+  };
 
   executePubsubCall = ({ api, id, from, token, params }, source) => {
     const callback = this._methodCallbackPost(id, from, source, token);
@@ -246,8 +253,12 @@ export default class Store {
 
       const _method = api ? params[0] : method;
 
-      if (methodGroupFromMethod[_method] && !this.hasTokenPermission(_method, token)) {
-        this.queueRequest(id, { // The requestId of a request is the id inside data
+      if (
+        methodGroupFromMethod[_method] &&
+        !this.hasTokenPermission(_method, token)
+      ) {
+        this.queueRequest(id, {
+          // The requestId of a request is the id inside data
           data,
           source
         });
@@ -257,14 +268,14 @@ export default class Store {
       if (api) {
         this.executePubsubCall(data, source);
       } else if (subId) {
-        const unsubscribePromise = subId === '*'
-          ? this.provider.unsubscribeAll()
-          : this.provider.unsubscribe(subId);
+        const unsubscribePromise =
+          subId === '*'
+            ? this.provider.unsubscribeAll()
+            : this.provider.unsubscribe(subId);
 
-        unsubscribePromise
-          .then(v =>
-            this._methodCallbackPost(id, from, source, token)(null, v)
-          );
+        unsubscribePromise.then(v =>
+          this._methodCallbackPost(id, from, source, token)(null, v)
+        );
       } else {
         this.executeMethodCall(data, source);
       }
@@ -275,7 +286,7 @@ export default class Store {
 
   static instance = null;
 
-  static create (provider) {
+  static create(provider) {
     if (!Store.instance) {
       Store.instance = new Store(provider);
     }
@@ -283,7 +294,7 @@ export default class Store {
     return Store.instance;
   }
 
-  static get () {
+  static get() {
     return Store.instance;
   }
 }
