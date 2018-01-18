@@ -29,18 +29,18 @@ function createWindow() {
     width: 1200
   });
 
-  console.log(process.env);
-
-  // TODO In prod, load the build via file://
-  // mainWindow.loadURL(url.format({
-  //   pathname: path.join(__dirname, 'index.html'),
-  //   protocol: 'file:',
-  //   slashes: true
-  // }));
-
-  // In dev load localhost:3000
-  mainWindow.loadURL('http://localhost:3000/#auth?token=arHk-lbfx-L3O4-YQRE');
-  mainWindow.webContents.openDevTools();
+  if (process.env.NODE_ENV === 'production') {
+    mainWindow.loadURL(
+      url.format({
+        pathname: path.join(__dirname, 'index.html'),
+        protocol: 'file:',
+        slashes: true
+      })
+    );
+  } else {
+    mainWindow.loadURL('http://localhost:3000/#auth?token=arHk-lbfx-L3O4-YQRE'); // TODO Don't put token here!
+    mainWindow.webContents.openDevTools();
+  }
 
   mainWindow.on('closed', function() {
     mainWindow = null;

@@ -117,14 +117,13 @@ class Dapp extends Component {
       );
     }
 
-    // const src = `${dappsUrl}/ui/dapps/${app.id}/index.html`;
-    const src = `http://localhost:3001?appId=dapp-status`;
+    const src = `${dappsUrl}/ui/dapps/${app.id}/index.html`;
+    // const src = `http://localhost:3001?appId=dapp-status`;
     const hash = '';
-
     return (
       <webview
         nodeintegration="true"
-        preload="file:///Users/amaurymartiny/Workspace/parity/js/.build/inject.js"
+        preload={`file:///Users/amaurymartiny/Workspace/shell/public/inject.js`}
         ref={this.handleRef}
         src={`${src}${hash}`}
         style={{ height: '100%', width: '100%' }}
