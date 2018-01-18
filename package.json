@@ -13,6 +13,7 @@
     "react-dom": "^16.2.0",
     "react-intl": "^2.4.0",
     "react-scripts": "1.1.0",
+    "semantic-ui-css": "^2.2.12",
     "store": "^2.0.12"
   },
   "scripts": {

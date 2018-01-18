@@ -14,3 +14,41 @@
 /* You should have received a copy of the GNU General Public License
 /* along with Parity.  If not, see <http://www.gnu.org/licenses/>.
 */
+
+:local(.container) {
+  color: #cccccc;
+}
+
+:local(.status),
+:local(.warning) {
+  padding: 0.5rem 0.75rem;
+}
+
+:local(.status) {
+  align-items: center;
+  display: flex;
+}
+
+:local(.warning) {
+  background: red;
+  display: block;
+}
+
+:local(.plugins) {
+  flex-grow: 1;
+  text-align: right;
+  vertical-align: middle;
+}
+
+:local(.plugins) > div,
+:local(.plugins) > img,
+:local(.plugins) > span {
+  display: inline-block !important;
+  margin: 0 0 0 1rem;
+}
+
+:local(.divider) {
+  height: 1rem;
+  margin: 0 0.25rem 0 1.25rem;
+  opacity: 0.75;
+}

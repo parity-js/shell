@@ -66,14 +66,25 @@ export default class SecureApi extends Api {
     protocol = SecureApi.protocol
   ) {
     const sysuiToken = store.get('sysuiToken');
-    const wsProvider = getProvider(uiUrl, protocol, sysuiToken);
+
+    // TODO
+    // Connecting to WS_URL
+    // Should connect to uiUrl to get an elevated API
+    // -Amaury 18.01.2018
+    const wsProvider = getProvider(null, protocol, sysuiToken);
+    // const wsProvider = getProvider(uiUrl, protocol, sysuiToken);
 
     super(wsProvider);
 
     this.protocol = protocol;
     this._url = uiUrl || UI_URL;
 
-    const httpProvider = SecureApi.getHttpProvider(this._url, this.protocol());
+    // TODO
+    // Connecting to RPC_URL
+    // Should connect to uiUrl to get an elevated API
+    // -Amaury 18.01.2018
+    const httpProvider = SecureApi.getHttpProvider(null, this.protocol());
+    // const httpProvider = SecureApi.getHttpProvider(this._url, this.protocol());
 
     this._uiApi = new Api(httpProvider, false);
     this._wsUrl = uiUrl;

@@ -85,9 +85,6 @@ StatusBar.contextTypes = {
   api: PropTypes.object.isRequired
 };
 
-StatusBar.propTypes = {
-  className: PropTypes.string,
-  upgradeStore: PropTypes.object.isRequired
-};
+StatusBar.propTypes = {};
 
 export default observer(StatusBar);

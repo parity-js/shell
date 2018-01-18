@@ -16,6 +16,7 @@
 
 import React from 'react';
 import ReactDOM from 'react-dom';
+import 'semantic-ui-css/semantic.min.css';
 
 import App from './App';
 import ContextProvider from '@parity/ui/lib/ContextProvider';
@@ -23,7 +24,7 @@ import registerServiceWorker from './registerServiceWorker';
 import { retrieveToken } from './utils';
 import SecureApi from './secureApi';
 
-const api = new SecureApi(window.location.host, retrieveToken());
+const api = new SecureApi(null, retrieveToken());
 
 ReactDOM.render(
   <ContextProvider api={api}>
