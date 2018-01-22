@@ -24,7 +24,7 @@ import viewsDapps from '@parity/shared/lib/config/dappsViews.json';
 import DappsStore from '@parity/shared/lib/mobx/dappsStore';
 import HistoryStore from '@parity/shared/lib/mobx/historyStore';
 
-import DappRequestsStore from '../DappRequests/store';
+import DappRequestsStore from '../mobx/RequestsStore';
 import styles from './Dapp.css';
 
 const internalDapps = [].concat(viewsDapps, builtinDapps);
@@ -66,9 +66,7 @@ class Dapp extends Component {
   }
 
   handleRef = ref => {
-    if (!ref) {
-      return;
-    }
+    if (!ref) return;
 
     // Log console.logs from webview
     ref.addEventListener('console-message', e => {

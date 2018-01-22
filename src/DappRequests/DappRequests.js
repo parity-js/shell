@@ -14,25 +14,22 @@
 // You should have received a copy of the GNU General Public License
 // along with Parity.  If not, see <http://www.gnu.org/licenses/>.
 
-import { observer } from 'mobx-react';
 import React, { Component } from 'react';
+import { inject, observer } from 'mobx-react';
 import methodGroups from '@parity/mobx/lib/methodGroups';
 
 import RequestGroups from './RequestGroups';
-import Store from './store';
 import styles from './DappRequests.css';
 
 class DappRequests extends Component {
-  store = Store.get();
-
   // When we approve a requestGroup, when approve all the requests, and add permissions
   // to all the other methods in the same methodGroup
   handleApproveRequestGroup = (requests, groupId, appId) => {
     requests
       .map(({ requestId }) => requestId)
-      .forEach(this.store.approveRequest);
+      .forEach(this.props.requestsStore.approveRequest);
     methodGroups[groupId].methods.forEach(method =>
-      this.store.addAppPermission(method, appId)
+      this.props.methodPermissionsStore.addAppPermission(appId, method)
     );
   };
 
@@ -40,23 +37,23 @@ class DappRequests extends Component {
   handleRejectRequestGroup = requests => {
     requests
       .map(({ requestId }) => requestId)
-      .forEach(this.store.rejectRequest);
+      .forEach(this.props.requestsStore.rejectRequest);
   };
 
   render() {
-    if (!this.store || !this.store.hasRequests) {
+    if (!this.props.requestsStore || !this.props.requestsStore.hasRequests) {
       return null;
     }
 
     return (
       <div className={styles.requests}>
-        {Object.keys(this.store.groupedRequests).map(appId => (
+        {Object.keys(this.props.requestsStore.groupedRequests).map(appId => (
           <RequestGroups
             key={appId}
             appId={appId}
             onApproveRequestGroup={this.handleApproveRequestGroup}
             onRejectRequestGroup={this.handleRejectRequestGroup}
-            requestGroups={this.store.groupedRequests[appId]}
+            requestGroups={this.props.requestsStore.groupedRequests[appId]}
           />
         ))}
       </div>
@@ -64,4 +61,6 @@ class DappRequests extends Component {
   }
 }
 
-export default observer(DappRequests);
+export default inject('methodPermissionsStore', 'requestsStore')(
+  observer(DappRequests)
+);

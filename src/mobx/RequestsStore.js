@@ -14,30 +14,28 @@
 // You should have received a copy of the GNU General Public License
 // along with Parity.  If not, see <http://www.gnu.org/licenses/>.
 
-import { extendObservable, action, computed, observable } from 'mobx';
-import store from 'store';
+import { extendObservable, action } from 'mobx';
 import { methodGroupFromMethod } from '@parity/mobx/lib/methodGroups';
 import { sha3 } from '@parity/api/lib/util/sha3';
 
-const LS_PERMISSIONS = '_parity::dapps::methods';
+import MethodPermissionsStore from './MethodPermissionsStore';
 
-export default class Store {
-  // @observable requests = {}; // Maps requestId to request
+let instance = null;
 
+export default class RequestsStore {
   middleware = [];
-  permissions = {}; // Maps `${method}:${appId}` to true/false
   sources = {}; // Maps requestId to a postMessage source
   tokens = {}; // Maps token to appId
 
-  constructor(provider) {
-    this.provider = provider;
-    this.permissions = store.get(LS_PERMISSIONS) || {};
+  constructor(api) {
+    this._api = api;
+    this.methodPermissionsStore = MethodPermissionsStore.get(api);
 
     // TODO Use @decorators
     extendObservable(this, {
       requests: {},
       get hasRequests() {
-        return Object.keys(this.requests).length !== 0;
+        return Object.keys(this.requests).length > 0;
       },
       get groupedRequests() {
         // Group by appId on top level, and by methodGroup on 2nd level
@@ -56,9 +54,6 @@ export default class Store {
         }, {});
       }
     });
-
-    // With IPC we don't need the following line
-    // window.addEventListener('message', this.receiveMessage, false);
   }
 
   // @action
@@ -78,7 +73,7 @@ export default class Store {
     const appId = this.tokens[data.token];
     const source = this.sources[requestId];
 
-    this.addAppPermission(method, appId);
+    this.methodPermissionsStore.addAppPermission(appId, method);
     this.removeRequest(requestId);
 
     if (data.api) {
@@ -106,8 +101,6 @@ export default class Store {
     this.requests = { ...this.requests };
   });
 
-  getPermissionId = (method, appId) => `${method}:${appId}`; // Create an id to identify permissions based on method and appId
-
   getMethodFromRequest = requestId => {
     const { data: { method, params } } = this.requests[requestId];
 
@@ -131,21 +124,6 @@ export default class Store {
       },
       '*'
     );
-  };
-
-  addAppPermission = (method, appId) => {
-    this.permissions[this.getPermissionId(method, appId)] = true;
-    this.savePermissions();
-  };
-
-  setPermissions = _permissions => {
-    this.permissions = {
-      ...this.permissions,
-      ..._permissions
-    };
-    this.savePermissions();
-
-    return true;
   };
 
   addMiddleware(middleware) {
@@ -174,15 +152,11 @@ export default class Store {
   };
 
   hasTokenPermission = (method, token) => {
-    return this.hasAppPermission(method, this.tokens[token]);
-  };
-
-  hasAppPermission = (method, appId) => {
-    return !!this.permissions[this.getPermissionId(method, appId)];
-  };
-
-  savePermissions = () => {
-    store.set(LS_PERMISSIONS, this.permissions);
+    console.log(this.tokens[token]);
+    return this.methodPermissionsStore.hasAppPermission(
+      this.tokens[token],
+      method
+    );
   };
 
   _methodCallbackPost = (id, from, source, token) => {
@@ -208,10 +182,12 @@ export default class Store {
 
   executePubsubCall = ({ api, id, from, token, params }, source) => {
     const callback = this._methodCallbackPost(id, from, source, token);
-
-    this.provider.subscribe(api, callback, params).then((result, error) => {
-      this._methodCallbackPost(id, from, source, token)(null, result);
-    });
+    console.log(this._api);
+    this._api.provider
+      .subscribe(api, callback, params)
+      .then((result, error) => {
+        this._methodCallbackPost(id, from, source, token)(null, result);
+      });
   };
 
   executeMethodCall = ({ id, from, method, params, token }, source) => {
@@ -270,8 +246,8 @@ export default class Store {
       } else if (subId) {
         const unsubscribePromise =
           subId === '*'
-            ? this.provider.unsubscribeAll()
-            : this.provider.unsubscribe(subId);
+            ? this._api.provider.unsubscribeAll()
+            : this._api.provider.unsubscribe(subId);
 
         unsubscribePromise.then(v =>
           this._methodCallbackPost(id, from, source, token)(null, v)
@@ -284,20 +260,10 @@ export default class Store {
     }
   };
 
-  static instance = null;
-
-  static create(provider) {
-    if (!Store.instance) {
-      Store.instance = new Store(provider);
+  static get(api) {
+    if (!instance) {
+      instance = new RequestsStore(api);
     }
-
-    return Store.instance;
-  }
-
-  static get(provider) {
-    if (!Store.instance) {
-      return Store.create(provider);
-    }
-    return Store.instance;
+    return instance;
   }
 }

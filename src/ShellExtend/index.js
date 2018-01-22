@@ -16,7 +16,7 @@
 
 import { extendShell } from './api';
 
-window.parity = Object.assign({}, window.parity || {}, {
+window.parity = Object.assign({}, window.parity, {
   extendShell
 });
 

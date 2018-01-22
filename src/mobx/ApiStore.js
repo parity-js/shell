@@ -18,7 +18,7 @@ import { action, extendObservable, transaction } from 'mobx';
 
 let instance = null;
 
-export default class Store {
+export default class ApiStore {
   constructor(api) {
     this._api = api;
 
@@ -36,7 +36,7 @@ export default class Store {
 
   static get = api => {
     if (!instance) {
-      instance = new Store(api);
+      instance = new ApiStore(api);
     }
 
     return instance;

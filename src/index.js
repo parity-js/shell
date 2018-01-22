@@ -16,21 +16,25 @@
 
 import React from 'react';
 import ReactDOM from 'react-dom';
+import { Provider as MobxProvider } from 'mobx-react';
 import 'semantic-ui-css/semantic.min.css';
 
 import App from './App';
 import ContextProvider from '@parity/ui/lib/ContextProvider';
 import registerServiceWorker from './registerServiceWorker';
 import { retrieveToken } from './utils';
+import rootStore from './mobx';
 import SecureApi from './secureApi';
 import { setupProviderFilters } from './DappRequests';
 
 const api = new SecureApi(window.location.host, retrieveToken());
-setupProviderFilters(api.provider);
+setupProviderFilters(api);
 
 ReactDOM.render(
   <ContextProvider api={api}>
-    <App />
+    <MobxProvider {...rootStore(api)}>
+      <App />
+    </MobxProvider>
   </ContextProvider>,
   document.getElementById('root')
 );

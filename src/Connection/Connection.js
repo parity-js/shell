@@ -15,7 +15,7 @@
 // along with Parity.  If not, see <http://www.gnu.org/licenses/>.
 
 import React, { Component } from 'react';
-import { observer } from 'mobx-react';
+import { inject, observer } from 'mobx-react';
 import PropTypes from 'prop-types';
 import { FormattedMessage } from 'react-intl';
 
@@ -28,7 +28,6 @@ import {
   KeyIcon
 } from '@parity/ui/lib/Icons';
 
-import Store from './store';
 import styles from './Connection.css';
 
 class Connection extends Component {
@@ -44,10 +43,8 @@ class Connection extends Component {
     validToken: false
   };
 
-  store = Store.get(this.context.api);
-
   render() {
-    const { isConnecting, isConnected, needsToken } = this.store;
+    const { isConnecting, isConnected, needsToken } = this.props.apiStore;
 
     if (!isConnecting && isConnected) {
       return null;
@@ -82,7 +79,7 @@ class Connection extends Component {
 
   renderSigner() {
     const { loading, token, validToken } = this.state;
-    const { isConnecting, needsToken } = this.store;
+    const { isConnecting, needsToken } = this.props.apiStore;
 
     if (needsToken && !isConnecting) {
       return (
@@ -185,4 +182,4 @@ class Connection extends Component {
   };
 }
 
-export default observer(Connection);
+export default inject('apiStore')(observer(Connection));
