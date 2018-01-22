@@ -38,7 +38,7 @@ function createWindow() {
       })
     );
   } else {
-    mainWindow.loadURL('http://localhost:3000/#auth?token=arHk-lbfx-L3O4-YQRE'); // TODO Don't put token here!
+    mainWindow.loadURL('http://127.0.0.1:3000');
     mainWindow.webContents.openDevTools();
   }
 

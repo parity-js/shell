@@ -25,7 +25,7 @@ import { retrieveToken } from './utils';
 import SecureApi from './secureApi';
 import { setupProviderFilters } from './DappRequests';
 
-const api = new SecureApi(null, retrieveToken());
+const api = new SecureApi(window.location.host, retrieveToken());
 setupProviderFilters(api.provider);
 
 ReactDOM.render(

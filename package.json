@@ -2,6 +2,31 @@
   "name": "shell",
   "version": "0.1.0",
   "private": true,
+  "proxy": {
+    "/api": {
+      "target": "http://127.0.0.1:8180",
+      "changeOrigin": true,
+      "autoRewrite": true
+    },
+    "/app": {
+      "target": "http://127.0.0.1:8545",
+      "changeOrigin": true,
+      "pathRewrite": {
+        "^/app": ""
+      }
+    },
+    "/parity-utils": {
+      "target": "http://127.0.0.1:3000",
+      "changeOrigin": true,
+      "pathRewrite": {
+        "^/parity-utils": ""
+      }
+    },
+    "/rpc": {
+      "target": "http://127.0.0.1:8545",
+      "changeOrigin": true
+    }
+  },
   "scripts": {
     "electron": "electron src/index.electron.js",
     "start": "react-scripts start",

@@ -14,7 +14,7 @@
 // You should have received a copy of the GNU General Public License
 // along with Parity.  If not, see <http://www.gnu.org/licenses/>.
 
-import uniq from 'lodash/uniq';
+import uniq from 'lodash.uniq';
 import store from 'store';
 
 import Api from '@parity/api';
@@ -36,62 +36,46 @@ export default class SecureApi extends Api {
   _wsUrl = null;
   _url = null;
 
-  static getHttpProvider(url, protocol) {
+  static getHttpProvider (url, protocol) {
     return new Api.Provider.Http(`${protocol}//${url || RPC_URL}/rpc`, 0);
   }
 
-  static getWsProvider(url, protocol, sysuiToken) {
+  static getWsProvider (url, protocol, sysuiToken) {
     const transportUrl = SecureApi.transportWsUrl(url || WS_URL, protocol);
 
     return new Api.Provider.Ws(transportUrl, sysuiToken, false);
   }
 
-  static transportWsUrl(url, protocol) {
+  static transportWsUrl (url, protocol) {
     const proto = protocol() === 'https:' ? 'wss:' : 'ws:';
 
     return `${proto}//${url}`;
   }
 
   // Returns a protocol with `:` at the end.
-  static protocol() {
+  static protocol () {
     return window.location.protocol === 'file:'
       ? 'http:'
       : window.location.protocol;
   }
 
-  constructor(
-    uiUrl,
-    nextToken,
-    getProvider = SecureApi.getWsProvider,
-    protocol = SecureApi.protocol
-  ) {
+  constructor (uiUrl, nextToken, getProvider = SecureApi.getWsProvider, protocol = SecureApi.protocol) {
     const sysuiToken = store.get('sysuiToken');
-
-    // TODO
-    // Connecting to WS_URL
-    // Should connect to uiUrl to get an elevated API
-    // -Amaury 18.01.2018
-    const wsProvider = getProvider(null, protocol, sysuiToken);
-    // const wsProvider = getProvider(uiUrl, protocol, sysuiToken);
+    const wsProvider = getProvider(uiUrl, protocol, sysuiToken);
 
     super(wsProvider);
 
     this.protocol = protocol;
     this._url = uiUrl || UI_URL;
 
-    // TODO
-    // Connecting to RPC_URL
-    // Should connect to uiUrl to get an elevated API
-    // -Amaury 18.01.2018
-    const httpProvider = SecureApi.getHttpProvider(null, this.protocol());
-    // const httpProvider = SecureApi.getHttpProvider(this._url, this.protocol());
+    const httpProvider = SecureApi.getHttpProvider(this._url, this.protocol());
 
     this._uiApi = new Api(httpProvider, false);
     this._wsUrl = uiUrl;
     // Try tokens from localStorage, from hash and 'initial'
     this._tokens = uniq([sysuiToken, nextToken, 'initial'])
-      .filter(token => token)
-      .map(value => ({
+      .filter((token) => token)
+      .map((value) => ({
         value,
         tried: false
       }));
@@ -102,7 +86,7 @@ export default class SecureApi extends Api {
     this.connect();
   }
 
-  get _dappsAddress() {
+  get _dappsAddress () {
     if (!this._dappsUrl) {
       return {
         host: null,
@@ -118,11 +102,11 @@ export default class SecureApi extends Api {
     };
   }
 
-  get dappsPort() {
+  get dappsPort () {
     return this._dappsAddress.port;
   }
 
-  get dappsUrl() {
+  get dappsUrl () {
     const { port } = this._dappsAddress;
 
     return port
@@ -130,7 +114,7 @@ export default class SecureApi extends Api {
       : `${this.protocol()}//${this.hostname}`;
   }
 
-  get hostname() {
+  get hostname () {
     if (window.location.hostname === 'home.parity') {
       return 'dapps.parity';
     }
@@ -138,23 +122,23 @@ export default class SecureApi extends Api {
     return this._dappsAddress.host || '127.0.0.1';
   }
 
-  get isConnecting() {
+  get isConnecting () {
     return this._isConnecting;
   }
 
-  get isConnected() {
+  get isConnected () {
     return this.provider.isConnected;
   }
 
-  get needsToken() {
+  get needsToken () {
     return this._needsToken;
   }
 
-  get secureToken() {
+  get secureToken () {
     return this.provider.token;
   }
 
-  connect() {
+  connect () {
     if (this._isConnecting) {
       return;
     }
@@ -170,7 +154,7 @@ export default class SecureApi extends Api {
 
     // Try to connect
     return this._connect()
-      .then(connected => {
+      .then((connected) => {
         this._isConnecting = false;
 
         if (connected) {
@@ -192,7 +176,7 @@ export default class SecureApi extends Api {
 
         return this.emit('disconnected');
       })
-      .catch(error => {
+      .catch((error) => {
         this._isConnecting = false;
 
         log.debug('emitting "disconnected"');
@@ -204,7 +188,7 @@ export default class SecureApi extends Api {
   /**
    * Resolves a wildcard address to `window.location.hostname`;
    */
-  _resolveHost(url) {
+  _resolveHost (url) {
     const parts = url ? url.split(':') : [];
     const port = parts[1];
     let host = parts[0];
@@ -225,11 +209,12 @@ export default class SecureApi extends Api {
    * a boolean: `true` if the node is up, `false`
    * otherwise (HEAD request to the Node)
    */
-  isNodeUp() {
-    return fetch(`${this.protocol()}//${this._url}/api/ping`, {
-      method: 'HEAD'
-    })
-      .then(r => r.status === 200, () => false)
+  isNodeUp () {
+    return fetch(`${this.protocol()}//${this._url}/api/ping`, { method: 'HEAD' })
+      .then(
+        (r) => r.status === 200,
+        () => false
+      )
       .catch(() => false);
   }
 
@@ -237,13 +222,13 @@ export default class SecureApi extends Api {
    * Update the given token, ie. add it to the token
    * list, and then try to connect (if not already connecting)
    */
-  updateToken(_token) {
+  updateToken (_token) {
     const token = this._sanitiseToken(_token);
 
     log.debug('updating token', token);
 
     // Update the tokens list: put the new one on first position
-    this._tokens = [{ value: token, tried: false }].concat(this._tokens);
+    this._tokens = [ { value: token, tried: false } ].concat(this._tokens);
 
     // Try to connect with the new token added
     return this.connect();
@@ -253,7 +238,7 @@ export default class SecureApi extends Api {
    * Try to connect to the Node with the next Token in
    * the list
    */
-  _connect() {
+  _connect () {
     log.debug('trying next token');
 
     // Get the first not-tried token
@@ -267,7 +252,7 @@ export default class SecureApi extends Api {
     nextToken.tried = true;
 
     return this._connectWithToken(nextToken.value)
-      .then(validToken => {
+      .then((validToken) => {
         // If not valid, try again with the next token in the list
         if (!validToken) {
           return this._connect();
@@ -275,9 +260,10 @@ export default class SecureApi extends Api {
 
         // If correct and valid token, wait until the Node is ready
         // and resolve as connected
-        return this._waitUntilNodeReady().then(() => true);
+        return this._waitUntilNodeReady()
+          .then(() => true);
       })
-      .catch(error => {
+      .catch((error) => {
         log.error('unknown error in _connect', error);
         return false;
       });
@@ -289,17 +275,14 @@ export default class SecureApi extends Api {
    * with `validToken` as argument, whether the given token
    * is valid or not
    */
-  _connectWithToken(_token) {
+  _connectWithToken (_token) {
     // Sanitize the token first
     const token = this._sanitiseToken(_token);
 
     const connectPromise = this._fetchSettings()
       .then(() => {
         // Update the URL and token in the transport layer
-        this.transport.url = SecureApi.transportWsUrl(
-          this._wsUrl,
-          this.protocol
-        );
+        this.transport.url = SecureApi.transportWsUrl(this._wsUrl, this.protocol);
         this.provider.updateToken(token, false);
 
         log.debug('connecting with token', token);
@@ -316,7 +299,7 @@ export default class SecureApi extends Api {
         // The token is valid !
         return true;
       })
-      .catch(error => {
+      .catch((error) => {
         // Log if it's not a close error (ie. wrong token)
         if (error && error.type !== 'close') {
           log.debug('did not connect ; error', error);
@@ -325,8 +308,12 @@ export default class SecureApi extends Api {
         return false;
       });
 
-    return Promise.all([connectPromise, this.isNodeUp()]).then(
-      ([connected, isNodeUp]) => {
+    return Promise
+      .all([
+        connectPromise,
+        this.isNodeUp()
+      ])
+      .then(([ connected, isNodeUp ]) => {
         if (connected) {
           return true;
         }
@@ -339,9 +326,7 @@ export default class SecureApi extends Api {
 
           return new Promise((resolve, reject) => {
             window.setTimeout(() => {
-              this._connectWithToken(token)
-                .then(resolve)
-                .catch(reject);
+              this._connectWithToken(token).then(resolve).catch(reject);
             }, timeout);
           });
         }
@@ -349,40 +334,41 @@ export default class SecureApi extends Api {
         // The token is invalid
         log.debug('tried with a wrong token', token);
         return false;
-      }
-    );
+      });
   }
 
   /**
    * Retrieve the correct ports from the Node
    */
-  _fetchSettings() {
-    return Promise.all([
-      // ignore dapps disabled errors
-      this._uiApi.parity.dappsUrl().catch(() => null),
-      this._uiApi.parity.wsUrl()
-    ]).then(([dappsUrl, wsUrl]) => {
-      this._dappsUrl = this._resolveHost(dappsUrl);
-      this._wsUrl = this._resolveHost(wsUrl);
-    });
+  _fetchSettings () {
+    return Promise
+      .all([
+        // ignore dapps disabled errors
+        this._uiApi.parity.dappsUrl().catch(() => null),
+        this._uiApi.parity.wsUrl()
+      ])
+      .then(([dappsUrl, wsUrl]) => {
+        this._dappsUrl = this._resolveHost(dappsUrl);
+        this._wsUrl = this._resolveHost(wsUrl);
+      });
   }
 
   /**
    * Try to generate an Authorization Token.
    * Then try to connect with the new token.
    */
-  _generateAuthorizationToken() {
+  _generateAuthorizationToken () {
     return this.signer
       .generateAuthorizationToken()
-      .then(token => this._connectWithToken(token));
+      .then((token) => this._connectWithToken(token));
   }
 
   /**
    * Get the next token to try, if any left
    */
-  _getNextToken() {
+  _getNextToken () {
     // Get the first not-tried token
-    const nextTokenIndex = this._tokens.findIndex(t => !t.tried);
+    const nextTokenIndex = this._tokens.findIndex((t) => !t.tried);
 
     // If no more tokens to try, user has to enter a new one
     if (nextTokenIndex < 0) {
@@ -394,18 +380,18 @@ export default class SecureApi extends Api {
     return nextToken;
   }
 
-  _resetTokens() {
-    this._tokens = this._tokens.map(token => ({
+  _resetTokens () {
+    this._tokens = this._tokens.map((token) => ({
       ...token,
       tried: false
     }));
   }
 
-  _sanitiseToken(token) {
+  _sanitiseToken (token) {
     return token.replace(/[^a-zA-Z0-9]/g, '');
   }
 
-  _saveToken(token) {
+  _saveToken (token) {
     store.set('sysuiToken', token);
   }
 
@@ -418,9 +404,11 @@ export default class SecureApi extends Api {
    * We check that the `parity_netChain` RPC calls
    * returns successfully
    */
-  _waitUntilNodeReady(_timeleft) {
+  _waitUntilNodeReady (_timeleft) {
     // Default timeout to 30 seconds
-    const timeleft = Number.isFinite(_timeleft) ? _timeleft : 30 * 1000;
+    const timeleft = Number.isFinite(_timeleft)
+      ? _timeleft
+      : 30 * 1000;
 
     // After timeout, just resolve the promise...
     if (timeleft <= 0) {
@@ -430,10 +418,10 @@ export default class SecureApi extends Api {
 
     const start = Date.now();
 
-    return this.parity
-      .netChain()
+    return this
+      .parity.netChain()
       .then(() => true)
-      .catch(error => {
+      .catch((error) => {
         if (!error) {
           return true;
         }
@@ -443,7 +431,7 @@ export default class SecureApi extends Api {
         }
 
         // Timeout between 250ms and 750ms
-        const timeout = Math.floor(250 + 500 * Math.random());
+        const timeout = Math.floor(250 + (500 * Math.random()));
 
         log.debug('waiting until node is ready', 'retry in', timeout, 'ms');
 
@@ -452,9 +440,7 @@ export default class SecureApi extends Api {
           window.setTimeout(() => {
             const duration = Date.now() - start;
 
-            this._waitUntilNodeReady(timeleft - duration)
-              .then(resolve)
-              .catch(reject);
+            this._waitUntilNodeReady(timeleft - duration).then(resolve).catch(reject);
           }, timeout);
         });
       });

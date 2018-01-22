@@ -14,28 +14,6 @@
 // You should have received a copy of the GNU General Public License
 // along with Parity.  If not, see <http://www.gnu.org/licenses/>.
 
-import React, { Component } from 'react';
+import Connection from './Connection';
 
-import Connection from '../Connection';
-import Dapp from '../Dapp';
-import DappRequests from '../DappRequests';
-import StatusBar from '../StatusBar';
-import SyncWarning from '../SyncWarning';
-
-import styles from './App.css';
-
-class App extends Component {
-  render() {
-    return (
-      <div className={styles.app}>
-        <StatusBar />
-        <SyncWarning />
-        <Connection />
-        <DappRequests />
-        <Dapp />
-      </div>
-    );
-  }
-}
-
-export default App;
+export default Connection;
