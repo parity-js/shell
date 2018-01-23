@@ -18,23 +18,18 @@ import * as mobx from 'mobx';
 import flatten from 'lodash/flatten';
 import methodGroups from '@parity/mobx/lib/methodGroups';
 
-import DappsStore from '@parity/shared/lib/mobx/dappsStore';
+import DappsStore from '../../mobx/DappsStore';
 import RequestStore from '../../mobx/RequestsStore';
+import LoadAppStore from '../../mobx/LoadAppStore';
 
 export default function shellMiddleware(appId, method, params, callback) {
   const dappsStore = DappsStore.get();
+  const loadAppStore = LoadAppStore.get();
   const requestStore = RequestStore.get();
 
   switch (method) {
     case 'shell_getApps': {
-      const [displayAll] = params;
-
-      callback(
-        null,
-        displayAll
-          ? dappsStore.allApps.slice().map(mobx.toJS)
-          : dappsStore.visibleApps.slice().map(mobx.toJS)
-      );
+      callback(null, dappsStore.appsArray);
       return true;
     }
 
@@ -57,10 +52,9 @@ export default function shellMiddleware(appId, method, params, callback) {
     }
 
     case 'shell_loadApp': {
-      const [loadId, loadParams] = params;
-      const loadUrl = `/${loadId}/${loadParams || ''}`;
+      const [appId, appParams] = params;
 
-      window.location.hash = loadUrl;
+      loadAppStore.loadApp(appId, appParams);
 
       callback(null, true);
       return true;

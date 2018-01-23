@@ -1,6 +1,6 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import { observer } from 'mobx-react';
+import { inject, observer } from 'mobx-react';
 import { FormattedMessage } from 'react-intl';
 
 import BlockNumber from '@parity/ui/lib/BlockNumber';
@@ -22,14 +22,14 @@ import styles from './StatusBar.css';
 
 // const pluginStore = PluginStore.get();
 
-function StatusBar({ className = '', upgradeStore }, { api }) {
+function StatusBar({ className = '', loadAppStore, upgradeStore }, { api }) {
   // const accountStore = AccountStore.get(api);
 
   return (
     <div className={`${styles.container} ${className}`}>
       <GradientBg className={styles.bar}>
         <div className={styles.status}>
-          <a href="#/" className={styles.home}>
+          <a className={styles.home} onClick={loadAppStore.loadHomepage}>
             <HomeIcon />
           </a>
           <ClientVersion className={styles.version} />
@@ -85,4 +85,4 @@ StatusBar.contextTypes = {
 
 StatusBar.propTypes = {};
 
-export default observer(StatusBar);
+export default inject('loadAppStore')(observer(StatusBar));

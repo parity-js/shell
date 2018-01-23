@@ -16,7 +16,7 @@
 
 import { extendObservable, action } from 'mobx';
 
-const IPC_CHANNEL = 'SHELL_DAPP_IPC_CHANNEL';
+const IPC_CHANNEL_PREFIX = 'IPC_CHANNEL_';
 
 let instance = null;
 
@@ -60,7 +60,12 @@ export default class MiddlewareStore {
       });
 
       if (!isHandled) {
-        this.webview.send('PARITY_IPC_CHANNEL', method, params, callback);
+        this.webview.send(
+          `${IPC_CHANNEL_PREFIX}${from}`,
+          method,
+          params,
+          callback
+        );
       }
     } catch (error) {
       console.error(`Execution error handling '${method}'`, error);
@@ -78,7 +83,7 @@ export default class MiddlewareStore {
 
   methodCallbackPost = (id, from, source, token) => {
     return (error, result) => {
-      this.webview.send('PARITY_IPC_CHANNEL', {
+      this.webview.send(`${IPC_CHANNEL_PREFIX}${from}`, {
         error: error ? error.message : null,
         id,
         from: 'shell',
@@ -95,7 +100,7 @@ export default class MiddlewareStore {
     }
 
     this.webview.send(
-      'PARITY_IPC_CHANNEL',
+      `${IPC_CHANNEL_PREFIX}${from}`,
       {
         error: `Method ${method} not allowed`,
         id,

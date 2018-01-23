@@ -19,17 +19,11 @@ import PropTypes from 'prop-types';
 import { inject, observer } from 'mobx-react';
 import { FormattedMessage } from 'react-intl';
 import path from 'path';
-
-import builtinDapps from '@parity/shared/lib/config/dappsBuiltin.json';
-import viewsDapps from '@parity/shared/lib/config/dappsViews.json';
 import DappsStore from '@parity/shared/lib/mobx/dappsStore';
-import HistoryStore from '@parity/shared/lib/mobx/historyStore';
 
 import styles from './Dapp.css';
 
 const { remote } = window.require('electron');
-
-const internalDapps = [].concat(viewsDapps, builtinDapps);
 
 class Dapp extends Component {
   static contextTypes = {
@@ -37,39 +31,14 @@ class Dapp extends Component {
   };
 
   static propTypes = {
-    params: PropTypes.object
+    loadAppStore: PropTypes.object.isRequired
   };
 
-  state = {
-    app: null,
-    loading: true
-  };
-
-  store = DappsStore.get(this.context.api);
-  historyStore = HistoryStore.get('dapps');
-
-  componentWillMount() {
-    const id =
-      '0xa48bd8fd56c90c899135281967a6cf90865c221b46f27f9fbe2a236d74a64ea2'; // Browse Dapps
-    // const id ='0xcd423760c9650eb549b1615f6cf96d420e32aadcea2ff5fe11c26457244adcc1'; // Node Status
-    // const id = 'v1';
-
-    if (!internalDapps[id] || !internalDapps[id].skipHistory) {
-      this.historyStore.add(id);
-    }
-
-    this.loadApp(id);
-  }
-
-  componentWillReceiveProps(nextProps) {
-    if (nextProps.params.id !== this.props.params.id) {
-      this.loadApp(nextProps.params.id);
-    }
-  }
-
+  dappsStore = DappsStore.get(this.context.api);
   handleRef = ref => {
-    if (!ref) return;
+    if (!ref) return this.setState({ isLoading: true });
     ref.addEventListener('did-finish-load', () => {
+      this.props.loadAppStore.setIsLoading(false);
       // Log console.logs from webview
       ref.addEventListener('console-message', e => {
         console.log('[DAPP]', e.message);
@@ -85,28 +54,11 @@ class Dapp extends Component {
     });
   };
 
-  loadApp(id) {
-    this.setState({ loading: true });
-
-    this.store
-      .loadApp(id)
-      .then(app => {
-        this.setState({ loading: false, app });
-      })
-      .catch(() => {
-        this.setState({ loading: false });
-      });
-  }
-
   render() {
     const { dappsUrl } = this.context.api;
-    const { app, loading } = this.state;
+    const { appId, isLoading } = this.props.loadAppStore;
 
-    if (loading) {
-      return null;
-    }
-
-    if (!app) {
+    if (!appId) {
       return (
         <div className={styles.full}>
           <div className={styles.text}>
@@ -119,7 +71,7 @@ class Dapp extends Component {
       );
     }
 
-    const src = `${dappsUrl}/ui/dapps/${app.id}/index.html`;
+    const src = `${dappsUrl}/ui/dapps/${appId}/index.html`;
     // const src = `http://localhost:3001?appId=dapp-status`;
     const hash = '';
 
@@ -132,16 +84,16 @@ class Dapp extends Component {
         )}`}
         ref={this.handleRef}
         src={`${src}${hash}`}
-        style={{ height: '100%', width: '100%' }}
+        style={{
+          height: '100%',
+          width: '100%',
+          visibility: isLoading ? 'hidden' : 'visible'
+        }}
       />
     );
   }
-
-  onDappLoad = () => {
-    const frame = document.getElementById('dappFrame');
-
-    frame.style.opacity = 1;
-  };
 }
 
-export default inject('middlewareStore', 'requestsStore')(observer(Dapp));
+export default inject('loadAppStore', 'middlewareStore', 'requestsStore')(
+  observer(Dapp)
+);
