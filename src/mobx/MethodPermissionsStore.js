@@ -14,20 +14,17 @@
 // You should have received a copy of the GNU General Public License
 // along with Parity.  If not, see <http://www.gnu.org/licenses/>.
 
-import { extendObservable, action } from 'mobx';
+import { action, observable } from 'mobx';
 import store from 'store';
 
 let instance = null;
 const LS_PERMISSIONS = '_parity::dapps::methods';
 
 export default class MethodPermissionsStore {
+  @observable permissions = {};
+
   constructor(api) {
     this._api = api;
-
-    // TODO Use @decorators
-    extendObservable(this, {
-      permissions: {} // Maps `${method}:${appId}` to true/false
-    });
 
     this.setPermissions(store.get(LS_PERMISSIONS));
   }
@@ -51,11 +48,12 @@ export default class MethodPermissionsStore {
     store.set(LS_PERMISSIONS, this.permissions);
   };
 
-  setPermissions = action(permissions => {
+  @action
+  setPermissions = permissions => {
     this.permissions = {
       ...this.permissions,
       ...permissions
     };
     this.savePermissions();
-  });
+  };
 }

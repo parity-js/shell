@@ -14,20 +14,18 @@
 // You should have received a copy of the GNU General Public License
 // along with Parity.  If not, see <http://www.gnu.org/licenses/>.
 
-import { extendObservable, action } from 'mobx';
+import { action, observable } from 'mobx';
 
 const IPC_CHANNEL_PREFIX = 'IPC_CHANNEL_';
 
 let instance = null;
 
 export default class MiddlewareStore {
+  @observable middleware = [];
+  webview = null;
+
   constructor(api) {
     this._api = api;
-
-    // TODO Use @decorators
-    extendObservable(this, {
-      middleware: []
-    });
   }
 
   static get(api) {
@@ -37,7 +35,8 @@ export default class MiddlewareStore {
     return instance;
   }
 
-  addMiddleware = action(middleware => {
+  @action
+  addMiddleware = middleware => {
     if (!middleware || typeof middleware !== 'function') {
       throw new Error('Interceptor middleware does not implement a function');
     }
@@ -45,7 +44,7 @@ export default class MiddlewareStore {
     this.middleware.push(middleware);
 
     return true;
-  });
+  };
 
   executeMethodCall = ({ id, from, method, params, token }, source) => {
     try {
@@ -113,7 +112,8 @@ export default class MiddlewareStore {
     );
   };
 
-  setWebview = action(webview => {
+  @action
+  setWebview = webview => {
     this.webview = webview;
-  });
+  };
 }

@@ -29,10 +29,9 @@
   },
   "scripts": {
     "electron": "electron src/index.electron.js",
-    "start": "react-scripts start",
-    "build": "react-scripts build",
-    "test": "react-scripts test --env=jsdom",
-    "eject": "react-scripts eject"
+    "start": "react-app-rewired start",
+    "build": "react-app-rewired build",
+    "test": "react-app-rewired test --env=jsdom"
   },
   "dependencies": {
     "@parity/api": "^2.1.16",
@@ -51,6 +50,8 @@
   },
   "devDependencies": {
     "electron": "^1.7.10",
-    "parity-react-scripts": "github:paritytech/parity-react-scripts"
+    "parity-react-scripts": "github:paritytech/parity-react-scripts",
+    "react-app-rewire-mobx": "^1.0.7",
+    "react-app-rewired": "^1.4.0"
   }
 }

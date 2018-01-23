@@ -14,7 +14,7 @@
 // You should have received a copy of the GNU General Public License
 // along with Parity.  If not, see <http://www.gnu.org/licenses/>.
 
-import { action, extendObservable, transaction } from 'mobx';
+import { action, computed, observable, transaction } from 'mobx';
 import Contracts from '@parity/shared/lib/contracts';
 import {
   fetchBuiltinApps,
@@ -29,6 +29,7 @@ const BUILTIN_APPS_KEY = 'BUILTIN_APPS_KEY';
 let instance = null;
 
 export default class DappsStore {
+  @observable apps = {};
   _subscriptions = {};
   _cachedApps = {};
   _manifests = {};
@@ -36,14 +37,6 @@ export default class DappsStore {
 
   constructor(api) {
     this._api = api;
-
-    // TODO use @decorators
-    extendObservable(this, {
-      apps: {},
-      get appsArray() {
-        return Object.values(this.apps);
-      }
-    });
 
     this.subscribeToChanges();
     this.loadAllApps();
@@ -55,6 +48,26 @@ export default class DappsStore {
     }
 
     return instance;
+  }
+
+  @action
+  addApp = app => {
+    if (!app || !app.id) return;
+    this.apps = {
+      ...this.apps,
+      [app.id]: app
+    };
+  };
+
+  addApps = (apps = []) => {
+    transaction(() => {
+      apps.forEach(this.addApp);
+    });
+  };
+
+  @computed
+  get appsArray() {
+    return Object.values(this.apps);
   }
 
   loadLocalApps() {
@@ -160,7 +173,8 @@ export default class DappsStore {
     });
   }
 
-  refreshDapps = action(() => {
+  @action
+  refreshDapps = () => {
     const self = this;
 
     self._api.parity
@@ -173,19 +187,5 @@ export default class DappsStore {
       .catch(err => {
         console.log(err);
       });
-  });
-
-  addApp = action(app => {
-    if (!app || !app.id) return;
-    this.apps = {
-      ...this.apps,
-      [app.id]: app
-    };
-  });
-
-  addApps = (apps = []) => {
-    transaction(() => {
-      apps.forEach(this.addApp);
-    });
   };
 }

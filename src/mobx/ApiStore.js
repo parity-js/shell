@@ -14,21 +14,18 @@
 // You should have received a copy of the GNU General Public License
 // along with Parity.  If not, see <http://www.gnu.org/licenses/>.
 
-import { action, extendObservable, transaction } from 'mobx';
+import { action, observable, transaction } from 'mobx';
 
 let instance = null;
 
 export default class ApiStore {
+  @observable isConnected = false;
+  @observable isConnecting = false;
+  @observable needsToken = false;
+  @observable secureToken = false;
+
   constructor(api) {
     this._api = api;
-
-    // TODO Use @decorators
-    extendObservable(this, {
-      isConnected: false,
-      isConnecting: false,
-      needsToken: false,
-      secureToken: false
-    });
 
     // Poll every 1s the api to get the status
     setInterval(() => this.updateConnection(), 1000);
@@ -42,12 +39,13 @@ export default class ApiStore {
     return instance;
   };
 
-  updateConnection = action(() => {
+  @action
+  updateConnection = () => {
     transaction(() => {
       this.isConnected = this._api.isConnected;
       this.isConnecting = this._api.isConnecting;
       this.needsToken = this._api.needsToken;
       this.secureToken = this._api.secureToken;
     });
-  });
+  };
 }

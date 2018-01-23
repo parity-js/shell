@@ -14,7 +14,7 @@
 // You should have received a copy of the GNU General Public License
 // along with Parity.  If not, see <http://www.gnu.org/licenses/>.
 
-import { extendObservable, action } from 'mobx';
+import { action, computed, observable } from 'mobx';
 import { methodGroupFromMethod } from '@parity/mobx/lib/methodGroups';
 import { sha3 } from '@parity/api/lib/util/sha3';
 
@@ -24,6 +24,7 @@ import MiddlewareStore from './MiddlewareStore';
 let instance = null;
 
 export default class RequestsStore {
+  @observable requests = {};
   sources = {}; // Maps requestId to a postMessage source
   tokens = {}; // Maps token to appId
 
@@ -31,30 +32,6 @@ export default class RequestsStore {
     this._api = api;
     this.methodPermissionsStore = MethodPermissionsStore.get(api);
     this.middlewareStore = MiddlewareStore.get(api);
-
-    // TODO Use @decorators
-    extendObservable(this, {
-      requests: {},
-      get hasRequests() {
-        return Object.keys(this.requests).length > 0;
-      },
-      get groupedRequests() {
-        // Group by appId on top level, and by methodGroup on 2nd level
-        return Object.keys(this.requests).reduce((accumulator, requestId) => {
-          const { data } = this.requests[requestId];
-          const appId = this.tokens[data.token];
-          const method = this.getMethodFromRequest(requestId);
-          const methodGroup = methodGroupFromMethod[method]; // Get the methodGroup the current request belongs to
-
-          accumulator[appId] = accumulator[appId] || {};
-          accumulator[appId][methodGroup] =
-            accumulator[appId][methodGroup] || [];
-          accumulator[appId][methodGroup].push({ data, requestId }); // Push request & append the requestId field in the request object
-
-          return accumulator;
-        }, {});
-      }
-    });
   }
 
   static get(api) {
@@ -64,18 +41,40 @@ export default class RequestsStore {
     return instance;
   }
 
-  // @action
-  queueRequest = action((requestId, { data, source }) => {
+  @computed
+  get groupedRequests() {
+    // Group by appId on top level, and by methodGroup on 2nd level
+    return Object.keys(this.requests).reduce((accumulator, requestId) => {
+      const { data } = this.requests[requestId];
+      const appId = this.tokens[data.token];
+      const method = this.getMethodFromRequest(requestId);
+      const methodGroup = methodGroupFromMethod[method]; // Get the methodGroup the current request belongs to
+
+      accumulator[appId] = accumulator[appId] || {};
+      accumulator[appId][methodGroup] = accumulator[appId][methodGroup] || [];
+      accumulator[appId][methodGroup].push({ data, requestId }); // Push request & append the requestId field in the request object
+
+      return accumulator;
+    }, {});
+  }
+
+  @computed
+  get hasRequests() {
+    return Object.keys(this.requests).length > 0;
+  }
+
+  @action
+  queueRequest = (requestId, { data, source }) => {
     this.sources[requestId] = source;
     // Create a new this.requests object to update mobx store
     this.requests = {
       ...this.requests,
       [requestId]: { data }
     };
-  });
+  };
 
-  // @action
-  approveRequest = action(requestId => {
+  @action
+  approveRequest = requestId => {
     const { data } = this.requests[requestId];
     const method = this.getMethodFromRequest(requestId);
     const appId = this.tokens[data.token];
@@ -89,25 +88,25 @@ export default class RequestsStore {
     } else {
       this.middlewareStore.executeMethodCall(data, source);
     }
-  });
+  };
 
-  // @action
-  rejectRequest = action(requestId => {
+  @action
+  rejectRequest = requestId => {
     const { data } = this.requests[requestId];
     const source = this.sources[requestId];
 
     this.removeRequest(requestId);
     this.middlewareStore.rejectMessage(source, data);
-  });
+  };
 
-  // @action
-  removeRequest = action(requestId => {
+  @action
+  removeRequest = requestId => {
     delete this.requests[requestId];
     delete this.sources[requestId];
 
     // Create a new object to update mobx store
     this.requests = { ...this.requests };
-  });
+  };
 
   getMethodFromRequest = requestId => {
     const { data: { method, params } } = this.requests[requestId];
