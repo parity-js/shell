@@ -37,19 +37,21 @@ class Dapp extends Component {
   dappsStore = DappsStore.get(this.context.api);
   handleRef = ref => {
     if (!ref) return this.setState({ isLoading: true });
+
+    // Log console.logs from webview
+    ref.addEventListener('console-message', e => {
+      console.log('[DAPP]', e.message);
+    });
+
     ref.addEventListener('did-finish-load', () => {
       this.props.loadAppStore.setIsLoading(false);
-      // Log console.logs from webview
-      ref.addEventListener('console-message', e => {
-        console.log('[DAPP]', e.message);
-      });
       // Listen to IPC messages from this webview
       ref.addEventListener('ipc-message', event => {
         this.props.requestsStore.receiveMessage(...event.args);
       });
       // Set webview on MiddlewareStore to send IPC messages
       this.props.middlewareStore.setWebview(ref);
-      // Send ping message to tell dapp everything's ready
+      // Send ping message to tell dapp we're ready to listen to its ipc messages
       ref.send('ping');
     });
   };
@@ -80,7 +82,7 @@ class Dapp extends Component {
         nodeintegration="true"
         preload={`file://${path.join(
           remote.getGlobal('dirName'),
-          '../public/inject.js' // TODO Take from node_modules instead of public/
+          '../node_modules/inject.js/lib/inject.js'
         )}`}
         ref={this.handleRef}
         src={`${src}${hash}`}
