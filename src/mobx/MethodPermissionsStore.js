@@ -23,12 +23,13 @@ const LS_PERMISSIONS = '_parity::dapps::methods';
 export default class MethodPermissionsStore {
   constructor(api) {
     this._api = api;
-    this.permissions = store.get(LS_PERMISSIONS) || {};
 
     // TODO Use @decorators
     extendObservable(this, {
       permissions: {} // Maps `${method}:${appId}` to true/false
     });
+
+    this.setPermissions(store.get(LS_PERMISSIONS));
   }
 
   static get(api) {

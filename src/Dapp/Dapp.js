@@ -15,7 +15,7 @@
 // along with Parity.  If not, see <http://www.gnu.org/licenses/>.
 
 import React, { Component } from 'react';
-import { observer } from 'mobx-react';
+import { inject, observer } from 'mobx-react';
 import { FormattedMessage } from 'react-intl';
 import PropTypes from 'prop-types';
 
@@ -24,7 +24,6 @@ import viewsDapps from '@parity/shared/lib/config/dappsViews.json';
 import DappsStore from '@parity/shared/lib/mobx/dappsStore';
 import HistoryStore from '@parity/shared/lib/mobx/historyStore';
 
-import DappRequestsStore from '../mobx/RequestsStore';
 import styles from './Dapp.css';
 
 const internalDapps = [].concat(viewsDapps, builtinDapps);
@@ -67,16 +66,18 @@ class Dapp extends Component {
 
   handleRef = ref => {
     if (!ref) return;
-
-    // Log console.logs from webview
-    ref.addEventListener('console-message', e => {
-      console.log('[DAPP]', e.message);
-    });
-
-    ref.addEventListener('did-finish-load', e => {
-      // Transfer messages to shellMiddleware
-      // TODO This is hacky
-      DappRequestsStore.get(this.context.api).setIpcListener(ref);
+    ref.addEventListener('did-finish-load', () => {
+      // Log console.logs from webview
+      ref.addEventListener('console-message', e => {
+        console.log('[DAPP]', e.message);
+      });
+      // Listen to IPC messages from this webview
+      ref.addEventListener('ipc-message', event => {
+        this.props.requestsStore.receiveMessage(...event.args);
+      });
+      // Set webview on MiddlewareStore to send IPC messages
+      this.props.middlewareStore.setWebview(ref);
+      // Send ping message to tell dapp everything's ready
       ref.send('ping');
     });
   };
@@ -136,4 +137,4 @@ class Dapp extends Component {
   };
 }
 
-export default observer(Dapp);
+export default inject('middlewareStore', 'requestsStore')(observer(Dapp));

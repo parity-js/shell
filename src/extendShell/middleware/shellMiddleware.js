@@ -19,9 +19,9 @@ import flatten from 'lodash/flatten';
 import methodGroups from '@parity/mobx/lib/methodGroups';
 
 import DappsStore from '@parity/shared/lib/mobx/dappsStore';
-import RequestStore from './mobx/RequestsStore';
+import RequestStore from '../../mobx/RequestsStore';
 
-export default function execute(appId, method, params, callback) {
+export default function shellMiddleware(appId, method, params, callback) {
   const dappsStore = DappsStore.get();
   const requestStore = RequestStore.get();
 

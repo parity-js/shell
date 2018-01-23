@@ -15,17 +15,5 @@
 // along with Parity.  If not, see <http://www.gnu.org/licenses/>.
 
 import DappRequests from './DappRequests';
-import shellMiddleware from '../shellMiddleware';
-
-import { extendShell } from '../ShellExtend';
-
-function setupProviderFilters(api) {
-  extendShell({
-    type: 'interceptor',
-    middleware: shellMiddleware
-  });
-}
 
 export default DappRequests;
-
-export { setupProviderFilters };

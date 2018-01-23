@@ -16,12 +16,14 @@
 
 import ApiStore from './ApiStore';
 import MethodPermissionsStore from './MethodPermissionsStore';
+import MiddlewareStore from './MiddlewareStore';
 import RequestsStore from './RequestsStore';
 
-const rootStore = api => ({
+const createRootStore = api => ({
   apiStore: ApiStore.get(api),
   methodPermissionsStore: MethodPermissionsStore.get(api),
+  middlewareStore: MiddlewareStore.get(api),
   requestsStore: RequestsStore.get(api)
 });
 
-export default rootStore;
+export default createRootStore;

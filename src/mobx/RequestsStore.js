@@ -19,17 +19,18 @@ import { methodGroupFromMethod } from '@parity/mobx/lib/methodGroups';
 import { sha3 } from '@parity/api/lib/util/sha3';
 
 import MethodPermissionsStore from './MethodPermissionsStore';
+import MiddlewareStore from './MiddlewareStore';
 
 let instance = null;
 
 export default class RequestsStore {
-  middleware = [];
   sources = {}; // Maps requestId to a postMessage source
   tokens = {}; // Maps token to appId
 
   constructor(api) {
     this._api = api;
     this.methodPermissionsStore = MethodPermissionsStore.get(api);
+    this.middlewareStore = MiddlewareStore.get(api);
 
     // TODO Use @decorators
     extendObservable(this, {
@@ -56,6 +57,13 @@ export default class RequestsStore {
     });
   }
 
+  static get(api) {
+    if (!instance) {
+      instance = new RequestsStore(api);
+    }
+    return instance;
+  }
+
   // @action
   queueRequest = action((requestId, { data, source }) => {
     this.sources[requestId] = source;
@@ -77,9 +85,9 @@ export default class RequestsStore {
     this.removeRequest(requestId);
 
     if (data.api) {
-      this.executePubsubCall(data, source);
+      this.middlewareStore.executePubsubCall(data, source);
     } else {
-      this.executeMethodCall(data, source);
+      this.middlewareStore.executeMethodCall(data, source);
     }
   });
 
@@ -89,7 +97,7 @@ export default class RequestsStore {
     const source = this.sources[requestId];
 
     this.removeRequest(requestId);
-    this.rejectMessage(source, data);
+    this.middlewareStore.rejectMessage(source, data);
   });
 
   // @action
@@ -107,35 +115,6 @@ export default class RequestsStore {
     return method || params[0];
   };
 
-  rejectMessage = (source, { id, from, method, token }) => {
-    if (!source) {
-      return;
-    }
-
-    this.webview.send(
-      'PARITY_IPC_CHANNEL',
-      {
-        error: `Method ${method} not allowed`,
-        id,
-        from: 'shell',
-        result: null,
-        to: from,
-        token
-      },
-      '*'
-    );
-  };
-
-  addMiddleware(middleware) {
-    if (!middleware || typeof middleware !== 'function') {
-      throw new Error('Interceptor middleware does not implement a function');
-    }
-
-    this.middleware.push(middleware);
-
-    return true;
-  }
-
   createToken = appId => {
     const token = sha3(`${appId}:${Date.now()}`);
 
@@ -151,64 +130,8 @@ export default class RequestsStore {
     return this.tokens[token] === appId;
   };
 
-  hasTokenPermission = (method, token) => {
-    console.log(this.tokens[token]);
-    return this.methodPermissionsStore.hasAppPermission(
-      this.tokens[token],
-      method
-    );
-  };
-
-  _methodCallbackPost = (id, from, source, token) => {
-    return (error, result) => {
-      this.webview.send('PARITY_IPC_CHANNEL', {
-        error: error ? error.message : null,
-        id,
-        from: 'shell',
-        to: from,
-        result,
-        token
-      });
-    };
-  };
-
-  setIpcListener = webview => {
-    this.webview = webview;
-    // Listen to IPC messages from webview
-    webview.addEventListener('ipc-message', event => {
-      this.receiveMessage(...event.args);
-    });
-  };
-
-  executePubsubCall = ({ api, id, from, token, params }, source) => {
-    const callback = this._methodCallbackPost(id, from, source, token);
-    console.log(this._api);
-    this._api.provider
-      .subscribe(api, callback, params)
-      .then((result, error) => {
-        this._methodCallbackPost(id, from, source, token)(null, result);
-      });
-  };
-
-  executeMethodCall = ({ id, from, method, params, token }, source) => {
-    try {
-      const callback = this._methodCallbackPost(id, from, source, token);
-      const isHandled = this.middleware.some(middleware => {
-        try {
-          return middleware(from, method, params, callback);
-        } catch (error) {
-          console.error(`Middleware error handling '${method}'`, error);
-        }
-        return false;
-      });
-
-      if (!isHandled) {
-        this.webview.send('PARITY_IPC_CHANNEL', method, params, callback);
-      }
-    } catch (error) {
-      console.error(`Execution error handling '${method}'`, error);
-    }
-  };
+  hasTokenPermission = (method, token) =>
+    this.methodPermissionsStore.hasAppPermission(this.tokens[token], method);
 
   receiveMessage = ({ data, source }) => {
     try {
@@ -223,7 +146,7 @@ export default class RequestsStore {
       }
 
       if (!this.hasValidToken(method, from, token)) {
-        this.rejectMessage(source, data);
+        this.middlewareStore.rejectMessage(source, data);
         return;
       }
 
@@ -242,7 +165,7 @@ export default class RequestsStore {
       }
 
       if (api) {
-        this.executePubsubCall(data, source);
+        this.middlewareStore.executePubsubCall(data, source);
       } else if (subId) {
         const unsubscribePromise =
           subId === '*'
@@ -253,17 +176,10 @@ export default class RequestsStore {
           this._methodCallbackPost(id, from, source, token)(null, v)
         );
       } else {
-        this.executeMethodCall(data, source);
+        this.middlewareStore.executeMethodCall(data, source);
       }
     } catch (error) {
       console.error('Exception handling data', data, error);
     }
   };
-
-  static get(api) {
-    if (!instance) {
-      instance = new RequestsStore(api);
-    }
-    return instance;
-  }
 }

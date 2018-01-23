@@ -14,10 +14,6 @@
 // You should have received a copy of the GNU General Public License
 // along with Parity.  If not, see <http://www.gnu.org/licenses/>.
 
-import { extendShell } from './api';
+import shellMiddleware from './shellMiddleware';
 
-window.parity = Object.assign({}, window.parity, {
-  extendShell
-});
-
-export { extendShell };
+export default [shellMiddleware];

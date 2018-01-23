@@ -21,18 +21,23 @@ import 'semantic-ui-css/semantic.min.css';
 
 import App from './App';
 import ContextProvider from '@parity/ui/lib/ContextProvider';
+import createExtendShell from './extendShell';
+import createRootStore from './mobx';
 import registerServiceWorker from './registerServiceWorker';
 import { retrieveToken } from './utils';
-import rootStore from './mobx';
 import SecureApi from './secureApi';
-import { setupProviderFilters } from './DappRequests';
 
 const api = new SecureApi(window.location.host, retrieveToken());
-setupProviderFilters(api);
+const rootStore = createRootStore(api);
+const extendShell = createExtendShell(rootStore);
+
+window.parity = Object.assign({}, window.parity, {
+  extendShell
+});
 
 ReactDOM.render(
   <ContextProvider api={api}>
-    <MobxProvider {...rootStore(api)}>
+    <MobxProvider {...rootStore}>
       <App />
     </MobxProvider>
   </ContextProvider>,
