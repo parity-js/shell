@@ -23,6 +23,8 @@ const url = require('url');
 
 let mainWindow;
 
+global.dirName = __dirname; // Will send this to renderers via IPC
+
 function createWindow() {
   mainWindow = new BrowserWindow({
     height: 800,

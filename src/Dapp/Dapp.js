@@ -15,9 +15,10 @@
 // along with Parity.  If not, see <http://www.gnu.org/licenses/>.
 
 import React, { Component } from 'react';
+import PropTypes from 'prop-types';
 import { inject, observer } from 'mobx-react';
 import { FormattedMessage } from 'react-intl';
-import PropTypes from 'prop-types';
+import path from 'path';
 
 import builtinDapps from '@parity/shared/lib/config/dappsBuiltin.json';
 import viewsDapps from '@parity/shared/lib/config/dappsViews.json';
@@ -25,6 +26,8 @@ import DappsStore from '@parity/shared/lib/mobx/dappsStore';
 import HistoryStore from '@parity/shared/lib/mobx/historyStore';
 
 import styles from './Dapp.css';
+
+const { remote } = window.require('electron');
 
 const internalDapps = [].concat(viewsDapps, builtinDapps);
 
@@ -119,10 +122,14 @@ class Dapp extends Component {
     const src = `${dappsUrl}/ui/dapps/${app.id}/index.html`;
     // const src = `http://localhost:3001?appId=dapp-status`;
     const hash = '';
+
     return (
       <webview
         nodeintegration="true"
-        preload={`file:///Users/amaurymartiny/Workspace/shell/public/inject.js`}
+        preload={`file://${path.join(
+          remote.getGlobal('dirName'),
+          '../public/inject.js' // TODO Take from node_modules instead of public/
+        )}`}
         ref={this.handleRef}
         src={`${src}${hash}`}
         style={{ height: '100%', width: '100%' }}
