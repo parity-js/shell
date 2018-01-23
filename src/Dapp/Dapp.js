@@ -59,6 +59,7 @@ class Dapp extends Component {
   render() {
     const { dappsUrl } = this.context.api;
     const { appId, isLoading } = this.props.loadAppStore;
+    const app = this.props.dappsStore.apps[appId];
 
     if (!appId) {
       return (
@@ -73,8 +74,11 @@ class Dapp extends Component {
       );
     }
 
-    const src = `${dappsUrl}/ui/dapps/${appId}/index.html`;
-    // const src = `http://localhost:3001?appId=dapp-status`;
+    const src =
+      app && app.localUrl
+        ? `${app.localUrl}?appId=${appId}`
+        : `${dappsUrl}/ui/dapps/${appId}/index.html`;
+
     const hash = '';
 
     return (
@@ -96,6 +100,9 @@ class Dapp extends Component {
   }
 }
 
-export default inject('loadAppStore', 'middlewareStore', 'requestsStore')(
-  observer(Dapp)
-);
+export default inject(
+  'dappsStore',
+  'loadAppStore',
+  'middlewareStore',
+  'requestsStore'
+)(observer(Dapp));
