@@ -35,26 +35,35 @@ class Dapp extends Component {
   };
 
   dappsStore = DappsStore.get(this.context.api);
+
   handleRef = ref => {
-    if (!ref) return this.setState({ isLoading: true });
+    if (!ref) {
+      return;
+    }
 
     // Log console.logs from webview
     ref.addEventListener('console-message', e => {
       console.log('[DAPP]', e.message);
     });
 
+    // Remove existing event listeners when we change dapp in webview
+    ref.addEventListener('did-start-loading', () => {
+      ref.removeEventListener('ipc-message', this.handleOnMessage);
+    });
+
     ref.addEventListener('did-finish-load', () => {
       this.props.loadAppStore.setIsLoading(false);
       // Listen to IPC messages from this webview
-      ref.addEventListener('ipc-message', event => {
-        this.props.requestsStore.receiveMessage(...event.args);
-      });
+      ref.addEventListener('ipc-message', this.handleOnMessage);
       // Set webview on MiddlewareStore to send IPC messages
       this.props.middlewareStore.setWebview(ref);
       // Send ping message to tell dapp we're ready to listen to its ipc messages
       ref.send('ping');
     });
   };
+
+  handleOnMessage = event =>
+    this.props.requestsStore.receiveMessage(...event.args);
 
   render() {
     const { dappsUrl } = this.context.api;
