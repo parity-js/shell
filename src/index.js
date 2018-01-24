@@ -23,22 +23,31 @@ import App from './App';
 import ContextProvider from '@parity/ui/lib/ContextProvider';
 import createExtendShell from './extendShell';
 import createRootStore from './mobx';
+import { redirectLocalhost } from './utils/host';
 import registerServiceWorker from './registerServiceWorker';
 import { retrieveToken } from './utils';
 import SecureApi from './secureApi';
 
-const api = new SecureApi(window.location.host, retrieveToken());
-const rootStore = createRootStore(api);
-const extendShell = createExtendShell(rootStore);
+const token = retrieveToken();
 
-window.parity = { ...window.parity, extendShell };
+const renderUI = () => {
+  const api = new SecureApi(window.location.host, token);
+  const rootStore = createRootStore(api);
+  const extendShell = createExtendShell(rootStore);
 
-ReactDOM.render(
-  <ContextProvider api={api}>
-    <MobxProvider {...rootStore}>
-      <App />
-    </MobxProvider>
-  </ContextProvider>,
-  document.getElementById('root')
-);
-registerServiceWorker();
+  window.parity = { ...window.parity, extendShell };
+
+  ReactDOM.render(
+    <ContextProvider api={api}>
+      <MobxProvider {...rootStore}>
+        <App />
+      </MobxProvider>
+    </ContextProvider>,
+    document.getElementById('root')
+  );
+  registerServiceWorker();
+};
+
+if (!redirectLocalhost(token)) {
+  renderUI();
+}
