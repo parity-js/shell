@@ -15,16 +15,15 @@
 // along with Parity.  If not, see <http://www.gnu.org/licenses/>.
 
 import * as mobx from 'mobx';
+import {} from 'react-router-dom';
 import flatten from 'lodash/flatten';
 import methodGroups from '@parity/mobx/lib/methodGroups';
 
 import DappsStore from '../../mobx/DappsStore';
 import RequestStore from '../../mobx/RequestsStore';
-import LoadAppStore from '../../mobx/LoadAppStore';
 
 export default function shellMiddleware(appId, method, params, callback) {
   const dappsStore = DappsStore.get();
-  const loadAppStore = LoadAppStore.get();
   const requestStore = RequestStore.get();
 
   switch (method) {
@@ -53,8 +52,10 @@ export default function shellMiddleware(appId, method, params, callback) {
 
     case 'shell_loadApp': {
       const [appId, appParams] = params;
+      const loadUrl = `/${appId}/${appParams || ''}`;
 
-      loadAppStore.loadApp(appId, appParams);
+      // TODO Use react-router-dom history
+      window.location.hash = loadUrl;
 
       callback(null, true);
       return true;

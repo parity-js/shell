@@ -31,9 +31,7 @@ const api = new SecureApi(window.location.host, retrieveToken());
 const rootStore = createRootStore(api);
 const extendShell = createExtendShell(rootStore);
 
-window.parity = Object.assign({}, window.parity, {
-  extendShell
-});
+window.parity = { ...window.parity, extendShell };
 
 ReactDOM.render(
   <ContextProvider api={api}>

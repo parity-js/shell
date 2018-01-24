@@ -15,17 +15,10 @@
 /* along with Parity.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-.frame,
-.full {
-  background: white;
-  box-sizing: border-box;
+:local(.frame) {
   border: 0;
-  flex-grow: 1;
-  margin: 0;
-  padding: 0;
-  opacity: 0;
+  height: 100%;
   width: 100%;
-  z-index: 1;
 }
 
 .full {

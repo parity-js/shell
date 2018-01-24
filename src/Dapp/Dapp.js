@@ -19,24 +19,44 @@ import PropTypes from 'prop-types';
 import { inject, observer } from 'mobx-react';
 import { FormattedMessage } from 'react-intl';
 import path from 'path';
-import DappsStore from '@parity/shared/lib/mobx/dappsStore';
 
 import styles from './Dapp.css';
 
-const { remote } = window.require('electron');
+// https://github.com/electron/electron/issues/2288
+const IS_ELECTRON = window && window.process && window.process.type;
+
+let remote;
+if (IS_ELECTRON) {
+  remote = window.require('electron').remote;
+}
 
 class Dapp extends Component {
+  state = {
+    isLoading: false
+  };
+
   static contextTypes = {
     api: PropTypes.object.isRequired
   };
 
-  static propTypes = {
-    loadAppStore: PropTypes.object.isRequired
-  };
+  static propTypes = {};
 
-  dappsStore = DappsStore.get(this.context.api);
+  componentWillMount() {
+    if (!IS_ELECTRON) {
+      window.addEventListener(
+        'message',
+        this.props.requestsStore.receiveMessage
+      );
+    }
+  }
 
-  handleRef = ref => {
+  handleIPCMessage = event =>
+    this.props.requestsStore.receiveMessage({
+      ...event.args[0],
+      source: event.target
+    });
+
+  handleWebview = ref => {
     if (!ref) {
       return;
     }
@@ -46,31 +66,57 @@ class Dapp extends Component {
       console.log('[DAPP]', e.message);
     });
 
-    // Remove existing event listeners when we change dapp in webview
+    // Remove existing eventListeners when we change dapp in webview
     ref.addEventListener('did-start-loading', () => {
-      ref.removeEventListener('ipc-message', this.handleOnMessage);
+      this.setState({ isLoading: true });
+      ref.removeEventListener('ipc-message', this.handleIPCMessage);
     });
 
+    // Reput eventListeners when webview has finished loading dapp
     ref.addEventListener('did-finish-load', () => {
-      this.props.loadAppStore.setIsLoading(false);
+      this.setState({ isLoading: false });
       // Listen to IPC messages from this webview
-      ref.addEventListener('ipc-message', this.handleOnMessage);
-      // Set webview on MiddlewareStore to send IPC messages
-      this.props.middlewareStore.setWebview(ref);
+      ref.addEventListener('ipc-message', this.handleIPCMessage);
       // Send ping message to tell dapp we're ready to listen to its ipc messages
       ref.send('ping');
     });
   };
 
-  handleOnMessage = event =>
-    this.props.requestsStore.receiveMessage(...event.args);
+  renderIframe = (src, hash) => (
+    <iframe
+      className={styles.frame}
+      frameBorder={0}
+      sandbox="allow-forms allow-popups allow-same-origin allow-scripts allow-top-navigation"
+      scrolling="auto"
+      src={`${src}${hash}`}
+      title="dappFrame"
+    />
+  );
+
+  renderWebview = (src, hash) => (
+    <webview
+      className={styles.frame}
+      nodeintegration="true"
+      preload={`file://${path.join(
+        remote.getGlobal('dirName'),
+        '../node_modules/inject.js/lib/inject.js'
+      )}`}
+      ref={this.handleWebview}
+      src={`${src}${hash}`}
+    />
+  );
 
   render() {
     const { dappsUrl } = this.context.api;
-    const { appId, isLoading } = this.props.loadAppStore;
-    const app = this.props.dappsStore.apps[appId];
+    const { match: { params } } = this.props;
+    // const { isLoading } = this.state;
+    const app = this.props.dappsStore.apps[params.appId];
 
-    if (!appId) {
+    // if (isLoading) {
+    //   return null;
+    // }
+
+    if (!app) {
       return (
         <div className={styles.full}>
           <div className={styles.text}>
@@ -83,35 +129,47 @@ class Dapp extends Component {
       );
     }
 
-    const src =
-      app && app.localUrl
-        ? `${app.localUrl}?appId=${appId}`
-        : `${dappsUrl}/ui/dapps/${appId}/index.html`;
+    let src = null;
 
-    const hash = '';
+    switch (app.type) {
+      case 'local':
+        src = app.localUrl
+          ? `${app.localUrl}?appId=${app.id}`
+          : `${dappsUrl}/${app.id}/`;
+        break;
 
-    return (
-      <webview
-        nodeintegration="true"
-        preload={`file://${path.join(
-          remote.getGlobal('dirName'),
-          '../node_modules/inject.js/lib/inject.js'
-        )}`}
-        ref={this.handleRef}
-        src={`${src}${hash}`}
-        style={{
-          height: '100%',
-          width: '100%',
-          visibility: isLoading ? 'hidden' : 'visible'
-        }}
-      />
-    );
+      case 'network':
+        src = `${dappsUrl}/${app.contentHash}/`;
+        break;
+
+      default:
+        let dapphost = process.env.DAPPS_URL || `${dappsUrl}/ui`;
+
+        if (dapphost === '/') {
+          dapphost = '';
+        }
+
+        src =
+          window.location.protocol === 'file:'
+            ? `dapps/${app.id}/index.html`
+            : `${dapphost}/dapps/${app.id}/index.html`;
+        break;
+    }
+
+    let hash = '';
+
+    if (params.details) {
+      hash = `#/${params.details}`;
+    }
+
+    if (IS_ELECTRON) {
+      return this.renderWebview(src, hash);
+    } else {
+      return this.renderIframe(src, hash);
+    }
   }
 }
 
-export default inject(
-  'dappsStore',
-  'loadAppStore',
-  'middlewareStore',
-  'requestsStore'
-)(observer(Dapp));
+export default inject('dappsStore', 'middlewareStore', 'requestsStore')(
+  observer(Dapp)
+);

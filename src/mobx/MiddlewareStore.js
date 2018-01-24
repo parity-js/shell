@@ -16,13 +16,12 @@
 
 import { action, observable } from 'mobx';
 
-const IPC_CHANNEL_PREFIX = 'IPC_CHANNEL_';
+const IPC_CHANNEL = 'PARITY_SHELL_IPC_CHANNEL';
 
 let instance = null;
 
 export default class MiddlewareStore {
   @observable middleware = [];
-  webview = null;
 
   constructor(api) {
     this._api = api;
@@ -59,12 +58,7 @@ export default class MiddlewareStore {
       });
 
       if (!isHandled) {
-        this.webview.send(
-          `${IPC_CHANNEL_PREFIX}${from}`,
-          method,
-          params,
-          callback
-        );
+        this.provider.send(method, params, callback);
       }
     } catch (error) {
       console.error(`Execution error handling '${method}'`, error);
@@ -82,7 +76,7 @@ export default class MiddlewareStore {
 
   methodCallbackPost = (id, from, source, token) => {
     return (error, result) => {
-      this.webview.send(`${IPC_CHANNEL_PREFIX}${from}`, {
+      this.sendMessage(source, {
         error: error ? error.message : null,
         id,
         from: 'shell',
@@ -98,22 +92,23 @@ export default class MiddlewareStore {
       return;
     }
 
-    this.webview.send(
-      `${IPC_CHANNEL_PREFIX}${from}`,
-      {
-        error: `Method ${method} not allowed`,
-        id,
-        from: 'shell',
-        result: null,
-        to: from,
-        token
-      },
-      '*'
-    );
+    this.sendMessage(source, {
+      error: `Method ${method} not allowed`,
+      id,
+      from: 'shell',
+      result: null,
+      to: from,
+      token
+    });
   };
 
-  @action
-  setWebview = webview => {
-    this.webview = webview;
+  sendMessage = (source, ...args) => {
+    if (source instanceof Element) {
+      // If webview, use IPC
+      return source.send(IPC_CHANNEL, ...args);
+    } else {
+      // If iframe, use postMessage
+      return source.postMessage(...args, '*');
+    }
   };
 }
