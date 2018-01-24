@@ -112,10 +112,6 @@ class Dapp extends Component {
     // const { isLoading } = this.state;
     const app = this.props.dappsStore.apps[params.appId];
 
-    // if (isLoading) {
-    //   return null;
-    // }
-
     if (!app) {
       return (
         <div className={styles.full}>
@@ -162,11 +158,11 @@ class Dapp extends Component {
       hash = `#/${params.details}`;
     }
 
-    if (IS_ELECTRON) {
-      return this.renderWebview(src, hash);
-    } else {
-      return this.renderIframe(src, hash);
-    }
+    // TODO Render loader when loading?
+
+    return IS_ELECTRON
+      ? this.renderWebview(src, hash)
+      : this.renderIframe(src, hash);
   }
 }
 

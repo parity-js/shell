@@ -58,7 +58,7 @@ export default class MiddlewareStore {
       });
 
       if (!isHandled) {
-        this.provider.send(method, params, callback);
+        this._api.provider.send(method, params, callback);
       }
     } catch (error) {
       console.error(`Execution error handling '${method}'`, error);
