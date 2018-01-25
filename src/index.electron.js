@@ -31,18 +31,19 @@ function createWindow() {
     width: 1200
   });
 
-  if (process.env.NODE_ENV === 'production') {
-    mainWindow.loadURL(
-      url.format({
-        pathname: path.join(__dirname, 'index.html'),
-        protocol: 'file:',
-        slashes: true
-      })
-    );
-  } else {
-    mainWindow.loadURL('http://127.0.0.1:3000');
-    mainWindow.webContents.openDevTools();
-  }
+  //TODO Find the path to index.html in production mode
+  // if (process.env.NODE_ENV === 'production') {
+  //   mainWindow.loadURL(
+  //     url.format({
+  //       pathname: path.join(__dirname, 'index.html'),
+  //       protocol: 'file:',
+  //       slashes: true
+  //     })
+  //   );
+  // } else {
+  mainWindow.loadURL('http://127.0.0.1:3000');
+  mainWindow.webContents.openDevTools();
+  // }
 
   mainWindow.on('closed', function() {
     mainWindow = null;

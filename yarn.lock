@@ -4294,7 +4294,7 @@ ini@^1.3.4, ini@~1.3.0:
 
 "inject.js@github:parity-js/inject.js#am-ipc-provider":
   version "1.0.0"
-  resolved "https://codeload.github.com/parity-js/inject.js/tar.gz/7c53d0f542e9867f6924b402e22c9ddf59731e4c"
+  resolved "https://codeload.github.com/parity-js/inject.js/tar.gz/b25c91ec143a837506b435d4d232750c1134e832"
   dependencies:
     "@parity/api" "^2.1.18"
     query-string "^5.0.1"
