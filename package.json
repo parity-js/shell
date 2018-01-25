@@ -2,6 +2,7 @@
   "name": "shell",
   "version": "0.1.0",
   "private": true,
+  "homepage": "./",
   "proxy": {
     "/api": {
       "target": "http://127.0.0.1:8180",
@@ -28,9 +29,10 @@
     }
   },
   "scripts": {
+    "build": "react-app-rewired build && yarn run electron",
     "electron": "electron src/index.electron.js",
+    "electron:dev": "yarn run electron --dev",
     "start": "react-app-rewired start",
-    "build": "react-app-rewired build",
     "test": "react-app-rewired test --env=jsdom"
   },
   "dependencies": {

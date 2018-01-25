@@ -145,10 +145,7 @@ class Dapp extends Component {
           dapphost = '';
         }
 
-        src =
-          window.location.protocol === 'file:'
-            ? `dapps/${app.id}/index.html`
-            : `${dapphost}/dapps/${app.id}/index.html`;
+        src = `${dapphost}/dapps/${app.id}/index.html`;
         break;
     }
 
