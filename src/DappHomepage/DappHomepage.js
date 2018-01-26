@@ -17,13 +17,11 @@
 import React, { Component } from 'react';
 import { inject, observer } from 'mobx-react';
 import PropTypes from 'prop-types';
-import { FormattedMessage } from 'react-intl';
 
-import Checkbox from '@parity/ui/lib/Form/Checkbox';
 import Page from '@parity/ui/lib/Page';
 
 import DappCard from './DappCard';
-
+import ExternalOverlay from './ExternalOverlay';
 import styles from './DappHomepage.css';
 
 @inject('displayAppsStore')
@@ -56,29 +54,7 @@ class App extends Component {
       <Page className={styles.layout}>
         {this.renderSection(displayAppsStore.pinned)}
         {this.renderSection(displayAppsStore.visibleUnpinned)}
-        {displayAppsStore.externalOverlayVisible && (
-          <div className={styles.overlay}>
-            <div>
-              <FormattedMessage
-                id="dapps.external.warning"
-                defaultMessage="Applications made available on the network by 3rd-party authors are not affiliated with Parity nor are they published by Parity. Each remain under the control of their respective authors. Please ensure that you understand the goals for each before interacting."
-              />
-            </div>
-            <div>
-              <Checkbox
-                className={styles.accept}
-                label={
-                  <FormattedMessage
-                    id="dapps.external.accept"
-                    defaultMessage="I understand that these applications are not affiliated with Parity"
-                  />
-                }
-                checked={false}
-                onClick={this.onClickAcceptExternal}
-              />
-            </div>
-          </div>
-        )}
+        <ExternalOverlay />
       </Page>
     );
   }

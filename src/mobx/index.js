@@ -17,6 +17,7 @@
 import ApiStore from './ApiStore';
 import DappsStore from './DappsStore';
 import DisplayAppsStore from './DisplayAppsStore';
+import ExternalOverlayStore from './ExternalOverlayStore';
 import MethodPermissionsStore from './MethodPermissionsStore';
 import MiddlewareStore from './MiddlewareStore';
 import RequestsStore from './RequestsStore';
@@ -25,6 +26,7 @@ const createRootStore = api => ({
   apiStore: ApiStore.get(api),
   dappsStore: DappsStore.get(api),
   displayAppsStore: DisplayAppsStore.get(api),
+  externalOverlayStore: ExternalOverlayStore.get(api),
   methodPermissionsStore: MethodPermissionsStore.get(api),
   middlewareStore: MiddlewareStore.get(api),
   requestsStore: RequestsStore.get(api)
