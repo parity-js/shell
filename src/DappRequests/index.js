@@ -14,25 +14,6 @@
 // You should have received a copy of the GNU General Public License
 // along with Parity.  If not, see <http://www.gnu.org/licenses/>.
 
-import Store from './store';
-import shellMiddleware from '../shellMiddleware';
+import DappRequests from './DappRequests';
 
-import { extendShell } from '../ShellExtend';
-
-function setupProviderFilters (provider) {
-  const store = Store.create(provider);
-
-  extendShell({
-    type: 'interceptor',
-    middleware: shellMiddleware
-  });
-
-  return store;
-}
-
-export default from './dappRequests';
-
-export {
-  Store,
-  setupProviderFilters
-};
+export default DappRequests;

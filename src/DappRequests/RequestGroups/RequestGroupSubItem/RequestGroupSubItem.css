@@ -15,10 +15,10 @@
 /* along with Parity.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-.requestGroupSubItem {
+:local(.requestGroupSubItem) {
   margin-top: 2px;
+}
 
-  .requestGroupSubItemTitle {
-    margin-right: 10px;
-  }
+:local(.requestGroupSubItemTitle) {
+  margin-right: 10px;
 }

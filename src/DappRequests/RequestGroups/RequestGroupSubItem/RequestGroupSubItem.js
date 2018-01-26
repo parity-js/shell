@@ -17,52 +17,54 @@
 import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
 import { FormattedMessage } from 'react-intl';
+import methodGroups from '@parity/mobx/lib/methodGroups';
 
 import Popup from 'semantic-ui-react/dist/commonjs/modules/Popup';
 import Button from '@parity/ui/lib/Button';
 
-import methodGroups from '../../methodGroups';
 import styles from './RequestGroupSubItem.css';
 
 export default class RequestGroupSubItem extends PureComponent {
-  handleApprove = () => this.props.onApprove(this.props.requests, this.props.groupId)
+  handleApprove = () =>
+    this.props.onApprove(this.props.requests, this.props.groupId);
 
-  handleReject = () => this.props.onReject(this.props.requests)
+  handleReject = () => this.props.onReject(this.props.requests);
 
-  render () {
+  render() {
     const { groupId } = this.props;
 
     return (
-      <div className={ styles.requestGroupSubItem }>
-        <span className={ styles.requestGroupSubItemTitle }>
+      <div className={styles.requestGroupSubItem}>
+        <span className={styles.requestGroupSubItemTitle}>
           Permission for{' '}
           <Popup
-            trigger={ <span>{groupId}</span> }
-            content={ `Requested methods: ${methodGroups[groupId].methods.join(', ')}` }
+            trigger={<span>{groupId}</span>}
+            content={`Requested methods: ${methodGroups[groupId].methods.join(
+              ', '
+            )}`}
           />
         </span>
         <Button
-          size='mini'
+          size="mini"
           label={
             <FormattedMessage
-              id='dappRequests.request.buttons.approve'
-              defaultMessage='Approve'
+              id="dappRequests.request.buttons.approve"
+              defaultMessage="Approve"
             />
           }
-          onClick={ this.handleApprove }
+          onClick={this.handleApprove}
         />
         <Button
-          size='mini'
+          size="mini"
           label={
             <FormattedMessage
-              id='dappRequests.request.buttons.reject'
-              defaultMessage='Reject'
+              id="dappRequests.request.buttons.reject"
+              defaultMessage="Reject"
             />
           }
-          onClick={ this.handleReject }
+          onClick={this.handleReject}
         />
       </div>
-
     );
   }
 }

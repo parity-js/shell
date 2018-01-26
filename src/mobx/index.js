@@ -14,6 +14,18 @@
 // You should have received a copy of the GNU General Public License
 // along with Parity.  If not, see <http://www.gnu.org/licenses/>.
 
-import RequestGroups from './RequestGroups';
+import ApiStore from './ApiStore';
+import DappsStore from './DappsStore';
+import MethodPermissionsStore from './MethodPermissionsStore';
+import MiddlewareStore from './MiddlewareStore';
+import RequestsStore from './RequestsStore';
 
-export default RequestGroups;
+const createRootStore = api => ({
+  apiStore: ApiStore.get(api),
+  dappsStore: DappsStore.get(api),
+  methodPermissionsStore: MethodPermissionsStore.get(api),
+  middlewareStore: MiddlewareStore.get(api),
+  requestsStore: RequestsStore.get(api)
+});
+
+export default createRootStore;

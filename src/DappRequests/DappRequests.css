@@ -15,14 +15,10 @@
 /* along with Parity.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-:local(.requestGroups) {
-  background: #f80;
-  background: linear-gradient(#f80, #e57a00);
-  padding: 0.5em;
-  text-align: right;
-  color: white;
-}
-
-:local(.requestGroups) > span {
-  margin-right: 30px;
+:local(.requests) {
+  position: fixed;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  z-index: 1001; /* sits above sync warning */
 }
