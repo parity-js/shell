@@ -15,10 +15,11 @@
 // along with Parity.  If not, see <http://www.gnu.org/licenses/>.
 
 import React, { Component } from 'react';
-import { HashRouter, Link, Route } from 'react-router-dom';
+import { HashRouter, Route } from 'react-router-dom';
 
 import Connection from '../Connection';
 import Dapp from '../Dapp';
+import DappHomepage from '../DappHomepage'; // TODO Import from 'dapp-homepage' package
 import DappRequests from '../DappRequests';
 import StatusBar from '../StatusBar';
 import SyncWarning from '../SyncWarning';
@@ -34,18 +35,7 @@ class App extends Component {
           <SyncWarning />
           <Connection />
           <DappRequests />
-          <Route
-            exact
-            path="/"
-            render={() => (
-              <div>
-                dapp-homepage goes here. Until it's built, you can go{' '}
-                <Link to="/0xa48bd8fd56c90c899135281967a6cf90865c221b46f27f9fbe2a236d74a64ea2">
-                  browse dapps
-                </Link>
-              </div>
-            )}
-          />
+          <Route exact path="/" component={DappHomepage} />
           <Route path="/:appId" component={Dapp} />
           <Route path="/:appId/:details" component={Dapp} />
         </div>
