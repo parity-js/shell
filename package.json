@@ -29,17 +29,17 @@
     }
   },
   "scripts": {
-    "build": "react-app-rewired build && yarn run electron",
+    "build": "react-app-rewired build && yarn run build:inject && yarn run electron",
+    "build:inject": "webpack --config webpack.inject.config.js",
     "electron": "electron src/index.electron.js",
     "electron:dev": "yarn run electron --dev",
-    "start": "react-app-rewired start",
+    "start": "yarn run build:inject && react-app-rewired start",
     "test": "react-app-rewired test --env=jsdom"
   },
   "dependencies": {
-    "@parity/api": "^2.1.16",
+    "@parity/api": "^2.1.19",
     "@parity/shared": "^2.2.21",
     "@parity/ui": "^3.0.22",
-    "inject.js": "github:parity-js/inject.js#a33dd38903a7a2c60a6a5cc67d36a8dda0bfcb9e",
     "lodash": "^4.17.4",
     "mobx": "^3.4.1",
     "mobx-react": "^4.3.5",
