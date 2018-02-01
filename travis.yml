@@ -10,5 +10,6 @@ before_install:
 install:
   - npm install
 script:
+  - npm run lint
   - npm run ci:build
   - ./scripts/push-precompiled.sh
