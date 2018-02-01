@@ -7,7 +7,7 @@ if [ "$TRAVIS_PULL_REQUEST" != "false" -o "$TRAVIS_BRANCH" != "master" ]; then
 fi
 
 # variables
-PVER="1-9"
+PVER="1-10"
 PTYPE="shell"
 UTCDATE=`date -u "+%Y%m%d-%H%M%S"`
 PRE_REPO="js-dist-paritytech/parity-${CI_BUILD_REF_NAME}-${PVER}-${PTYPE}.git"
