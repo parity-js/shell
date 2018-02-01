@@ -1,6 +1,11 @@
 #!/bin/bash
 set -e
 
+if [ "$TRAVIS_PULL_REQUEST" != "false" -o "$TRAVIS_BRANCH" != "master" ]; then
+  echo "Not on master branch, skipping precompiled update"
+  exit 0
+fi
+
 # variables
 PVER="1-9"
 PTYPE="shell"
