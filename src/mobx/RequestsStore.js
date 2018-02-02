@@ -172,7 +172,10 @@ export default class RequestsStore {
             : this._api.provider.unsubscribe(subId);
 
         unsubscribePromise.then(v =>
-          this._methodCallbackPost(id, from, source, token)(null, v)
+          this.middlewareStore.methodCallbackPost(id, from, source, token)(
+            null,
+            v
+          )
         );
       } else {
         this.middlewareStore.executeMethodCall(data, source);
