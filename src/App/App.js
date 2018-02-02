@@ -23,6 +23,7 @@ import DappHomepage from '../DappHomepage'; // TODO Import from 'dapp-homepage' 
 import DappRequests from '../DappRequests';
 import StatusBar from '../StatusBar';
 import SyncWarning from '../SyncWarning';
+import Signer from '../Signer';
 
 import styles from './App.css';
 
@@ -38,6 +39,7 @@ class App extends Component {
           <Route exact path="/" component={DappHomepage} />
           <Route path="/:appId" component={Dapp} />
           <Route path="/:appId/:details" component={Dapp} />
+          <Signer />
         </div>
       </HashRouter>
     );

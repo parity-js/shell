@@ -22,11 +22,11 @@ import { STATUS_OK } from '@parity/mobx/lib/parity/NodeHealthStore';
 
 import styles from './SyncWarning.css';
 
-function SyncWarning({ className, nodeHealthStore }) {
+function SyncWarning({ className, parityNodeHealthStore }) {
   const isOk =
-    !nodeHealthStore.overall ||
-    (!nodeHealthStore.overall.isNotReadyYet &&
-      nodeHealthStore.overall.status === STATUS_OK);
+    !parityNodeHealthStore.overall ||
+    (!parityNodeHealthStore.overall.isNotReadyYet &&
+      parityNodeHealthStore.overall.status === STATUS_OK);
 
   if (isOk) {
     return null;
@@ -35,7 +35,7 @@ function SyncWarning({ className, nodeHealthStore }) {
   return (
     <div className={className}>
       <div className={styles.body}>
-        {nodeHealthStore.overall.message.map(message => (
+        {parityNodeHealthStore.overall.message.map(message => (
           <p key={message}>{message}</p>
         ))}
       </div>
@@ -47,4 +47,4 @@ SyncWarning.propTypes = {
   className: PropTypes.string
 };
 
-export default inject('nodeHealthStore')(observer(SyncWarning));
+export default inject('parityNodeHealthStore')(observer(SyncWarning));

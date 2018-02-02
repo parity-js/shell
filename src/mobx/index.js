@@ -14,6 +14,8 @@
 // You should have received a copy of the GNU General Public License
 // along with Parity.  If not, see <http://www.gnu.org/licenses/>.
 
+import getStore from '@parity/mobx';
+
 import ApiStore from './ApiStore';
 import DappsStore from './DappsStore';
 import DisplayAppsStore from './DisplayAppsStore';
@@ -29,7 +31,10 @@ const createRootStore = api => ({
   externalOverlayStore: ExternalOverlayStore.get(api),
   methodPermissionsStore: MethodPermissionsStore.get(api),
   middlewareStore: MiddlewareStore.get(api),
-  requestsStore: RequestsStore.get(api)
+  parityAllAccountsInfoStore: getStore('parity_allAccountsInfo')().get(api),
+  parityNodeHealthStore: getStore('parity_nodeHealth')().get(api),
+  requestsStore: RequestsStore.get(api),
+  signerRequestsToConfirmStore: getStore('signer_requestsToConfirm')().get(api)
 });
 
 export default createRootStore;
