@@ -16,11 +16,12 @@
 
 import React from 'react';
 import ReactDOM from 'react-dom';
+import ContextProvider from '@parity/ui/lib/ContextProvider';
+import { initStore } from '@parity/shared/lib/redux';
 import { Provider as MobxProvider } from 'mobx-react';
 import 'semantic-ui-css/semantic.min.css';
 
 import App from './App';
-import ContextProvider from '@parity/ui/lib/ContextProvider';
 import createExtendShell from './extendShell';
 import createRootStore from './mobx';
 import { redirectLocalhost } from './utils/host';
@@ -33,12 +34,13 @@ const token = retrieveToken();
 const renderUI = () => {
   const api = new SecureApi(window.location.host, token);
   const rootStore = createRootStore(api);
+  const store = initStore(api); // TODO Remove redux if possible
   const extendShell = createExtendShell(rootStore);
 
   window.parity = { ...window.parity, extendShell };
 
   ReactDOM.render(
-    <ContextProvider api={api}>
+    <ContextProvider api={api} store={store}>
       <MobxProvider {...rootStore}>
         <App />
       </MobxProvider>
