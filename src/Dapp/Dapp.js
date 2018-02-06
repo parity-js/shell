@@ -99,7 +99,7 @@ class Dapp extends Component {
       nodeintegration="true"
       preload={`file://${path.join(
         remote.getGlobal('dirName'),
-        '../node_modules/inject.js/lib/inject.js'
+        '../build/inject.js'
       )}`}
       ref={this.handleWebview}
       src={`${src}${hash}`}
