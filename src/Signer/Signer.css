@@ -22,3 +22,11 @@
   width: 960px;
   background-color: #fafafa;
 }
+
+:local(.header) {
+  padding: 0.5em;
+}
+
+:local(.title) {
+  color: white !important;
+}

@@ -17,8 +17,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import { inject, observer } from 'mobx-react';
-
-import { STATUS_OK } from '@parity/mobx/lib/parity/NodeHealthStore';
+import { STATUS_OK } from '@parity/mobx/lib/parity/nodeHealth';
 
 import styles from './SyncWarning.css';
 

@@ -20,31 +20,45 @@ import Header from 'semantic-ui-react/dist/commonjs/elements/Header';
 import GradientBg from '@parity/ui/lib/GradientBg';
 import { FormattedMessage } from 'react-intl';
 
-import Signer from './plugin-signer-account/src/Request';
 import styles from './Signer.css';
 
-@inject('signerRequestsToConfirmStore')
+@inject('signerRequestsToConfirmStore', 'signerStore')
 @observer
 class App extends Component {
-  render() {
-    const { requestsToConfirm } = this.props.signerRequestsToConfirmStore;
+  state = {
+    isReady: false
+  };
 
-    console.log(requestsToConfirm);
-    return requestsToConfirm.length ? (
+  componentWillMount() {
+    // TODO Add other signers here
+    Promise.all([import('@parity/plugin-signer-account')]).then(() =>
+      this.setState({ isReady: true })
+    );
+  }
+
+  render() {
+    if (!this.state.isReady) return null;
+
+    const { signerRequestsToConfirmStore, signerStore } = this.props;
+    const { requestsToConfirm } = signerRequestsToConfirmStore;
+    if (!requestsToConfirm.length) return null;
+
+    return (
       <div className={styles.container}>
         <GradientBg className={styles.header}>
-          <Header as="h2">
+          <Header as="h2" className={styles.title}>
             <FormattedMessage
               id="parityBar.title.signer"
               defaultMessage="Parity Signer: Pending"
             />
           </Header>
         </GradientBg>
-        {requestsToConfirm.map(request => (
-          <Signer key={request.id} request={request} />
-        ))}
+        {requestsToConfirm.map(request => {
+          const Signer = signerStore.getSignerComponent(request);
+          return Signer && <Signer key={request.id} request={request} />;
+        })}
       </div>
-    ) : null;
+    );
   }
 }
 

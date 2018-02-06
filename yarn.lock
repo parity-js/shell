@@ -61,6 +61,10 @@
   version "2.1.4"
   resolved "https://registry.yarnpkg.com/@parity/jsonrpc/-/jsonrpc-2.1.4.tgz#d64f348e6ae0b24eb995f7002a03e2ade59f5da0"
 
+"@parity/jsonrpc@^2.1.5":
+  version "2.1.5"
+  resolved "https://registry.yarnpkg.com/@parity/jsonrpc/-/jsonrpc-2.1.5.tgz#9d2bedff6e90859dcc56f83c8a31042c4dd44849"
+
 "@parity/ledger@2.1.x", "@parity/ledger@^2.1.2":
   version "2.1.2"
   resolved "https://registry.yarnpkg.com/@parity/ledger/-/ledger-2.1.2.tgz#d7f27b5c6084cda8dc38e1333454a67c752496a0"
@@ -70,15 +74,24 @@
     u2f-api "0.0.9"
     u2f-api-polyfill "0.4.3"
 
-"@parity/mobx@^1.0.4", "@parity/mobx@^1.0.7":
-  version "1.0.7"
-  resolved "https://registry.yarnpkg.com/@parity/mobx/-/mobx-1.0.7.tgz#b7e047abed426fef940ca81297b0c47bc71a49ad"
+"@parity/mobx@1.1.x":
+  version "1.1.1"
+  resolved "https://registry.yarnpkg.com/@parity/mobx/-/mobx-1.1.1.tgz#86a368ac4ebb482ae06946fee21d0c798b419951"
   dependencies:
+    "@parity/jsonrpc" "^2.1.5"
     "@parity/ledger" "^2.1.2"
+    "@parity/shared" "^2.2.23"
 
-"@parity/plugin-signer-account@parity-js/plugin-signer-account#c1272caa242c8b97dac78e5d0b1e068614657fdc":
-  version "1.1.7"
-  resolved "https://codeload.github.com/parity-js/plugin-signer-account/tar.gz/c1272caa242c8b97dac78e5d0b1e068614657fdc"
+"@parity/plugin-signer-account@github:js-dist-paritytech/plugin-signer-account#01b4a67888fb27fe6f65777b73fbadcd3dab6b90":
+  version "1.2.2"
+  resolved "https://codeload.github.com/js-dist-paritytech/plugin-signer-account/tar.gz/01b4a67888fb27fe6f65777b73fbadcd3dab6b90"
+  dependencies:
+    "@parity/mobx" "1.1.x"
+    "@parity/ui" "3.1.x"
+    lodash "^4.17.5"
+    prop-types "^15.6.0"
+    react-intl "^2.4.0"
+    semantic-ui-react "^0.78.1"
 
 "@parity/shared@2.2.x", "@parity/shared@^2.2.21":
   version "2.2.21"
@@ -99,13 +112,32 @@
     useragent.js "^0.5.6"
     yargs "6.6.0"
 
-"@parity/ui@^3.0.23":
-  version "3.0.23"
-  resolved "https://registry.yarnpkg.com/@parity/ui/-/ui-3.0.23.tgz#0adfcc64ff81e8f2c81f11853604e1899ed2df4d"
+"@parity/shared@^2.2.23":
+  version "2.2.24"
+  resolved "https://registry.yarnpkg.com/@parity/shared/-/shared-2.2.24.tgz#11bc09bbc3088f20c71004f623fa6dce21012e99"
+  dependencies:
+    "@parity/ledger" "2.1.x"
+    eventemitter3 "^2.0.3"
+    loglevel "1.4.1"
+    mobx "2.6.4"
+    mobx-react "4.0.3"
+    push.js "0.0.11"
+    react-redux "4.4.6"
+    redux "3.6.0"
+    redux-actions "1.1.0"
+    redux-thunk "2.1.0"
+    scryptsy "2.0.0"
+    solc ngotchac/solc-js
+    useragent.js "^0.5.6"
+    yargs "6.6.0"
+
+"@parity/ui@3.1.x":
+  version "3.1.1"
+  resolved "https://registry.yarnpkg.com/@parity/ui/-/ui-3.1.1.tgz#96c3957897221a70b444aa1ae3d02fa47df1ffce"
   dependencies:
     "@parity/api" "2.1.x"
     "@parity/etherscan" "2.1.x"
-    "@parity/mobx" "^1.0.4"
+    "@parity/mobx" "1.1.x"
     "@parity/shared" "2.2.x"
     babel-runtime "^6.26.0"
     bignumber.js "4.1.0"
@@ -4516,6 +4548,10 @@ lodash@4.17.4, "lodash@>=3.5 <5", lodash@^4.13.1, lodash@^4.14.0, lodash@^4.15.0
   version "4.17.4"
   resolved "https://registry.yarnpkg.com/lodash/-/lodash-4.17.4.tgz#78203a4d1c328ae1d86dca6460e369b57f4055ae"
 
+lodash@^4.17.5:
+  version "4.17.5"
+  resolved "https://registry.yarnpkg.com/lodash/-/lodash-4.17.5.tgz#99a92d65c0272debe8c96b6057bc8fbfa3bed511"
+
 loglevel@1.4.1:
   version "1.4.1"
   resolved "https://registry.yarnpkg.com/loglevel/-/loglevel-1.4.1.tgz#95b383f91a3c2756fd4ab093667e4309161f2bcd"
@@ -5950,6 +5986,10 @@ react-router-dom@^4.2.2:
     react-router "^4.2.0"
     warning "^3.0.0"
 
+react-router-redux@^4.0.8:
+  version "4.0.8"
+  resolved "https://registry.yarnpkg.com/react-router-redux/-/react-router-redux-4.0.8.tgz#227403596b5151e182377dab835b5d45f0f8054e"
+
 react-router@^3.2.0:
   version "3.2.0"
   resolved "https://registry.yarnpkg.com/react-router/-/react-router-3.2.0.tgz#62b6279d589b70b34e265113e4c0a9261a02ed36"
@@ -6567,6 +6607,16 @@ semantic-ui-react@0.76.0:
 semantic-ui-react@^0.77.2:
   version "0.77.2"
   resolved "https://registry.yarnpkg.com/semantic-ui-react/-/semantic-ui-react-0.77.2.tgz#c4cf0e3cd5590c906f4d655d163ac5969acd359b"
+  dependencies:
+    babel-runtime "^6.25.0"
+    classnames "^2.2.5"
+    fbjs "^0.8.16"
+    lodash "^4.17.4"
+    prop-types "^15.5.10"
+
+semantic-ui-react@^0.78.1:
+  version "0.78.1"
+  resolved "https://registry.yarnpkg.com/semantic-ui-react/-/semantic-ui-react-0.78.1.tgz#a39990e199669bb01f85a0d24bfe96b9ea89d4b4"
   dependencies:
     babel-runtime "^6.25.0"
     classnames "^2.2.5"
