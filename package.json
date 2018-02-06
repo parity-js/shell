@@ -38,10 +38,10 @@
   },
   "dependencies": {
     "@parity/api": "^2.1.19",
-    "@parity/mobx": "1.1.x",
+    "@parity/mobx": "~1.1.2",
     "@parity/plugin-signer-account": "github:js-dist-paritytech/plugin-signer-account#01b4a67888fb27fe6f65777b73fbadcd3dab6b90",
     "@parity/shared": "^2.2.21",
-    "@parity/ui": "3.1.x",
+    "@parity/ui": "~3.1.2",
     "lodash": "^4.17.4",
     "mobx": "^3.4.1",
     "mobx-react": "^4.3.5",
