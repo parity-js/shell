@@ -16,14 +16,20 @@
 
 import middlewares from './middleware';
 
-const createExtendShell = ({ middlewareStore }) => {
+const createExtendShell = ({ middlewareStore, signerStore }) => {
   const extendShell = options => {
     switch (options.type) {
       case 'interceptor':
         return middlewareStore.addMiddleware(options.middleware);
 
-      // case 'signer':
-      //   return injectSignerPlugin(options.component, options.isHandler);
+      case 'signer': {
+        const isFallback = options.isHandler(null, null, null) || false;
+        return signerStore.addSigner(
+          options.component,
+          options.isHandler,
+          isFallback
+        );
+      }
 
       // case 'status':
       //   return injectStatusPlugin(options.component);
@@ -42,7 +48,10 @@ const createExtendShell = ({ middlewareStore }) => {
       middleware
     })
   );
+
   // Add default signer plugins
+  // Done in plugin-signer-* repo
+
   // Add default status plugins
 
   return extendShell;
