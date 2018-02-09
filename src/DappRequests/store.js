@@ -34,8 +34,6 @@ export default class Store {
   constructor (provider) {
     this.provider = provider;
     this.permissions = store.get(LS_PERMISSIONS) || {};
-
-    window.addEventListener('message', this.receiveMessage, false);
   }
 
   @computed get hasRequests () {
@@ -112,17 +110,14 @@ export default class Store {
       return;
     }
 
-    source.postMessage(
-      {
-        error: `Method ${method} not allowed`,
-        id,
-        from: 'shell',
-        result: null,
-        to: from,
-        token
-      },
-      '*'
-    );
+    this.sendMessage(source, {
+      error: `Method ${method} not allowed`,
+      id,
+      from: 'shell',
+      result: null,
+      to: from,
+      token
+    });
   };
 
   addAppPermission = (method, appId) => {
@@ -182,17 +177,14 @@ export default class Store {
       if (!source) {
         return;
       }
-      source.postMessage(
-        {
-          error: error ? error.message : null,
-          id,
-          from: 'shell',
-          to: from,
-          result,
-          token
-        },
-        '*'
-      );
+      this.sendMessage(source, {
+        error: error ? error.message : null,
+        id,
+        from: 'shell',
+        to: from,
+        result,
+        token
+      });
     };
   };
 
@@ -268,6 +260,16 @@ export default class Store {
       }
     } catch (error) {
       console.error('Exception handling data', data, error);
+    }
+  };
+
+  sendMessage = (source, ...args) => {
+    if (source instanceof Element) {
+      // If webview, use IPC
+      return source.send('PARITY_SHELL_IPC_CHANNEL', ...args);
+    } else {
+      // If iframe, use postMessage
+      return source.postMessage(...args, '*');
     }
   };
 

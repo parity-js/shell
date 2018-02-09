@@ -17,6 +17,11 @@
 import Api from '@parity/api';
 import qs from 'query-string';
 
+// https://github.com/electron/electron/issues/2288
+const IS_ELECTRON = !!(window && window.process && window.process.type);
+
+console.log('This inject.js has been injected by the shell.');
+
 function initProvider () {
   const path = window.location.pathname.split('/');
   const query = qs.parse(window.location.search);
@@ -27,7 +32,9 @@ function initProvider () {
     appId = path[2];
   }
 
-  const ethereum = new Api.Provider.PostMessage(appId);
+  const ethereum = IS_ELECTRON
+    ? new Api.Provider.Ipc(appId)
+    : new Api.Provider.PostMessage(appId);
 
   console.log(`Requesting API communications token for ${appId}`);
 

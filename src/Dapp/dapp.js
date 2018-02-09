@@ -18,13 +18,23 @@ import React, { Component } from 'react';
 import { observer } from 'mobx-react';
 import { FormattedMessage } from 'react-intl';
 import PropTypes from 'prop-types';
+import path from 'path';
 
 import builtinDapps from '@parity/shared/lib/config/dappsBuiltin.json';
 import viewsDapps from '@parity/shared/lib/config/dappsViews.json';
 import DappsStore from '@parity/shared/lib/mobx/dappsStore';
 import HistoryStore from '@parity/shared/lib/mobx/historyStore';
 
+import RequestsStore from '../DappRequests/store';
 import styles from './dapp.css';
+
+// https://github.com/electron/electron/issues/2288
+const IS_ELECTRON = !!(window && window.process && window.process.type);
+let remote;
+
+if (IS_ELECTRON) {
+  remote = window.require('electron').remote;
+}
 
 const internalDapps = [].concat(viewsDapps, builtinDapps);
 
@@ -45,6 +55,7 @@ export default class Dapp extends Component {
 
   store = DappsStore.get(this.context.api);
   historyStore = HistoryStore.get('dapps');
+  requestsStore = RequestsStore.get(this.context.api)
 
   componentWillMount () {
     const { id } = this.props.params;
@@ -62,6 +73,36 @@ export default class Dapp extends Component {
     }
   }
 
+  handleIframe = () => {
+    window.addEventListener('message', this.requestsStore.receiveMessage, false);
+  }
+
+  handleWebview = webview => {
+    if (!webview) {
+      return;
+    }
+
+    // Log console.logs from webview
+    webview.addEventListener('console-message', e => {
+      console.log('[DAPP]', e.message);
+    });
+
+    // Reput eventListeners when webview has finished loading dapp
+    webview.addEventListener('did-finish-load', () => {
+      this.setState({ loading: false });
+      // Listen to IPC messages from this webview
+      webview.addEventListener('ipc-message', event =>
+        this.requestsStore.receiveMessage({
+          ...event.args[0],
+          source: event.target
+        }));
+      // Send ping message to tell dapp we're ready to listen to its ipc messages
+      webview.send('ping');
+    });
+
+    this.onDappLoad();
+  };
+
   loadApp (id) {
     this.setState({ loading: true });
 
@@ -74,6 +115,34 @@ export default class Dapp extends Component {
         this.setState({ loading: false });
       });
   }
+
+  renderIframe = (src, hash) => (
+    <iframe
+      className={ styles.frame }
+      frameBorder={ 0 }
+      id='dappFrame'
+      name={ name }
+      onLoad={ this.onDappLoad }
+      ref={ this.handleIframe }
+      sandbox='allow-forms allow-popups allow-same-origin allow-scripts allow-top-navigation'
+      scrolling='auto'
+      src={ `${src}${hash}` }
+    />
+  )
+
+  renderWebview = (src, hash) => (
+    <webview
+      className={ styles.frame }
+      id='dappFrame'
+      nodeintegration='true'
+      preload={ `file://${path.join(
+        remote.getGlobal('dirName'),
+        '../.build/inject.js'
+      )}` }
+      ref={ this.handleWebview }
+      src={ `${src}${hash}` }
+    />
+  );
 
   render () {
     const { dappsUrl } = this.context.api;
@@ -133,18 +202,9 @@ export default class Dapp extends Component {
       hash = `#/${params.details}`;
     }
 
-    return (
-      <iframe
-        className={ styles.frame }
-        frameBorder={ 0 }
-        id='dappFrame'
-        name={ name }
-        onLoad={ this.onDappLoad }
-        sandbox='allow-forms allow-popups allow-same-origin allow-scripts allow-top-navigation'
-        scrolling='auto'
-        src={ `${src}${hash}` }
-      />
-    );
+    return IS_ELECTRON
+      ? this.renderWebview(src, hash)
+      : this.renderIframe(src, hash);
   }
 
   onDappLoad = () => {

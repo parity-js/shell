@@ -21,21 +21,32 @@ const BrowserWindow = electron.BrowserWindow;
 const path = require('path');
 const url = require('url');
 
+const IS_DEV = process.argv.includes('--dev'); // Opens http://127.0.0.1:3000 in --dev mode
+
 let mainWindow;
+
+global.dirName = __dirname; // Will send this to renderers via IPC
 
 function createWindow () {
   mainWindow = new BrowserWindow({
-    height: 600,
-    width: 800
+    height: 800,
+    width: 1200
   });
 
-  mainWindow.loadURL(url.format({
-    pathname: path.join(__dirname, 'index.html'),
-    protocol: 'file:',
-    slashes: true
-  }));
-
-  mainWindow.webContents.openDevTools();
+  if (IS_DEV) {
+    mainWindow.loadURL('http://127.0.0.1:3000');
+    mainWindow.webContents.openDevTools();
+  } else {
+    // TODO Check if file exists?
+    mainWindow.loadURL(
+      url.format({
+        pathname: path.join(__dirname, '../.build/index.html'),
+        protocol: 'file:',
+        slashes: true
+      })
+    );
+  }
+  // }
 
   mainWindow.on('closed', function () {
     mainWindow = null;
