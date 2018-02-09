@@ -22,7 +22,7 @@ import SyncWarning from './';
 let component;
 
 function createApi (syncing = null) {
-  return {};
+  return { pubsub: { parity: { nodeHealth: () => { } } } };
 }
 
 function render () {
