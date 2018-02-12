@@ -14,32 +14,26 @@
 // You should have received a copy of the GNU General Public License
 // along with Parity.  If not, see <http://www.gnu.org/licenses/>.
 
+const argv = require('yargs').argv;
 const electron = require('electron');
-const app = electron.app;
-const BrowserWindow = electron.BrowserWindow;
 
-const path = require('path');
-const url = require('url');
+const { app, BrowserWindow } = electron;
 
 let mainWindow;
 
 function createWindow () {
   mainWindow = new BrowserWindow({
-    height: 600,
-    width: 800
+    height: 800,
+    width: 1200
   });
 
-  mainWindow.loadURL(url.format({
-    pathname: path.join(__dirname, 'index.html'),
-    protocol: 'file:',
-    slashes: true
-  }));
-
-  mainWindow.webContents.openDevTools();
-
-  mainWindow.on('closed', function () {
-    mainWindow = null;
-  });
+  if (argv.dev === true) {
+    // Load 127.0.0.1:3000 in --dev mode
+    mainWindow.loadURL('http://127.0.0.1:3000');
+    mainWindow.webContents.openDevTools();
+  } else {
+    mainWindow.loadURL(`http://${argv['ui-interface'] || '127.0.0.1'}:${argv['ui-port'] || '8180'}`);
+  }
 }
 
 app.on('ready', createWindow);
