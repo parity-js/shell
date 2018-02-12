@@ -15,8 +15,9 @@
 // along with Parity.  If not, see <http://www.gnu.org/licenses/>.
 
 import React, { Component } from 'react';
-import { observer } from 'mobx-react';
 import { FormattedMessage } from 'react-intl';
+import isElectron from 'is-electron';
+import { observer } from 'mobx-react';
 import PropTypes from 'prop-types';
 import path from 'path';
 
@@ -28,11 +29,9 @@ import HistoryStore from '@parity/shared/lib/mobx/historyStore';
 import RequestsStore from '../DappRequests/store';
 import styles from './dapp.css';
 
-// https://github.com/electron/electron/issues/2288
-const IS_ELECTRON = !!(window && window.process && window.process.type);
 let remote;
 
-if (IS_ELECTRON) {
+if (isElectron()) {
   remote = window.require('electron').remote;
 }
 
@@ -202,7 +201,7 @@ export default class Dapp extends Component {
       hash = `#/${params.details}`;
     }
 
-    return IS_ELECTRON
+    return isElectron()
       ? this.renderWebview(src, hash)
       : this.renderIframe(src, hash);
   }
