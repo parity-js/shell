@@ -19,7 +19,6 @@ import { FormattedMessage } from 'react-intl';
 import isElectron from 'is-electron';
 import { observer } from 'mobx-react';
 import PropTypes from 'prop-types';
-import path from 'path';
 
 import builtinDapps from '@parity/shared/lib/config/dappsBuiltin.json';
 import viewsDapps from '@parity/shared/lib/config/dappsViews.json';
@@ -28,12 +27,6 @@ import HistoryStore from '@parity/shared/lib/mobx/historyStore';
 
 import RequestsStore from '../DappRequests/store';
 import styles from './dapp.css';
-
-let remote;
-
-if (isElectron()) {
-  remote = window.require('electron').remote;
-}
 
 const internalDapps = [].concat(viewsDapps, builtinDapps);
 
@@ -134,10 +127,6 @@ export default class Dapp extends Component {
       className={ styles.frame }
       id='dappFrame'
       nodeintegration='true'
-      preload={ `file://${path.join(
-        remote.getGlobal('dirName'),
-        '../.build/inject.js'
-      )}` }
       ref={ this.handleWebview }
       src={ `${src}${hash}` }
     />

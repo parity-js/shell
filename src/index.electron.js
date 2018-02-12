@@ -16,14 +16,10 @@
 
 const argv = require('yargs').argv;
 const electron = require('electron');
-const path = require('path');
-const url = require('url');
 
 const { app, BrowserWindow } = electron;
 
 let mainWindow;
-
-global.dirName = __dirname; // Will send this to renderers via IPC
 
 function createWindow () {
   mainWindow = new BrowserWindow({
@@ -36,19 +32,8 @@ function createWindow () {
     mainWindow.loadURL('http://127.0.0.1:3000');
     mainWindow.webContents.openDevTools();
   } else {
-    // Load from local file
-    mainWindow.loadURL(
-      url.format({
-        pathname: path.join(__dirname, '../.build/index.html'),
-        protocol: 'file:',
-        slashes: true
-      })
-    );
+    mainWindow.loadURL(`http://${argv['ui-interface'] || '127.0.0.1'}:${argv['ui-port'] || '8180'}`);
   }
-
-  mainWindow.on('closed', function () {
-    mainWindow = null;
-  });
 }
 
 app.on('ready', createWindow);
