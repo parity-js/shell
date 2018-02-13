@@ -14,28 +14,49 @@
 // You should have received a copy of the GNU General Public License
 // along with Parity.  If not, see <http://www.gnu.org/licenses/>.
 
+const argv = require('yargs').argv;
 const electron = require('electron');
-const app = electron.app;
-const BrowserWindow = electron.BrowserWindow;
-
 const path = require('path');
+const pick = require('lodash/pick');
 const url = require('url');
 
+const { app, BrowserWindow, session } = electron;
 let mainWindow;
+
+// Will send these variables to renderers via IPC
+global.dirName = __dirname;
+Object.assign(global, pick(argv, ['wsInterface', 'wsPort']));
 
 function createWindow () {
   mainWindow = new BrowserWindow({
-    height: 600,
-    width: 800
+    height: 800,
+    width: 1200
   });
 
-  mainWindow.loadURL(url.format({
-    pathname: path.join(__dirname, 'index.html'),
-    protocol: 'file:',
-    slashes: true
-  }));
+  if (argv.dev === true) {
+    // Opens http://127.0.0.1:3000 in --dev mode
+    mainWindow.loadURL('http://127.0.0.1:3000');
+    mainWindow.webContents.openDevTools();
+  } else {
+    // Opens file:///path/to/.build/index.html in prod mode
+    // TODO Check if file exists?
+    mainWindow.loadURL(
+      url.format({
+        pathname: path.join(__dirname, '../.build/index.html'),
+        protocol: 'file:',
+        slashes: true
+      })
+    );
+  }
 
-  mainWindow.webContents.openDevTools();
+  // WS calls have Origin `file://` by default, which is not trusted.
+  // We override Origin header on all WS connections with an authorized one.
+  session.defaultSession.webRequest.onBeforeSendHeaders({
+    urls: ['ws://*/*', 'wss://*/*']
+  }, (details, callback) => {
+    details.requestHeaders.Origin = `parity://${mainWindow.id}.wallet.parity`;
+    callback({ requestHeaders: details.requestHeaders });
+  });
 
   mainWindow.on('closed', function () {
     mainWindow = null;

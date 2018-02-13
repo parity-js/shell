@@ -22,23 +22,15 @@ import { LOG_KEYS, getLogger } from '@parity/shared/lib/config';
 
 const log = getLogger(LOG_KEYS.Signer);
 
-const RPC_URL = '127.0.0.1:8545';
 const WS_URL = '127.0.0.1:8546';
-const UI_URL = '127.0.0.1:8180';
 
 export default class SecureApi extends Api {
   _isConnecting = false;
   _needsToken = false;
   _tokens = [];
-  _uiApi = null;
 
   _dappsUrl = null;
   _wsUrl = null;
-  _url = null;
-
-  static getHttpProvider (url, protocol) {
-    return new Api.Provider.Http(`${protocol}//${url || RPC_URL}/rpc`, 0);
-  }
 
   static getWsProvider (url, protocol, sysuiToken) {
     const transportUrl = SecureApi.transportWsUrl(url || WS_URL, protocol);
@@ -59,19 +51,16 @@ export default class SecureApi extends Api {
       : window.location.protocol;
   }
 
-  constructor (uiUrl, nextToken, getProvider = SecureApi.getWsProvider, protocol = SecureApi.protocol) {
+  constructor (wsUrl, nextToken, getProvider = SecureApi.getWsProvider, protocol = SecureApi.protocol) {
     const sysuiToken = store.get('sysuiToken');
-    const wsProvider = getProvider(uiUrl, protocol, sysuiToken);
+    const wsProvider = getProvider(wsUrl, protocol, sysuiToken);
 
     super(wsProvider);
 
     this.protocol = protocol;
-    this._url = uiUrl || UI_URL;
+    this._wsUrl = wsUrl || WS_URL;
+    this._wsProvider = wsProvider;
 
-    const httpProvider = SecureApi.getHttpProvider(this._url, this.protocol());
-
-    this._uiApi = new Api(httpProvider, false);
-    this._wsUrl = uiUrl;
     // Try tokens from localStorage, from hash and 'initial'
     this._tokens = uniq([sysuiToken, nextToken, 'initial'])
       .filter((token) => token)
@@ -83,7 +72,9 @@ export default class SecureApi extends Api {
     // When the provider is closed, try to reconnect
     wsProvider.on('close', this.connect, this);
 
-    this.connect();
+    this
+      .connect() // Connect with token
+      .then(() => this._fetchSettings()); // Update this._dappsUrl
   }
 
   get _dappsAddress () {
@@ -210,7 +201,7 @@ export default class SecureApi extends Api {
    * otherwise (HEAD request to the Node)
    */
   isNodeUp () {
-    return fetch(`${this.protocol()}//${this._url}/api/ping`, { method: 'HEAD' })
+    return fetch(`${this.protocol()}//${this._wsUrl}/api/ping`, { method: 'HEAD', mode: 'no-cors' })
       .then(
         (r) => r.status === 200,
         () => false
@@ -228,7 +219,7 @@ export default class SecureApi extends Api {
     log.debug('updating token', token);
 
     // Update the tokens list: put the new one on first position
-    this._tokens = [ { value: token, tried: false } ].concat(this._tokens);
+    this._tokens = [{ value: token, tried: false }].concat(this._tokens);
 
     // Try to connect with the new token added
     return this.connect();
@@ -279,16 +270,11 @@ export default class SecureApi extends Api {
     // Sanitize the token first
     const token = this._sanitiseToken(_token);
 
-    const connectPromise = this._fetchSettings()
-      .then(() => {
-        // Update the URL and token in the transport layer
-        this.transport.url = SecureApi.transportWsUrl(this._wsUrl, this.protocol);
-        this.provider.updateToken(token, false);
+    this.provider.updateToken(token, false);
 
-        log.debug('connecting with token', token);
+    log.debug('connecting with token', token);
 
-        return this.provider.connect();
-      })
+    const connectPromise = this.provider.connect()
       .then(() => {
         log.debug('connected with', token);
 
@@ -313,7 +299,7 @@ export default class SecureApi extends Api {
         connectPromise,
         this.isNodeUp()
       ])
-      .then(([ connected, isNodeUp ]) => {
+      .then(([connected, isNodeUp]) => {
         if (connected) {
           return true;
         }
@@ -341,15 +327,11 @@ export default class SecureApi extends Api {
    * Retrieve the correct ports from the Node
    */
   _fetchSettings () {
-    return Promise
-      .all([
-        // ignore dapps disabled errors
-        this._uiApi.parity.dappsUrl().catch(() => null),
-        this._uiApi.parity.wsUrl()
-      ])
-      .then(([dappsUrl, wsUrl]) => {
+    return this.parity
+      .dappsUrl()
+      .catch(() => null)
+      .then((dappsUrl) => {
         this._dappsUrl = this._resolveHost(dappsUrl);
-        this._wsUrl = this._resolveHost(wsUrl);
       });
   }
 

@@ -15,7 +15,10 @@
 // along with Parity.  If not, see <http://www.gnu.org/licenses/>.
 
 import Api from '@parity/api';
+import isElectron from 'is-electron';
 import qs from 'query-string';
+
+console.log('This inject.js has been injected by the shell.');
 
 function initProvider () {
   const path = window.location.pathname.split('/');
@@ -27,7 +30,9 @@ function initProvider () {
     appId = path[2];
   }
 
-  const ethereum = new Api.Provider.PostMessage(appId);
+  const ethereum = isElectron()
+    ? new Api.Provider.Ipc(appId)
+    : new Api.Provider.PostMessage(appId);
 
   console.log(`Requesting API communications token for ${appId}`);
 
