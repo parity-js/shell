@@ -17,13 +17,15 @@
 const argv = require('yargs').argv;
 const electron = require('electron');
 const path = require('path');
+const pick = require('lodash/pick');
 const url = require('url');
 
-const { app, BrowserWindow } = electron;
-
+const { app, BrowserWindow, session } = electron;
 let mainWindow;
 
-global.dirName = __dirname; // Will send this to renderers via IPC
+// Will send these variables to renderers via IPC
+global.dirName = __dirname;
+Object.assign(global, pick(argv, ['wsInterface', 'wsPort']));
 
 function createWindow () {
   mainWindow = new BrowserWindow({
@@ -32,11 +34,12 @@ function createWindow () {
   });
 
   if (argv.dev === true) {
-    // Load 127.0.0.1:3000 in --dev mode
+    // Opens http://127.0.0.1:3000 in --dev mode
     mainWindow.loadURL('http://127.0.0.1:3000');
     mainWindow.webContents.openDevTools();
   } else {
-    // Load from local file
+    // Opens file:///path/to/.build/index.html in prod mode
+    // TODO Check if file exists?
     mainWindow.loadURL(
       url.format({
         pathname: path.join(__dirname, '../.build/index.html'),
@@ -45,6 +48,15 @@ function createWindow () {
       })
     );
   }
+
+  // WS calls have Origin `file://` by default, which is not trusted.
+  // We override Origin header on all WS connections with an authorized one.
+  session.defaultSession.webRequest.onBeforeSendHeaders({
+    urls: ['ws://*/*', 'wss://*/*']
+  }, (details, callback) => {
+    details.requestHeaders.Origin = `parity://${mainWindow.id}.wallet.parity`;
+    callback({ requestHeaders: details.requestHeaders });
+  });
 
   mainWindow.on('closed', function () {
     mainWindow = null;

@@ -38,7 +38,7 @@ export function retrieveToken (location = window.location) {
   let token = null;
 
   if (hashIndex !== -1) {
-    // extract from hash (e.g. http://127.0.0.1:8180/#/auth?token=...)
+    // extract from hash (e.g. http://127.0.0.1:3000/#/auth?token=...)
     token = parseTokenQuery(location.hash.substr(hashIndex));
   } else if (searchIndex !== -1) {
     // extract from query (e.g. http://127.0.0.1:3000/?token=...)

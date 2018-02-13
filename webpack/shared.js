@@ -77,7 +77,7 @@ function addProxies (app) {
   const proxy = require('http-proxy-middleware');
 
   app.use('/api', proxy({
-    target: 'http://127.0.0.1:8180',
+    target: 'http://127.0.0.1:8545',
     changeOrigin: true,
     autoRewrite: true
   }));
