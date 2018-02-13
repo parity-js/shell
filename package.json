@@ -142,7 +142,7 @@
   },
   "dependencies": {
     "@parity/api": "2.1.15",
-    "@parity/plugin-signer-account": "parity-js/plugin-signer-account#c1272caa242c8b97dac78e5d0b1e068614657fdc",
+    "@parity/plugin-signer-account": "github:parity-js/plugin-signer-account#ed0ebc41745a3df379e7707f0c05174a8fa4a39e",
     "@parity/plugin-signer-default": "parity-js/plugin-signer-default#9a47bded9d6d70b69bb2f719732bd6f7854d1842",
     "@parity/plugin-signer-hardware": "parity-js/plugin-signer-hardware#4320d818a053d4efae890b74a7476e4c8dc6ba10",
     "@parity/plugin-signer-qr": "parity-js/plugin-signer-qr#2d1fafad347ba53eaf58c14265d4d07631d6a45c",
