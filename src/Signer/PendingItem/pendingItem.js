@@ -31,7 +31,8 @@ const DEFAULT_ORIGIN = {
   details: ''
 };
 
-function PendingItem ({ accounts, className, data: { date, id, isSending, payload, origin }, gasLimit, isFocussed, netVersion, onConfirm, onReject }) {
+function PendingItem ({ accounts, className, data, isFocused }) {
+  const { payload } = data;
   const Handler = pluginStore.findHandler(payload, accounts);
 
   if (!Handler) {
@@ -47,24 +48,8 @@ function PendingItem ({ accounts, className, data: { date, id, isSending, payloa
     );
   }
 
-  const _onConfirm = (data) => onConfirm(Object.assign({ id: id.toNumber(), payload }, data));
-  const _onReject = () => onReject({ id: id.toNumber() });
-
   return (
-    <Handler
-      accounts={ accounts }
-      className={ `${styles.request} ${className}` }
-      date={ date }
-      gasLimit={ gasLimit }
-      id={ id }
-      isFocussed={ isFocussed || false }
-      isSending={ isSending || false }
-      netVersion={ netVersion }
-      onConfirm={ _onConfirm }
-      onReject={ _onReject }
-      origin={ origin || DEFAULT_ORIGIN }
-      payload={ payload }
-    />
+    <Handler isFocused={ isFocused } request={ { ...data, origin: data.origin || DEFAULT_ORIGIN } } />
   );
 }
 
@@ -72,11 +57,7 @@ PendingItem.propTypes = {
   accounts: PropTypes.object.isRequired,
   className: PropTypes.string,
   data: PropTypes.object.isRequired,
-  gasLimit: PropTypes.object.isRequired,
-  netVersion: PropTypes.string.isRequired,
-  isFocussed: PropTypes.bool.isRequired,
-  onConfirm: PropTypes.func.isRequired,
-  onReject: PropTypes.func.isRequired
+  isFocused: PropTypes.bool
 };
 
 export default observer(PendingItem);
