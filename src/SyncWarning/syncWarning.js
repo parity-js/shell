@@ -17,13 +17,12 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import { observer } from 'mobx-react';
-import stores from '@parity/mobx';
-// import StatusIndicator from '@parity/ui/lib/StatusIndicator'; // TODO use this instead of @parity/mobx
+import StatusIndicator from '@parity/ui/lib/StatusIndicator'; // TODO use this instead of @parity/mobx
 
 import styles from './syncWarning.css';
 
 function SyncWarning ({ className }, { api }) {
-  const statusStore = stores.parity.nodeHealth().get(api);
+  const statusStore = StatusIndicator.Store.get(api);
   const isOk = !statusStore.nodeHealth.overall || (!statusStore.nodeHealth.overall.isNotReadyYet && statusStore.nodeHealth.overall.status === 'ok');
 
   if (isOk) {

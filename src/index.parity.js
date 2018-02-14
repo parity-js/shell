@@ -86,7 +86,7 @@ function renderUI (token) {
 
   // testing, signer plugins
   require('@parity/plugin-signer-account');
-  // require('@parity/plugin-signer-default');
+  require('@parity/plugin-signer-default');
   // require('@parity/plugin-signer-hardware');
   // require('@parity/plugin-signer-qr');
 }
