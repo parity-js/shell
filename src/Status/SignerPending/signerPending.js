@@ -74,7 +74,7 @@ class SignerPending extends Component {
           <List divided relaxed='very' selection>
             {this.store.pending.map(request => (
               <RequestItem
-                transaction={ request.payload.sendTransaction }
+                request={ request }
                 key={ request.id.toNumber() }
                 onClick={ this.handleRequestClick }
               />

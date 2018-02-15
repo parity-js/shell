@@ -31,14 +31,12 @@ import EtherValue from '../EtherValue';
 import styles from './requestItem.css';
 
 @observer
-@connect(({ tokens }, { transaction }) => ({
-  token: Object.values(tokens).find(({ address }) => address === transaction.to)
-}))
+@connect(({ tokens }) => ({ tokens }))
 class RequestItem extends Component {
   static propTypes = {
     onClick: PropTypes.func.isRequired,
-    transaction: PropTypes.object.isRequired,
-    token: PropTypes.object
+    request: PropTypes.object.isRequired,
+    tokens: PropTypes.array
   };
 
   static contextTypes = {
@@ -52,7 +50,10 @@ class RequestItem extends Component {
   methodDecodingStore = MethodDecodingStore.get(this.context.api);
 
   componentWillMount () {
-    const { transaction } = this.props;
+    const { payload } = this.props.request;
+    const transaction = payload.sendTransaction || payload.signTransaction;
+
+    if (!transaction) { return; }
 
     // Decode the transaction and put it into the state
     this.methodDecodingStore
@@ -62,56 +63,153 @@ class RequestItem extends Component {
       }));
   }
 
-  renderDescription = () => {
-    // Decide what to display in the description, depending
-    // on what type of transaction we're dealing with
-    const { token } = this.props;
-    const {
-      inputs,
-      signature,
-      contract,
-      deploy
-    } = this.state.decoded;
+  /**
+   * Get the author of a request
+   * TODO Duplicate code of https://github.com/Parity-JS/ui/blob/master/src/Signer/Request/request.js#L54-L69
+   */
+  getRequestAuthor = () => {
+    const { payload } = this.props.request;
 
-    if (deploy) {
-      return this.renderDeploy();
+    if (payload.sign) {
+      return payload.sign.address;
     }
-
-    if (contract && signature) {
-      if (token && TOKEN_METHODS[signature] && inputs) {
-        return this.renderTokenTransfer();
-      }
-      return this.renderContractMethod();
+    if (payload.decrypt) {
+      return payload.decrypt.address;
     }
+    const transaction = payload.sendTransaction || payload.signTransaction;
 
-    return this.renderValueTransfer();
+    if (transaction) {
+      return transaction.from;
+    }
+  };
+
+  render () {
+    const { onClick } = this.props;
+
+    return (
+      <List.Item onClick={ onClick }>
+        <Image avatar size='mini' verticalAlign='middle'>
+          <IdentityIcon
+            className={ styles.fromAvatar }
+            address={ this.getRequestAuthor() }
+          />
+        </Image>
+        <List.Content>
+          <List.Header>
+            <FormattedMessage
+              id='application.status.signerPendingSignerRequest'
+              defaultMessage='Parity Signer Request'
+            />
+          </List.Header>
+          {this.renderDescription()}
+        </List.Content>
+      </List.Item >
+    );
   }
 
-  renderDeploy = () => {
-    return (
+  /**
+   * Render description when calling a contract method
+   */
+  renderContractMethod = (transaction) => (
+    <List.Description className={ styles.listDescription }>
       <FormattedMessage
-        id='application.status.signerPendingContractDeploy'
-        defaultMessage='Deploying contract'
+        id='application.status.signerPendingContractMethod'
+        defaultMessage='Executing method on contract'
       />
-    );
-  };
+      {this.renderRecipient(transaction.to)}
+    </List.Description>
+  );
 
-  renderContractMethod = () => {
-    const { transaction } = this.props;
+  /**
+   * Render description when decrypting a message with parity_decrypt
+   */
+  renderDecrypt = () => (
+    <FormattedMessage
+      id='application.status.signerPendingContractDecrypt'
+      defaultMessage='Decrypting a message'
+    />
+  );
 
-    return (
-      <List.Description className={ styles.listDescription }>
-        <FormattedMessage
-          id='application.status.signerPendingContractMethod'
-          defaultMessage='Executing method on contract'
-        />
-        {this.renderRecipient(transaction.to)}
-      </List.Description>
-    );
-  };
+  /**
+   * Render description when deploying a contract
+   */
+  renderDeploy = () => (
+    <FormattedMessage
+      id='application.status.signerPendingDeploy'
+      defaultMessage='Deploying a contract'
+    />
+  );
 
-  renderTokenTransfer = () => {
-    const { token } = this.props;
+  /**
+   * Render the description of the request
+   */
+  renderDescription = () => {
+    const { payload } = this.props.request;
+
+    // Decide what to display in the description, depending
+    // on what type of transaction we're dealing with
+    if (payload.sign) {
+      return this.renderSign();
+    }
+    if (payload.decrypt) {
+      return this.renderDecrypt();
+    }
+    const transaction = payload.sendTransaction || payload.signTransaction;
+
+    if (transaction) {
+      const { tokens } = this.props;
+      const token = Object.values(tokens).find(({ address }) => address === transaction.to);
+
+      if (!this.state.decoded) { return null; }
+
+      const {
+        inputs,
+        signature,
+        contract,
+        deploy
+      } = this.state.decoded;
+
+      if (deploy) {
+        return this.renderDeploy(transaction);
+      }
+
+      if (contract && signature) {
+        if (token && TOKEN_METHODS[signature] && inputs) {
+          return this.renderTokenTransfer(transaction, token);
+        }
+        return this.renderContractMethod(transaction);
+      }
+
+      return this.renderValueTransfer(transaction);
+    }
+    return null;
+  }
+
+  /**
+   * Render recipient (of token transfer or eth transfer)
+   */
+  renderRecipient = address => (
+    <IdentityIcon
+      tiny
+      address={ address }
+      className={ styles.toAvatar }
+    />
+  );
+
+  /**
+   * Render description when signing some data with eth_sign
+   */
+  renderSign = () => (
+    <FormattedMessage
+      id='application.status.signerPendingSign'
+      defaultMessage='Signing a message'
+    />
+  );
+
+  /**
+   * Render description when transferring tokens
+   */
+  renderTokenTransfer = (transaction, token) => {
     const { inputs } = this.state.decoded;
     const valueInput = inputs.find(({ name }) => name === '_value');
     const toInput = inputs.find(({ name }) => name === '_to');
@@ -133,57 +231,22 @@ class RequestItem extends Component {
     );
   };
 
-  renderValueTransfer = () => {
-    const { transaction } = this.props;
-
-    return (
-      <List.Description className={ styles.listDescription }>
-        <FormattedMessage
-          id='application.status.signerendingValueTransfer'
-          defaultMessage='Sending {etherValue} to'
-          values={ {
-            etherValue: <EtherValue value={ transaction.value } />
-          }
-          }
-        />
-        {this.renderRecipient(transaction.to)}
-      </List.Description>
-    );
-  };
-
-  renderRecipient = address => (
-    <IdentityIcon
-      tiny
-      address={ address }
-      className={ styles.toAvatar }
-    />
+  /**
+   * Render description when transferring ETH
+   */
+  renderValueTransfer = (transaction) => (
+    <List.Description className={ styles.listDescription }>
+      <FormattedMessage
+        id='application.status.signerendingValueTransfer'
+        defaultMessage='Sending {etherValue} to'
+        values={ {
+          etherValue: <EtherValue value={ transaction.value } />
+        }
+        }
+      />
+      {this.renderRecipient(transaction.to)}
+    </List.Description>
   );
-
-  render () {
-    const { transaction, onClick } = this.props;
-
-    if (!this.state.decoded) { return null; }
-
-    return (
-      <List.Item onClick={ onClick }>
-        <Image avatar size='mini' verticalAlign='middle'>
-          <IdentityIcon
-            className={ styles.fromAvatar }
-            address={ transaction.from }
-          />
-        </Image>
-        <List.Content>
-          <List.Header>
-            <FormattedMessage
-              id='application.status.signerPendingSignerRequest'
-              defaultMessage='Parity Signer Request'
-            />
-          </List.Header>
-          {this.renderDescription()}
-        </List.Content>
-      </List.Item >
-    );
-  }
 }
 
 export default RequestItem;
