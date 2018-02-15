@@ -217,7 +217,7 @@ class RequestItem extends Component {
     return (
       <List.Description className={ styles.listDescription }>
         <FormattedMessage
-          id='application.status.signerendingTokenTransfer'
+          id='application.status.signerPendingTokenTransfer'
           defaultMessage='Sending {tokenValue} to'
           values={ {
             tokenValue: (
@@ -237,7 +237,7 @@ class RequestItem extends Component {
   renderValueTransfer = (transaction) => (
     <List.Description className={ styles.listDescription }>
       <FormattedMessage
-        id='application.status.signerendingValueTransfer'
+        id='application.status.signerPendingValueTransfer'
         defaultMessage='Sending {etherValue} to'
         values={ {
           etherValue: <EtherValue value={ transaction.value } />
