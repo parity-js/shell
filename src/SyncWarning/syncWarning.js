@@ -17,14 +17,13 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import { observer } from 'mobx-react';
-
-import StatusIndicator from '@parity/ui/lib/StatusIndicator';
+import StatusIndicator from '@parity/ui/lib/StatusIndicator'; // TODO use this instead of @parity/mobx
 
 import styles from './syncWarning.css';
 
 function SyncWarning ({ className }, { api }) {
   const statusStore = StatusIndicator.Store.get(api);
-  const isOk = !statusStore.health.overall || (!statusStore.health.overall.isNotReadyYet && statusStore.health.overall.status === 'ok');
+  const isOk = !statusStore.nodeHealth.overall || (!statusStore.nodeHealth.overall.isNotReadyYet && statusStore.nodeHealth.overall.status === 'ok');
 
   if (isOk) {
     return null;
@@ -34,9 +33,9 @@ function SyncWarning ({ className }, { api }) {
     <div className={ className }>
       <div className={ styles.body }>
         {
-          statusStore.health.overall.message.map((message) => (
+          statusStore.nodeHealth.overall.message.map((message) => (
             <p key={ message }>
-              { message }
+              {message}
             </p>
           ))
         }
