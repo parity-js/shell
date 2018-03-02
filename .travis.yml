@@ -1,4 +1,11 @@
 language: node_js
+env:
+  global:
+    - ELECTRON_CACHE=$HOME/.cache/electron
+    - ELECTRON_BUILDER_CACHE=$HOME/.cache/electron-builder
+os:
+  - linux
+  - osx
 node_js:
   - "8"
 cache:
@@ -13,3 +20,28 @@ script:
   - ./scripts/lint.sh
   - ./scripts/build.sh
   - ./scripts/push-precompiled.sh
+  - ./scripts/package.sh
+deploy:
+  - provider: releases
+    api_key: $GH_TOKEN
+    draft: true
+    name: Parity Wallet
+    file:
+      - ./dist/Parity-1.10.0-x86_64.AppImage
+      - ./dist/Parity_1.10.0_amd64.deb
+      - ./dist/parity_1.10.0_amd64.snap
+    skip_cleanup: true
+    on:
+      condition: $TRAVIS_OS_NAME = linux
+      tags: true
+  - provider: releases
+    api_key: $GH_TOKEN
+    draft: true
+    name: Parity Wallet
+    file:
+      - "./dist/Parity Wallet Setup 1.10.0.exe"
+      - "./dist/Parity Wallet-1.10.0.dmg"
+    skip_cleanup: true
+    on:
+      condition: $TRAVIS_OS_NAME = osx
+      tags: true

@@ -1,14 +1,22 @@
 {
-  "name": "Parity",
-  "version": "1.9.0",
-  "main": "electron.js",
-  "author": "Parity Team <admin@parity.io>",
-  "repository": {
-    "type": "git",
-    "url": "git+https://github.com/paritytech/parity.git"
+  "appId": "com.parity.wallet",
+  "directories": {
+    "buildResources": "./"
   },
-  "keywords": [
-    "Ethereum",
-    "Parity"
-  ]
+  "linux": {
+    "category": "Utility",
+    "target": [
+      "AppImage",
+      "snap",
+      "deb"
+    ]
+  },
+  "mac": {
+    "category": "public.app-category.productivity",
+    "icon": "./assets/icon/small-white-512x512.png"
+  },
+  "productName": "Parity Wallet",
+  "win": {
+    "icon": "./assets/icon/small-white-512x512.png"
+  }
 }
