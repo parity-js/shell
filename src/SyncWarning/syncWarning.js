@@ -23,7 +23,7 @@ import styles from './syncWarning.css';
 
 function SyncWarning ({ className }, { api }) {
   const statusStore = StatusIndicator.Store.get(api);
-  const isOk = !statusStore.nodeHealth.overall || (!statusStore.nodeHealth.overall.isNotReadyYet && statusStore.nodeHealth.overall.status === 'ok');
+  const isOk = !statusStore.overall || (!statusStore.overall.isNotReadyYet && statusStore.overall.status === 'ok');
 
   if (isOk) {
     return null;
@@ -33,7 +33,7 @@ function SyncWarning ({ className }, { api }) {
     <div className={ className }>
       <div className={ styles.body }>
         {
-          statusStore.nodeHealth.overall.message.map((message) => (
+          statusStore.overall.message.map((message) => (
             <p key={ message }>
               {message}
             </p>
