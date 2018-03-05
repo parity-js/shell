@@ -144,13 +144,13 @@
     "yargs": "6.6.0"
   },
   "dependencies": {
-    "@parity/api": "2.1.15",
+    "@parity/api": "2.1.20",
     "@parity/plugin-signer-account": "github:parity-js/plugin-signer-account#3acd84ba1965f9ee419edd04d84e13e097e6d661",
     "@parity/plugin-signer-default": "github:parity-js/plugin-signer-default#dcf8cf23bb050070b6a691413b974b5c2d7d1ce6",
     "@parity/plugin-signer-hardware": "github:parity-js/plugin-signer-hardware#e8b8a4e67adc37870e370d22805632d08012b9ee",
     "@parity/plugin-signer-qr": "github:parity-js/plugin-signer-qr#c275ba13524e9f6759079fabd10faf49cc00cfc0",
     "@parity/shared": "2.2.24",
-    "@parity/ui": "3.1.3",
+    "@parity/ui": "3.1.4",
     "is-electron": "2.1.0",
     "keythereum": "1.0.2",
     "lodash.flatten": "4.4.0",
