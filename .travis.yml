@@ -33,7 +33,7 @@ deploy:
     skip_cleanup: true
     on:
       condition: $TRAVIS_OS_NAME = linux
-      tags: true
+      branch: ci-package
   - provider: releases
     api_key: $GH_TOKEN
     draft: true
@@ -44,4 +44,4 @@ deploy:
     skip_cleanup: true
     on:
       condition: $TRAVIS_OS_NAME = osx
-      tags: true
+      branch: ci-package
