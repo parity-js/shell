@@ -1,5 +1,5 @@
 {
-  "name": "Parity",
+  "name": "parity-wallet",
   "version": "1.10.0",
   "main": ".build/electron.js",
   "jsnext:main": ".build/electron.js",
