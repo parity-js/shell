@@ -202,10 +202,7 @@ export default class SecureApi extends Api {
    */
   isNodeUp () {
     return fetch(`${this.protocol()}//${this._wsUrl}/api/ping`, { method: 'HEAD', mode: 'no-cors' })
-      .then(
-        (r) => r.status === 200,
-        () => false
-      )
+      .then(() => true)
       .catch(() => false);
   }
 
