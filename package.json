@@ -1,6 +1,6 @@
 {
   "name": "parity-wallet",
-  "version": "1.10.0",
+  "version": "0.1.0",
   "main": ".build/electron.js",
   "jsnext:main": ".build/electron.js",
   "author": "Parity Team <admin@parity.io>",

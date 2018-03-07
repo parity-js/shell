@@ -27,9 +27,9 @@ deploy:
     draft: true
     name: Parity Wallet
     file:
-      - ./dist/parity-wallet_1.10.0_amd64.deb
-      - ./dist/parity-wallet_1.10.0_amd64.snap
-      - ./dist/parity-wallet-1.10.0-x86_64.AppImage
+      - ./dist/parity-wallet_0.1.0_amd64.deb
+      - ./dist/parity-wallet_0.1.0_amd64.snap
+      - ./dist/parity-wallet-0.1.0-x86_64.AppImage
     skip_cleanup: true
     on:
       condition: $TRAVIS_OS_NAME = linux
@@ -39,8 +39,8 @@ deploy:
     draft: true
     name: Parity Wallet
     file:
-      - "./dist/Parity Wallet Setup 1.10.0.exe"
-      - "./dist/Parity Wallet-1.10.0.dmg"
+      - "./dist/Parity Wallet Setup 0.1.0.exe"
+      - "./dist/Parity Wallet-0.1.0.dmg"
     skip_cleanup: true
     on:
       condition: $TRAVIS_OS_NAME = osx
