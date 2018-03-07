@@ -27,9 +27,9 @@ deploy:
     draft: true
     name: Parity Wallet
     file:
-      - ./dist/Parity-1.10.0-x86_64.AppImage
-      - ./dist/Parity_1.10.0_amd64.deb
-      - ./dist/parity_1.10.0_amd64.snap
+      - ./dist/parity-wallet_1.10.0_amd64.deb
+      - ./dist/parity-wallet_1.10.0_amd64.snap
+      - ./dist/parity-wallet-1.10.0-x86_64.AppImage
     skip_cleanup: true
     on:
       condition: $TRAVIS_OS_NAME = linux
