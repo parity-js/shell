@@ -20,7 +20,7 @@ const path = require('path');
 const pick = require('lodash/pick');
 const url = require('url');
 
-const { app, BrowserWindow, session } = electron;
+const { app, BrowserWindow, Menu, session } = electron;
 let mainWindow;
 
 // Will send these variables to renderers via IPC
@@ -48,6 +48,55 @@ function createWindow () {
       })
     );
   }
+
+  // Create the Application's main menu
+  // https://github.com/electron/electron/blob/master/docs/api/menu.md#examples
+  const template = [
+    {
+      label: 'Edit',
+      submenu: [
+        { role: 'cut' },
+        { role: 'copy' },
+        { role: 'paste' },
+        { role: 'delete' },
+        { role: 'selectall' }
+      ]
+    },
+    {
+      label: 'View',
+      submenu: [
+        { role: 'reload' },
+        { role: 'forcereload' },
+        { role: 'toggledevtools' },
+        { type: 'separator' },
+        { role: 'resetzoom' },
+        { role: 'zoomin' },
+        { role: 'zoomout' },
+        { type: 'separator' },
+        { role: 'togglefullscreen' }
+      ]
+    },
+    {
+      role: 'window',
+      submenu: [
+        { role: 'minimize' },
+        { role: 'close' }
+      ]
+    },
+    {
+      role: 'help',
+      submenu: [
+        {
+          label: 'Learn More',
+          click () { require('electron').shell.openExternal('https://parity.io'); }
+        }
+      ]
+    }
+  ];
+
+  const menu = Menu.buildFromTemplate(template);
+
+  Menu.setApplicationMenu(menu);
 
   // WS calls have Origin `file://` by default, which is not trusted.
   // We override Origin header on all WS connections with an authorized one.
