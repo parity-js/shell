@@ -2,6 +2,7 @@ yarn.lock
 node_modules
 npm-debug.log
 build
+dist
 docs
 .build
 .coverage
