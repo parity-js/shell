@@ -29,12 +29,6 @@ import HistoryStore from '@parity/shared/lib/mobx/historyStore';
 import RequestsStore from '../DappRequests/store';
 import styles from './dapp.css';
 
-let remote;
-
-if (isElectron()) {
-  remote = window.require('electron').remote;
-}
-
 const internalDapps = [].concat(viewsDapps, builtinDapps);
 
 @observer
@@ -129,19 +123,30 @@ export default class Dapp extends Component {
     />
   )
 
-  renderWebview = (src, hash) => (
-    <webview
+  renderWebview = (src, hash) => {
+    const remote = window.require('electron').remote;
+    // Replace all backslashes by front-slashes (happens in Windows)
+    // Note: `dirName` contains backslashes in Windows. One would assume that
+    // path.join in Windows would handle everything for us, but after some time
+    // I realized that even in Windows path.join here bahaves like POSIX (maybe
+    // it's electron, maybe browser env?). Switching to '/'. -Amaury 12.03.2018
+    const posixDirName = remote.getGlobal('dirName').replace(/\\/g, '/');
+    const preload = `file://${path.join(
+      posixDirName,
+      '..',
+      '.build',
+      'inject.js'
+    )}`;
+
+    return <webview
       className={ styles.frame }
       id='dappFrame'
       nodeintegration='true'
-      preload={ `file://${path.join(
-        remote.getGlobal('dirName'),
-        '../.build/inject.js'
-      )}` }
+      preload={ preload }
       ref={ this.handleWebview }
       src={ `${src}${hash}` }
-    />
-  );
+           />;
+  }
 
   render () {
     const { dappsUrl } = this.context.api;
