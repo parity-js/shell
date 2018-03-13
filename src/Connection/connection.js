@@ -51,7 +51,7 @@ class Connection extends Component {
     validToken: false
   }
 
-  componentWillMount () {
+  componentDidMount () {
     if (isElectron()) {
       const { ipcRenderer, remote } = electron;
       const parityInstallLocation = remote.getGlobal('parityInstallLocation');
