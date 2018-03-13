@@ -37,12 +37,13 @@ const locations = {
  * This function should run in node env.
  * Returns a string which is the command to run parity.
  */
-const isParityInstalled = () => {
+const parityInstallLocation = () => {
   return commandExists('parity') // First test is `parity` command exists
     .then(() => 'parity') // If yes, return `parity` as command
     .catch(() => promiseAny(locations[process.platform].map(
       location => fsExists(location).then(() => location) // Then test if OS-specific locations contain parity
-    )));
+    )))
+    .catch(() => null); // Return null if no parity is found
 };
 
-module.exports = isParityInstalled;
+module.exports = parityInstallLocation;

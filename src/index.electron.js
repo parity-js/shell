@@ -15,22 +15,25 @@
 // along with Parity.  If not, see <http://www.gnu.org/licenses/>.
 
 // eslint-disable-next-line
-const argv = __non_webpack_require__('yargs').argv; // Dynamic require https://github.com/yargs/yargs/issues/781
+const dynamicRequire = typeof __non_webpack_require__ === 'undefined' ? require : __non_webpack_require__; // Dynamic require https://github.com/yargs/yargs/issues/781
+
+const argv = dynamicRequire('yargs').argv;
 const electron = require('electron');
 const path = require('path');
 const pick = require('lodash/pick');
+const { spawn } = require('child_process');
 const url = require('url');
 
-const isParityInstalled = require('./util/isParityInstalled');
+const parityInstallLocation = require('./util/parityInstallLocation');
 
-const { app, BrowserWindow, Menu, session } = electron;
+const { app, BrowserWindow, ipcMain, Menu, session } = electron;
 let mainWindow;
 
 // Will send these variables to renderers via IPC
 global.dirName = __dirname;
 Object.assign(global, pick(argv, ['wsInterface', 'wsPort']));
-isParityInstalled()
-  .then((installed) => { global.isParityInstalled = installed; })
+parityInstallLocation()
+  .then((location) => { global.parityInstallLocation = location; })
   .catch(() => { });
 
 function createWindow () {
@@ -54,6 +57,21 @@ function createWindow () {
       })
     );
   }
+
+  // Listen to messages from renderer process
+  ipcMain.on('asynchronous-message', (event, arg) => {
+    // Run an instance of parity if we receive the `run-parity` message
+    if (arg === 'run-parity') {
+      const parity = spawn(global.parityInstallLocation);
+
+      // Parity logs are written to stderr by default. If we see one log, we
+      // assume that parity is running
+      parity.stderr.once('data', data => {
+        // Send message back when successfully launched
+        event.sender.send('asynchronous-reply', 'parity-running');
+      });
+    }
+  });
 
   // Create the Application's main menu
   // https://github.com/electron/electron/blob/master/docs/api/menu.md#examples

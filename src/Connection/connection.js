@@ -27,6 +27,12 @@ import { CompareIcon, ComputerIcon, DashboardIcon, KeyIcon } from '@parity/ui/li
 
 import styles from './connection.css';
 
+let electron;
+
+if (isElectron()) {
+  electron = window.require('electron');
+}
+
 class Connection extends Component {
   static contextTypes = {
     api: PropTypes.object.isRequired
@@ -40,28 +46,44 @@ class Connection extends Component {
 
   state = {
     loading: false,
-    isParityInstalled: true,
+    parityInstallLocation: true,
     token: '',
     validToken: false
   }
 
   componentWillMount () {
     if (isElectron()) {
-      const remote = window.require('electron').remote;
+      const { ipcRenderer, remote } = electron;
+      const parityInstallLocation = remote.getGlobal('parityInstallLocation');
 
-      this.setState({ isParityInstalled: remote.getGlobal('isParityInstalled') });
+      this.setState({ parityInstallLocation });
+
+      // Run parity if parityInstallLocation !== null and not connected yet
+      if (!parityInstallLocation) { return; }
+
+      // After 3s, check if ui is still isConnecting
+      // If yes, then try to run `parity`
+      // The reason why we do this after 3s, is that even when parity is
+      // running, isConnecting is true on componentWillMount (lag to ping the
+      // node). -Amaury 13.03.2018
+      // TODO Find a more reliable way to know if parity is running or not
+      setTimeout(() => {
+        if (!this.props.isConnecting) { return; }
+        console.log('Launching parity.');
+        ipcRenderer.send('asynchronous-message', 'run-parity');
+      }, 3000);
     }
   }
 
   handleOpenWebsite = () => {
-    const shell = window.require('electron').shell;
+    const { shell } = electron;
 
     shell.openExternal('https://parity.io');
   }
 
   render () {
     const { isConnecting, isConnected, needsToken } = this.props;
-    const { isParityInstalled } = this.state;
+    const { parityInstallLocation } = this.state;
 
     if (!isConnecting && isConnected) {
       return null;
@@ -83,7 +105,7 @@ class Connection extends Component {
                 {
                   needsToken
                     ? <KeyIcon className={ styles.svg } />
-                    : isParityInstalled
+                    : parityInstallLocation
                       ? <DashboardIcon className={ styles.svg } />
                       : <Icon className={ styles.svg } name='warning sign' />
                 }
@@ -92,7 +114,7 @@ class Connection extends Component {
             {
               needsToken
                 ? this.renderSigner()
-                : isParityInstalled
+                : parityInstallLocation
                   ? this.renderPing()
                   : this.renderParityNotInstalled()
             }
@@ -163,7 +185,7 @@ class Connection extends Component {
         <FormattedMessage
           id='connection.noParity'
           defaultMessage="We couldn't find any Parity installation on this computer. If you have it installed, please run it now. If not, please follow the instructions on {link} to install Parity first."
-          values={ { link: <a href='#' onClick={ this.handleOpenWebsite }>https://parity.io</a> } }
+          values={ { link: <a onClick={ this.handleOpenWebsite }>https://parity.io</a> } }
         />
       </div>
     );
