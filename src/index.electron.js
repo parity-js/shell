@@ -14,7 +14,8 @@
 // You should have received a copy of the GNU General Public License
 // along with Parity.  If not, see <http://www.gnu.org/licenses/>.
 
-const argv = require('yargs').argv;
+// eslint-disable-next-line
+const argv = __non_webpack_require__('yargs').argv; // Dynamic require https://github.com/yargs/yargs/issues/781
 const electron = require('electron');
 const path = require('path');
 const pick = require('lodash/pick');
@@ -47,7 +48,7 @@ function createWindow () {
     // TODO Check if file exists?
     mainWindow.loadURL(
       url.format({
-        pathname: path.join(__dirname, '../.build/index.html'),
+        pathname: path.join(__dirname, '..', '.build', 'index.html'),
         protocol: 'file:',
         slashes: true
       })
