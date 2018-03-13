@@ -185,7 +185,7 @@ class Connection extends Component {
         <FormattedMessage
           id='connection.noParity'
           defaultMessage="We couldn't find any Parity installation on this computer. If you have it installed, please run it now. If not, please follow the instructions on {link} to install Parity first."
-          values={ { link: <a onClick={ this.handleOpenWebsite }>https://parity.io</a> } }
+          values={ { link: <a href='#' onClick={ this.handleOpenWebsite }>https://parity.io</a> } }
         />
       </div>
     );
