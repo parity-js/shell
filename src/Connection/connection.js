@@ -15,11 +15,13 @@
 // along with Parity.  If not, see <http://www.gnu.org/licenses/>.
 
 import React, { Component } from 'react';
-import { FormattedMessage } from 'react-intl';
 import { connect } from 'react-redux';
+import { FormattedMessage } from 'react-intl';
+import isElectron from 'is-electron';
 import PropTypes from 'prop-types';
 
 import GradientBg from '@parity/ui/lib/GradientBg';
+import Icon from 'semantic-ui-react/dist/commonjs/elements/Icon';
 import Input from '@parity/ui/lib/Form/Input';
 import { CompareIcon, ComputerIcon, DashboardIcon, KeyIcon } from '@parity/ui/lib/Icons';
 
@@ -38,12 +40,28 @@ class Connection extends Component {
 
   state = {
     loading: false,
+    isParityInstalled: true,
     token: '',
     validToken: false
   }
 
+  componentWillMount () {
+    if (isElectron()) {
+      const remote = window.require('electron').remote;
+
+      this.setState({ isParityInstalled: remote.getGlobal('isParityInstalled') });
+    }
+  }
+
+  handleOpenWebsite = () => {
+    const shell = window.require('electron').shell;
+
+    shell.openExternal('https://parity.io');
+  }
+
   render () {
     const { isConnecting, isConnected, needsToken } = this.props;
+    const { isParityInstalled } = this.state;
 
     if (!isConnecting && isConnected) {
       return null;
@@ -65,14 +83,18 @@ class Connection extends Component {
                 {
                   needsToken
                     ? <KeyIcon className={ styles.svg } />
-                    : <DashboardIcon className={ styles.svg } />
+                    : isParityInstalled
+                      ? <DashboardIcon className={ styles.svg } />
+                      : <Icon className={ styles.svg } name='warning sign' />
                 }
               </div>
             </div>
             {
               needsToken
                 ? this.renderSigner()
-                : this.renderPing()
+                : isParityInstalled
+                  ? this.renderPing()
+                  : this.renderParityNotInstalled()
             }
           </GradientBg>
         </div>
@@ -130,6 +152,18 @@ class Connection extends Component {
         <FormattedMessage
           id='connection.connectingAPI'
           defaultMessage='Connecting to the Parity Secure API.'
+        />
+      </div>
+    );
+  }
+
+  renderParityNotInstalled () {
+    return (
+      <div className={ styles.info }>
+        <FormattedMessage
+          id='connection.noParity'
+          defaultMessage="We couldn't find any Parity installation on this computer. If you have it installed, please run it now. If not, please follow the instructions on {link} to install Parity first."
+          values={ { link: <a href='#' onClick={ this.handleOpenWebsite }>https://parity.io</a> } }
         />
       </div>
     );

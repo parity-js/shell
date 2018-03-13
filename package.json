@@ -154,6 +154,7 @@
     "@parity/plugin-signer-qr": "github:parity-js/plugin-signer-qr#c275ba13524e9f6759079fabd10faf49cc00cfc0",
     "@parity/shared": "2.2.25",
     "@parity/ui": "3.1.4",
+    "command-exists": "1.2.2",
     "is-electron": "2.1.0",
     "keythereum": "1.0.2",
     "lodash.flatten": "4.4.0",

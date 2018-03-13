@@ -20,12 +20,17 @@ const path = require('path');
 const pick = require('lodash/pick');
 const url = require('url');
 
+const isParityInstalled = require('./util/isParityInstalled');
+
 const { app, BrowserWindow, Menu, session } = electron;
 let mainWindow;
 
 // Will send these variables to renderers via IPC
 global.dirName = __dirname;
 Object.assign(global, pick(argv, ['wsInterface', 'wsPort']));
+isParityInstalled()
+  .then((installed) => { global.isParityInstalled = installed; })
+  .catch(() => { });
 
 function createWindow () {
   mainWindow = new BrowserWindow({
