@@ -62,14 +62,7 @@ function createWindow () {
   ipcMain.on('asynchronous-message', (event, arg) => {
     // Run an instance of parity if we receive the `run-parity` message
     if (arg === 'run-parity') {
-      const parity = spawn(global.parityInstallLocation);
-
-      // Parity logs are written to stderr by default. If we see one log, we
-      // assume that parity is running
-      parity.stderr.once('data', data => {
-        // Send message back when successfully launched
-        event.sender.send('asynchronous-reply', 'parity-running');
-      });
+      spawn(global.parityInstallLocation);
     }
   });
 
