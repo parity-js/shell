@@ -24,6 +24,7 @@ const pick = require('lodash/pick');
 const { spawn } = require('child_process');
 const url = require('url');
 
+let parity; // Will hold the parity process (if spawned by node)
 const parityInstallLocation = require('./util/parityInstallLocation');
 
 const { app, BrowserWindow, ipcMain, Menu, session, shell } = electron;
@@ -62,7 +63,7 @@ function createWindow () {
   ipcMain.on('asynchronous-message', (event, arg) => {
     // Run an instance of parity if we receive the `run-parity` message
     if (arg === 'run-parity') {
-      spawn(global.parityInstallLocation);
+      parity = spawn(global.parityInstallLocation);
     }
   });
 
@@ -163,20 +164,26 @@ function createWindow () {
     callback({ requestHeaders: details.requestHeaders });
   });
 
-  mainWindow.on('closed', function () {
+  mainWindow.on('closed', () => {
     mainWindow = null;
   });
 }
 
 app.on('ready', createWindow);
 
-app.on('window-all-closed', function () {
+app.on('window-all-closed', () => {
   if (process.platform !== 'darwin') {
     app.quit();
   }
 });
 
-app.on('activate', function () {
+app.on('will-quit', () => {
+  if (parity) {
+    parity.kill();
+  }
+});
+
+app.on('activate', () => {
   if (mainWindow === null) {
     createWindow();
   }
