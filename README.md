@@ -1,6 +1,6 @@
-# Parity Wallet
+# Parity UI
 
-The Electron app of Parity Wallet user interface.
+The Electron app for Parity UI.
 
 ## Development
 

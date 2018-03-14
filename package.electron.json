@@ -1,5 +1,5 @@
 {
-  "appId": "com.parity.wallet",
+  "appId": "com.parity.ui",
   "directories": {
     "buildResources": "./"
   },
@@ -15,7 +15,7 @@
     "category": "public.app-category.productivity",
     "icon": "./assets/icon/small-white-512x512.png"
   },
-  "productName": "Parity Wallet",
+  "productName": "Parity UI",
   "win": {
     "icon": "./assets/icon/small-white-512x512.png"
   }
