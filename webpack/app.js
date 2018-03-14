@@ -174,7 +174,7 @@ module.exports = {
         plugins,
 
         new HtmlWebpackPlugin({
-          title: 'Parity',
+          title: 'Parity Wallet',
           filename: 'index.html',
           template: './index.parity.ejs',
           favicon: FAVICON,
@@ -194,10 +194,6 @@ module.exports = {
             {
               from: path.join(__dirname, '../src/error_pages.css'),
               to: 'styles.css'
-            },
-            {
-              from: path.join(__dirname, '../src/index.electron.js'),
-              to: 'electron.js'
             },
             {
               from: path.join(__dirname, '../package.electron.json'),

@@ -14,18 +14,27 @@
 // You should have received a copy of the GNU General Public License
 // along with Parity.  If not, see <http://www.gnu.org/licenses/>.
 
-const argv = require('yargs').argv;
+// eslint-disable-next-line
+const dynamicRequire = typeof __non_webpack_require__ === 'undefined' ? require : __non_webpack_require__; // Dynamic require https://github.com/yargs/yargs/issues/781
+
+const argv = dynamicRequire('yargs').argv;
 const electron = require('electron');
 const path = require('path');
 const pick = require('lodash/pick');
+const { spawn } = require('child_process');
 const url = require('url');
 
-const { app, BrowserWindow, Menu, session } = electron;
+const parityInstallLocation = require('./util/parityInstallLocation');
+
+const { app, BrowserWindow, ipcMain, Menu, session, shell } = electron;
 let mainWindow;
 
 // Will send these variables to renderers via IPC
 global.dirName = __dirname;
 Object.assign(global, pick(argv, ['wsInterface', 'wsPort']));
+parityInstallLocation()
+  .then((location) => { global.parityInstallLocation = location; })
+  .catch(() => { });
 
 function createWindow () {
   mainWindow = new BrowserWindow({
@@ -42,12 +51,20 @@ function createWindow () {
     // TODO Check if file exists?
     mainWindow.loadURL(
       url.format({
-        pathname: path.join(__dirname, '../.build/index.html'),
+        pathname: path.join(__dirname, '..', '.build', 'index.html'),
         protocol: 'file:',
         slashes: true
       })
     );
   }
+
+  // Listen to messages from renderer process
+  ipcMain.on('asynchronous-message', (event, arg) => {
+    // Run an instance of parity if we receive the `run-parity` message
+    if (arg === 'run-parity') {
+      spawn(global.parityInstallLocation);
+    }
+  });
 
   // Create the Application's main menu
   // https://github.com/electron/electron/blob/master/docs/api/menu.md#examples
@@ -88,11 +105,49 @@ function createWindow () {
       submenu: [
         {
           label: 'Learn More',
-          click () { require('electron').shell.openExternal('https://parity.io'); }
+          click () { shell.openExternal('https://parity.io'); }
         }
       ]
     }
   ];
+
+  if (process.platform === 'darwin') {
+    template.unshift({
+      label: app.getName(),
+      submenu: [
+        { role: 'about' },
+        { type: 'separator' },
+        { role: 'services', submenu: [] },
+        { type: 'separator' },
+        { role: 'hide' },
+        { role: 'hideothers' },
+        { role: 'unhide' },
+        { type: 'separator' },
+        { role: 'quit' }
+      ]
+    });
+
+    // Edit menu
+    template[1].submenu.push(
+      { type: 'separator' },
+      {
+        label: 'Speech',
+        submenu: [
+          { role: 'startspeaking' },
+          { role: 'stopspeaking' }
+        ]
+      }
+    );
+
+    // Window menu
+    template[3].submenu = [
+      { role: 'close' },
+      { role: 'minimize' },
+      { role: 'zoom' },
+      { type: 'separator' },
+      { role: 'front' }
+    ];
+  }
 
   const menu = Menu.buildFromTemplate(template);
 

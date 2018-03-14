@@ -24,8 +24,9 @@
     "Parity"
   ],
   "scripts": {
-    "build": "npm run build:inject && npm run build:app && npm run build:embed",
+    "build": "npm run build:inject && npm run build:app && npm run build:electron && npm run build:embed",
     "build:app": "webpack --config webpack/app",
+    "build:electron": "webpack --config webpack/electron",
     "build:inject": "webpack --config webpack/inject",
     "build:embed": "cross-env EMBED=1 node webpack/embed",
     "build:i18n": "npm run clean && npm run build && babel-node ./scripts/build-i18n.js",
@@ -42,7 +43,7 @@
     "lint:js": "eslint --ignore-path .gitignore ./src/",
     "lint:js:cached": "eslint --cache --ignore-path .gitignore ./src/",
     "lint:js:fix": "eslint --fix --ignore-path .gitignore ./src/",
-    "package": "npm run build && electron-builder --config package.electron.json",
+    "package": "npm run ci:build && electron-builder --config package.electron.json",
     "start": "npm run clean && npm install && npm run build:inject && npm run start:app",
     "start:app": "node webpack/dev.server",
     "test": "cross-env NODE_ENV=test mocha 'src/**/*.spec.js'",
@@ -154,6 +155,7 @@
     "@parity/plugin-signer-qr": "github:parity-js/plugin-signer-qr#c275ba13524e9f6759079fabd10faf49cc00cfc0",
     "@parity/shared": "2.2.25",
     "@parity/ui": "3.1.4",
+    "command-exists": "1.2.2",
     "is-electron": "2.1.0",
     "keythereum": "1.0.2",
     "lodash.flatten": "4.4.0",
