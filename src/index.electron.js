@@ -26,7 +26,7 @@ const url = require('url');
 
 const parityInstallLocation = require('./util/parityInstallLocation');
 
-const { app, BrowserWindow, ipcMain, Menu, session } = electron;
+const { app, BrowserWindow, ipcMain, Menu, session, shell } = electron;
 let mainWindow;
 
 // Will send these variables to renderers via IPC
@@ -105,11 +105,49 @@ function createWindow () {
       submenu: [
         {
           label: 'Learn More',
-          click () { require('electron').shell.openExternal('https://parity.io'); }
+          click () { shell.openExternal('https://parity.io'); }
         }
       ]
     }
   ];
+
+  if (process.platform === 'darwin') {
+    template.unshift({
+      label: app.getName(),
+      submenu: [
+        { role: 'about' },
+        { type: 'separator' },
+        { role: 'services', submenu: [] },
+        { type: 'separator' },
+        { role: 'hide' },
+        { role: 'hideothers' },
+        { role: 'unhide' },
+        { type: 'separator' },
+        { role: 'quit' }
+      ]
+    });
+
+    // Edit menu
+    template[1].submenu.push(
+      { type: 'separator' },
+      {
+        label: 'Speech',
+        submenu: [
+          { role: 'startspeaking' },
+          { role: 'stopspeaking' }
+        ]
+      }
+    );
+
+    // Window menu
+    template[3].submenu = [
+      { role: 'close' },
+      { role: 'minimize' },
+      { role: 'zoom' },
+      { type: 'separator' },
+      { role: 'front' }
+    ];
+  }
 
   const menu = Menu.buildFromTemplate(template);
 
