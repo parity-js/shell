@@ -174,7 +174,7 @@ module.exports = {
         plugins,
 
         new HtmlWebpackPlugin({
-          title: 'Parity Wallet',
+          title: 'Parity UI',
           filename: 'index.html',
           template: './index.parity.ejs',
           favicon: FAVICON,

@@ -25,11 +25,11 @@ deploy:
   - provider: releases
     api_key: $GH_TOKEN
     draft: true
-    name: Parity Wallet
+    name: Parity UI v0.1.0
     file:
-      - ./dist/parity-wallet_0.1.0_amd64.deb
-      - ./dist/parity-wallet_0.1.0_amd64.snap
-      - ./dist/parity-wallet-0.1.0-x86_64.AppImage
+      - ./dist/parity-ui_0.1.0_amd64.deb
+      - ./dist/parity-ui_0.1.0_amd64.snap
+      - ./dist/parity-ui-0.1.0-x86_64.AppImage
     skip_cleanup: true
     on:
       condition: $TRAVIS_OS_NAME = linux
@@ -37,10 +37,10 @@ deploy:
   - provider: releases
     api_key: $GH_TOKEN
     draft: true
-    name: Parity Wallet
+    name: Parity UI v0.1.0
     file:
-      - "./dist/Parity Wallet Setup 0.1.0.exe"
-      - "./dist/Parity Wallet-0.1.0.dmg"
+      - "./dist/Parity UI Setup 0.1.0.exe"
+      - "./dist/Parity UI-0.1.0.dmg"
     skip_cleanup: true
     on:
       condition: $TRAVIS_OS_NAME = osx
