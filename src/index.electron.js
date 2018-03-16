@@ -160,7 +160,7 @@ function createWindow () {
   session.defaultSession.webRequest.onBeforeSendHeaders({
     urls: ['ws://*/*', 'wss://*/*']
   }, (details, callback) => {
-    details.requestHeaders.Origin = `parity://${mainWindow.id}.wallet.parity`;
+    details.requestHeaders.Origin = `parity://${mainWindow.id}.ui.parity`;
     callback({ requestHeaders: details.requestHeaders });
   });
 
