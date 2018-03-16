@@ -17,7 +17,8 @@
   },
   "nsis": {
     "allowToChangeInstallationDirectory": true,
-    "onClick": false
+    "include": "installer.nsh",
+    "oneClick": false
   },
   "productName": "Parity UI",
   "win": {
