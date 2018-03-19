@@ -18,7 +18,9 @@ import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import { FormattedMessage } from 'react-intl';
 import isElectron from 'is-electron';
+import { observer } from 'mobx-react';
 import PropTypes from 'prop-types';
+import stores from '@parity/mobx';
 
 import GradientBg from '@parity/ui/lib/GradientBg';
 import Icon from 'semantic-ui-react/dist/commonjs/elements/Icon';
@@ -33,6 +35,7 @@ if (isElectron()) {
   electron = window.require('electron');
 }
 
+@observer
 class Connection extends Component {
   static contextTypes = {
     api: PropTypes.object.isRequired
@@ -50,6 +53,8 @@ class Connection extends Component {
     token: '',
     validToken: false
   }
+
+  versionInfoStore = stores.parity.versionInfo().get(this.context.api)
 
   componentDidMount () {
     if (isElectron()) {
@@ -75,6 +80,18 @@ class Connection extends Component {
     }
   }
 
+  /**
+   * Electron UI requires parity version >=1.10.0
+   */
+  isVersionCorrect = () => {
+    const { versionInfo } = this.versionInfoStore;
+
+    if (!versionInfo) { return true; } // Simpler to return true when pinging for parity_versionInfo
+    const { version: { major, minor } } = versionInfo;
+
+    return major > 1 || (major === 1 && minor >= 10);
+  }
+
   handleOpenWebsite = () => {
     const { shell } = electron;
 
@@ -82,10 +99,9 @@ class Connection extends Component {
   }
 
   render () {
-    const { isConnecting, isConnected, needsToken } = this.props;
-    const { parityInstallLocation } = this.state;
+    const { isConnecting, isConnected } = this.props;
 
-    if (!isConnecting && isConnected) {
+    if (!isConnecting && isConnected && this.isVersionCorrect()) {
       return null;
     }
 
@@ -102,26 +118,33 @@ class Connection extends Component {
                 <CompareIcon className={ `${styles.svg} ${styles.pulse}` } />
               </div>
               <div className={ styles.icon }>
-                {
-                  needsToken
-                    ? <KeyIcon className={ styles.svg } />
-                    : parityInstallLocation
-                      ? <DashboardIcon className={ styles.svg } />
-                      : <Icon className={ styles.svg } name='warning sign' />
-                }
+                {this.renderIcon()}
               </div>
             </div>
-            {
-              needsToken
-                ? this.renderSigner()
-                : parityInstallLocation
-                  ? this.renderPing()
-                  : this.renderParityNotInstalled()
-            }
+            {this.renderText()}
           </GradientBg>
         </div>
       </div>
     );
+  }
+
+  renderIcon = () => {
+    const { isConnected, needsToken } = this.props;
+    const { parityInstallLocation } = this.state;
+
+    if (needsToken) { return <KeyIcon className={ styles.svg } />; }
+    if (!parityInstallLocation || (isConnected && !this.isVersionCorrect())) { return <Icon className={ styles.svg } name='warning sign' />; }
+    return <DashboardIcon className={ styles.svg } />;
+  }
+
+  renderText = () => {
+    const { isConnected, needsToken } = this.props;
+    const { parityInstallLocation } = this.state;
+
+    if (needsToken) { return this.renderSigner(); }
+    if (!parityInstallLocation) { return this.renderParityNotInstalled(); }
+    if (isConnected && !this.isVersionCorrect()) { return this.renderIncorrectVersion(); }
+    return this.renderPing();
   }
 
   renderSigner () {
@@ -197,6 +220,23 @@ class Connection extends Component {
         <FormattedMessage
           id='connection.connectingNode'
           defaultMessage='Connecting to the Parity Node. If this informational message persists, please ensure that your Parity node is running and reachable on the network.'
+        />
+      </div>
+    );
+  }
+
+  renderIncorrectVersion () {
+    const { versionInfo: { version: { major, minor, patch } } } = this.versionInfoStore;
+
+    return (
+      <div className={ styles.info }>
+        <FormattedMessage
+          id='connection.incorrectVersion'
+          defaultMessage='We found parity version {version} running. Parity UI requires parity >=1.10 to run. Please visit {link} to install Parity 1.10 first.'
+          values={ {
+            link: <a href='#' onClick={ this.handleOpenWebsite }>https://parity.io</a>,
+            version: `${major}.${minor}.${patch}`
+          } }
         />
       </div>
     );
