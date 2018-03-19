@@ -8,7 +8,8 @@
     "target": [
       "AppImage",
       "snap",
-      "deb"
+      "deb",
+      "tar.xz"
     ]
   },
   "mac": {
