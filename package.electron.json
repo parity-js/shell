@@ -1,5 +1,5 @@
 {
-  "appId": "com.parity.ui",
+  "appId": "io.parity.ui",
   "directories": {
     "buildResources": "./"
   },
@@ -15,8 +15,14 @@
     "category": "public.app-category.productivity",
     "icon": "./assets/icon/small-white-512x512.png"
   },
+  "nsis": {
+    "allowToChangeInstallationDirectory": true,
+    "include": "installer.nsh",
+    "oneClick": false
+  },
   "productName": "Parity UI",
   "win": {
-    "icon": "./assets/icon/small-white-512x512.png"
+    "icon": "./assets/icon/small-white-512x512.png",
+    "target": "nsis"
   }
 }

@@ -16,6 +16,7 @@
 // along with Parity.  If not, see <http://www.gnu.org/licenses/>.
 
 const path = require('path');
+const CopyWebpackPlugin = require('copy-webpack-plugin');
 
 const rulesEs6 = require('./rules/es6');
 const rulesParity = require('./rules/parity');
@@ -57,5 +58,8 @@ module.exports = {
     ]
   },
 
-  plugins: Shared.getPlugins()
+  plugins: Shared.getPlugins().concat(new CopyWebpackPlugin([{
+    from: path.join(__dirname, '../src/util/windowInstaller.nsh'),
+    to: 'installer.nsh'
+  }]))
 };

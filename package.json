@@ -4,7 +4,7 @@
   "main": ".build/electron.js",
   "jsnext:main": ".build/electron.js",
   "author": {
-    "name": "Parity Team",
+    "name": "Parity Technologies",
     "email": "admin@parity.io"
   },
   "maintainers": [
