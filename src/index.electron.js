@@ -63,7 +63,7 @@ function createWindow () {
   ipcMain.on('asynchronous-message', (event, arg) => {
     // Run an instance of parity if we receive the `run-parity` message
     if (arg === 'run-parity') {
-      parity = spawn(global.parityInstallLocation);
+      parity = spawn(global.parityInstallLocation, ['--ws-origins', 'parity://*.ui.parity']); // Argument for retro-compatibility with <1.10 versions
     }
   });
 
