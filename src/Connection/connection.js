@@ -129,21 +129,21 @@ class Connection extends Component {
   }
 
   renderIcon = () => {
-    const { isConnected, needsToken } = this.props;
+    const { needsToken } = this.props;
     const { parityInstallLocation } = this.state;
 
     if (needsToken) { return <KeyIcon className={ styles.svg } />; }
-    if (!parityInstallLocation || (isConnected && !this.isVersionCorrect())) { return <Icon className={ styles.svg } name='warning sign' />; }
+    if (!parityInstallLocation || !this.isVersionCorrect()) { return <Icon className={ styles.svg } name='warning sign' />; }
     return <DashboardIcon className={ styles.svg } />;
   }
 
   renderText = () => {
-    const { isConnected, needsToken } = this.props;
+    const { needsToken } = this.props;
     const { parityInstallLocation } = this.state;
 
     if (needsToken) { return this.renderSigner(); }
     if (!parityInstallLocation) { return this.renderParityNotInstalled(); }
-    if (isConnected && !this.isVersionCorrect()) { return this.renderIncorrectVersion(); }
+    if (!this.isVersionCorrect()) { return this.renderIncorrectVersion(); }
     return this.renderPing();
   }
 
