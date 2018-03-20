@@ -8,7 +8,8 @@
     "target": [
       "AppImage",
       "snap",
-      "deb"
+      "deb",
+      "tar.xz"
     ]
   },
   "mac": {
@@ -16,9 +17,9 @@
     "icon": "./assets/icon/small-white-512x512.png"
   },
   "nsis": {
-    "allowToChangeInstallationDirectory": true,
     "include": "./.build/installer.nsh",
-    "oneClick": false
+    "oneClick": true,
+    "perMachine": true
   },
   "productName": "Parity UI",
   "win": {

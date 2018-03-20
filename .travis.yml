@@ -30,6 +30,7 @@ deploy:
       - ./dist/parity-ui_0.1.0_amd64.deb
       - ./dist/parity-ui_0.1.0_amd64.snap
       - ./dist/parity-ui-0.1.0-x86_64.AppImage
+      - ./dist/parity-ui-0.1.0.tar.xz
     skip_cleanup: true
     on:
       condition: $TRAVIS_OS_NAME = linux
