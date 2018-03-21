@@ -57,26 +57,45 @@ class Connection extends Component {
   versionInfoStore = stores.parity.versionInfo().get(this.context.api)
 
   componentDidMount () {
-    if (isElectron()) {
-      const { ipcRenderer, remote } = electron;
-      const parityInstallLocation = remote.getGlobal('parityInstallLocation');
+    if (!isElectron()) { return; }
+    const { ipcRenderer, remote } = electron;
+    const parityInstallLocation = remote.getGlobal('parityInstallLocation');
 
-      this.setState({ parityInstallLocation });
+    this.setState({ parityInstallLocation });
 
-      // Run parity if parityInstallLocation !== null and not connected yet
-      if (!parityInstallLocation) { return; }
+    // Run parity if parityInstallLocation !== null and not connected yet
+    if (!parityInstallLocation) { return; }
 
-      // After 3s, check if ui is still isConnecting
-      // If yes, then try to run `parity`
-      // The reason why we do this after 3s, is that even when parity is
-      // running, isConnecting is true on componentWillMount (lag to ping the
-      // node). -Amaury 13.03.2018
-      // TODO Find a more reliable way to know if parity is running or not
-      setTimeout(() => {
-        if (!this.props.isConnecting) { return; }
-        console.log('Launching parity.');
-        ipcRenderer.send('asynchronous-message', 'run-parity');
-      }, 3000);
+    // After 3s, check if ui is still isConnecting
+    // If yes, then try to run `parity`
+    // The reason why we do this after 3s, is that even when parity is
+    // running, isConnecting is true on componentWillMount (lag to ping the
+    // node). -Amaury 13.03.2018
+    // TODO Find a more reliable way to know if parity is running or not
+    setTimeout(() => {
+      if (!this.props.isConnecting) { return; }
+      console.log('Launching parity.');
+      ipcRenderer.send('asynchronous-message', 'run-parity');
+    }, 3000);
+  }
+
+  componentWillReceiveProps ({ needsToken }) {
+    if (!isElectron()) { return; }
+    // needsToken is set to false by default at the beginning. If the UI needs
+    // a token, then it will be set to true. At that point, we send an IPC
+    // message to the main process to attempt to run `parity signer new-token`
+    // automatically.
+    if (!this.props.needsToken && needsToken) {
+      const { ipcRenderer } = electron;
+
+      ipcRenderer.send('asynchronous-message', 'signer-new-token');
+
+      ipcRenderer.once('asynchronous-reply', (_, arg) => {
+        if (!arg) { return; }
+        // If `parity signer new-token` has successfully given us a token back,
+        // then we submit it
+        this.onChangeToken(null, arg);
+      });
     }
   }
 
