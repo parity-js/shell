@@ -61,9 +61,33 @@ function createWindow () {
 
   // Listen to messages from renderer process
   ipcMain.on('asynchronous-message', (event, arg) => {
-    // Run an instance of parity if we receive the `run-parity` message
-    if (arg === 'run-parity') {
-      parity = spawn(global.parityInstallLocation, ['--ws-origins', 'parity://*.ui.parity']); // Argument for retro-compatibility with <1.10 versions
+    switch (arg) {
+      case 'run-parity': {
+        // Run an instance of parity if we receive the `run-parity` message
+        parity = spawn(global.parityInstallLocation, ['--ws-origins', 'parity://*.ui.parity']); // Argument for retro-compatibility with <1.10 versions
+        break;
+      }
+      case 'signer-new-token': {
+        // Generate a new token if we can find the parity binary
+        if (!global.parityInstallLocation) { return; }
+        const paritySigner = spawn(global.parityInstallLocation, ['signer', 'new-token']);
+
+        // Listen to the output of the previous command
+        paritySigner.stdout.on('data', (data) => {
+          // If the output line is xxxx-xxxx-xxxx-xxxx, then it's our token
+          const match = data.toString().match(/[a-zA-Z0-9]{4}(-)?[a-zA-Z0-9]{4}(-)?[a-zA-Z0-9]{4}(-)?[a-zA-Z0-9]{4}/);
+
+          if (match) {
+            const token = match[0];
+
+            // Send back the token to the renderer process
+            event.sender.send('asynchronous-reply', token);
+            paritySigner.kill(); // We don't need the signer anymore
+          }
+        });
+        break;
+      }
+      default:
     }
   });
 

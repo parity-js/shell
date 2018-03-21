@@ -80,6 +80,25 @@ class Connection extends Component {
     }
   }
 
+  componentWillReceiveProps ({ needsToken }) {
+    // needsToken is set to false by default at the beginning. If the UI needs
+    // a token, then it will be set to true. At that point, we send an IPC
+    // message to the main process to attempt to run `parity signer new-token`
+    // automatically.
+    if (!this.props.needsToken && needsToken) {
+      const { ipcRenderer } = electron;
+
+      ipcRenderer.send('asynchronous-message', 'signer-new-token');
+
+      ipcRenderer.once('asynchronous-reply', (_, arg) => {
+        if (!arg) { return; }
+        // If `parity signer new-token` has successfully given us a token back,
+        // then we submit it
+        this.onChangeToken(null, arg);
+      });
+    }
+  }
+
   /**
    * Electron UI requires parity version >=1.10.0
    */
