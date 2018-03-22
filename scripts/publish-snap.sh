@@ -17,9 +17,5 @@ snapcraft push --release $CHANNEL "dist/parity-ui_"$VERSION"_"$BUILD_ARCH".snap"
 cat push.log
 REVISION="$(grep -m 1 "Revision " push.log | awk '{print $2}')"
 snapcraft list-revisions --arch $BUILD_ARCH parity-ui
-echo "__________Revision__________"
-echo $REVISION
-sleep 120
-snapcraft release "parity-ui_"$VERSION"_"$BUILD_ARCH".snap" $REVISION $CHANNEL
 snapcraft status parity-ui
 snapcraft logout
