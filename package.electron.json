@@ -14,7 +14,10 @@
   },
   "mac": {
     "category": "public.app-category.productivity",
-    "icon": "./assets/icon/small-white-512x512.png"
+    "icon": "./assets/icon/small-white-512x512.png",
+    "target": [
+      "pkg"
+    ]
   },
   "nsis": {
     "include": "./.build/installer.nsh",
