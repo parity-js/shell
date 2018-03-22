@@ -1,7 +1,7 @@
 stages:
   - build
   - package
-  - sign
+  - publish
 
 image:                  parity/rust:gitlab-ci
 
@@ -32,6 +32,7 @@ cache:
 before_script:
   - npm install --global yarn --cache-min 999999999
   - npm install
+  - export VERSION=$(node -p "require('./package.json').version")
 
 #Stage - build
 build:
@@ -87,5 +88,18 @@ package:binaries:windows:
     expire_in:          1 week
     paths:
       - dist/*.exe
+  tags:
+    - rust-stable
+#Stage publish
+publish:snap:
+  stage: publish
+  only:                 *publishable_branches
+  image:                parity/snapcraft:gitlab-ci
+  dependencies:
+    - package:binaries:linux
+  variables:
+    BUILD_ARCH: amd64
+  script:
+    - scripts/publish-snap.sh
   tags:
     - rust-stable
