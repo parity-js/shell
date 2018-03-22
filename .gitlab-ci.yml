@@ -1,7 +1,7 @@
 stages:
 #  - build
   - package
-  #- sign
+  - sign
 
 image:                  parity/rust:gitlab-ci
 
@@ -60,7 +60,7 @@ package:binaries:linux:
       - dist/*.AppImage
       - dist/*.xz
   tags:
-    - rust-stable
+    - linux
 package:binaries:mac:
   stage:                package
   only:                 *releaseable_branches
@@ -88,17 +88,18 @@ package:binaries:windows:
     paths:
       - dist/*.exe
   tags:
-    - rust-stable
+    - windows
 
-#sign:mac:
-#  stage:                sign
-#  only:                 *releaseable_branches
-#  before_script:
-#      - export VER="$(node -p "require('./package.json').version")"
-#      - export CSC_IDENTITY_AUTO_DISCOVERY=false
-#  dependencies:
-#    - package:binaries:mac
-#  script:
-#    - scripts/sign-mac.sh
-#  tags:
-#    - osx
+# Stage sign
+sign:mac:
+  stage:                sign
+  only:                 *releaseable_branches
+  before_script:
+      - export VER="$(node -p "require('./package.json').version")"
+      - export CSC_IDENTITY_AUTO_DISCOVERY=false
+  dependencies:
+    - package:binaries:mac
+  script:
+    - scripts/sign-mac.sh
+  tags:
+    - osx

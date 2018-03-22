@@ -24,6 +24,10 @@
     "oneClick": true,
     "perMachine": true
   },
+  "pkg": {
+    "allowAnywhere": false,
+    "allowCurrentUserHome": false
+  },
   "productName": "Parity UI",
   "win": {
     "icon": "./assets/icon/small-white-512x512.png",
