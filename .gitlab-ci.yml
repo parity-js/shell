@@ -64,6 +64,8 @@ package:binaries:linux:
 package:binaries:mac:
   stage:                package
   only:                 *releaseable_branches
+  variables:
+    ELECTRON_BUILDER_ALLOW_UNRESOLVED_DEPENDENCIES: true
   script:
     - npm run package -- --mac
   artifacts:
@@ -71,7 +73,7 @@ package:binaries:mac:
     when:               on_success
     expire_in:          1 week
     paths:
-      - dist/*.dmg
+      - dist/*.pkg
   tags:
     - osx
 package:binaries:windows:
@@ -86,7 +88,6 @@ package:binaries:windows:
     expire_in:          1 week
     paths:
       - dist/*.exe
-      - dist/*.zip
   tags:
     - rust-stable
 
