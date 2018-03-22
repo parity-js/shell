@@ -94,11 +94,13 @@ package:binaries:windows:
 publish:snap:
   stage: publish
   only:                 *publishable_branches
-  image:                parity/rust:gitlab-ci
+  image:                snapcore/snapcraft:stable
   dependencies:
     - package:binaries:linux
   variables:
     BUILD_ARCH: amd64
+  before_script:
+    - export VERSION=$(grep -m 1 "version" package.json | awk '{print $2}' | tr -d '",' | tr -d "\n")
   script:
     - scripts/publish-snap.sh
   tags:

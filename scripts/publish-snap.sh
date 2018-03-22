@@ -11,8 +11,8 @@ case ${CI_COMMIT_REF_NAME} in
 esac
 echo "Release channel :" $CHANNEL " Branch/tag: " $CI_COMMIT_REF_NAME
 
-echo $SNAPCRAFT_LOGIN_PARITY_BASE64 | base64 --decode > snapcraft.login
-snapcraft login --with snapcraft.login
+echo $SNAPCRAFT_LOGIN_PARITY_BASE64 | base64 --decode > exported
+snapcraft login --with exported
 snapcraft push --release $CHANNEL "dist/parity-ui_"$VERSION"_"$BUILD_ARCH".snap" >> push.log
 cat push.log
 REVISION="$(grep -m 1 "Revision " push.log | awk '{print $2}')"
