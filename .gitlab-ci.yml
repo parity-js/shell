@@ -94,7 +94,7 @@ package:binaries:windows:
 publish:snap:
   stage: publish
   only:                 *publishable_branches
-  image:                parity/snapcraft:gitlab-ci
+  image:                parity/rust:gitlab-ci
   dependencies:
     - package:binaries:linux
   variables:
