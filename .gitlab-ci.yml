@@ -60,7 +60,7 @@ package:binaries:linux:
       - dist/*.AppImage
       - dist/*.xz
   tags:
-    - linux
+    - rust-stable
 package:binaries:mac:
   stage:                package
   only:                 *releaseable_branches
@@ -88,7 +88,7 @@ package:binaries:windows:
     paths:
       - dist/*.exe
   tags:
-    - windows
+    - rust-stable
 
 # Stage sign
 sign:mac:
