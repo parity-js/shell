@@ -83,7 +83,7 @@ class Dapps extends Component {
               <div>
                 <FormattedMessage
                   id='dapps.external.warning'
-                  defaultMessage='Applications made available on the network by 3rd-party authors are not affiliated with Parity nor are they published by Parity. Each remain under the control of their respective authors. Please ensure that you understand the goals for each before interacting.'
+                  defaultMessage='Applications made available on the network by 3rd-party authors are not affiliated with Parity Technologies nor are they published by Parity Technologies. Each remain under the control of their respective authors. Please ensure that you understand the goals for each before interacting.'
                 />
               </div>
               <div>
@@ -92,7 +92,7 @@ class Dapps extends Component {
                   label={
                     <FormattedMessage
                       id='dapps.external.accept'
-                      defaultMessage='I understand that these applications are not affiliated with Parity'
+                      defaultMessage='I understand that these applications are not affiliated with Parity Technologies'
                     />
                   }
                   checked={ false }
