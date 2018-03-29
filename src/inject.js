@@ -21,7 +21,7 @@ import qs from 'query-string';
 console.log('This inject.js has been injected by the shell.');
 
 function initProvider () {
-  const match = window.location.pathname.match(/0x[a-f0-9]{64}|v1/i); // Find the appId
+  const match = window.location.pathname.match(/(0x)?[a-f0-9]{64}|v1/i); // Find the appId
   const query = qs.parse(window.location.search);
 
   let appId = match ? match[0] : query.appId;
