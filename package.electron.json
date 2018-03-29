@@ -29,6 +29,7 @@
     "allowCurrentUserHome": false
   },
   "productName": "Parity UI",
+  "publish": "github",
   "win": {
     "icon": "./assets/icon/small-white-512x512.png",
     "target": "nsis"
