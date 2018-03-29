@@ -20,7 +20,6 @@ script:
   - ./scripts/lint.sh
   - ./scripts/build.sh
   - ./scripts/push-precompiled.sh
-  - ./scripts/package.sh
 deploy:
   - provider: releases
     api_key: $GH_TOKEN
