@@ -44,7 +44,7 @@
     "lint:js": "eslint --ignore-path .gitignore ./src/",
     "lint:js:cached": "eslint --cache --ignore-path .gitignore ./src/",
     "lint:js:fix": "eslint --fix --ignore-path .gitignore ./src/",
-    "package": "npm run ci:build && electron-builder --config package.electron.json --publish onTagOrDraft",
+    "package": "npm run ci:build && electron-builder --config package.electron.json --publish always",
     "start": "npm run clean && npm install && npm run build:inject && npm run start:app",
     "start:app": "node webpack/dev.server",
     "test": "cross-env NODE_ENV=test mocha 'src/**/*.spec.js'",
