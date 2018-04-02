@@ -16,29 +16,39 @@
 
 import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
-import { FormattedMessage } from 'react-intl';
+import { FormattedMessage, injectIntl, intlShape } from 'react-intl';
 
-import Popup from 'semantic-ui-react/dist/commonjs/modules/Popup';
 import Button from '@parity/ui/lib/Button';
+import Icon from 'semantic-ui-react/dist/commonjs/elements/Icon';
+import messages from '@parity/dapp-dapp-methods/messages';
+import Popup from 'semantic-ui-react/dist/commonjs/modules/Popup';
 
 import methodGroups from '../../methodGroups';
 import styles from './RequestGroupSubItem.css';
 
+@injectIntl
 export default class RequestGroupSubItem extends PureComponent {
   handleApprove = () => this.props.onApprove(this.props.requests, this.props.groupId)
 
   handleReject = () => this.props.onReject(this.props.requests)
 
   render () {
-    const { groupId } = this.props;
+    const { groupId, intl: { formatMessage } } = this.props;
 
     return (
       <div className={ styles.requestGroupSubItem }>
         <span className={ styles.requestGroupSubItemTitle }>
-          Permission for{' '}
+          {formatMessage(messages[groupId])}{' '}
           <Popup
-            trigger={ <span>{groupId}</span> }
-            content={ `Requested methods: ${methodGroups[groupId].methods.join(', ')}` }
+            trigger={ <Icon name='help circle' /> }
+            content={
+              <div>
+                <FormattedMessage
+                  id='dappRequests.request.methodsRequested'
+                  defaultMessage='This dapp might use the following methods'
+                />: <code>{methodGroups[groupId].methods.join(', ')}</code>
+              </div>
+            }
           />
         </span>
         <Button
@@ -70,6 +80,7 @@ export default class RequestGroupSubItem extends PureComponent {
 RequestGroupSubItem.propTypes = {
   className: PropTypes.string,
   groupId: PropTypes.string,
+  intl: intlShape,
   onApprove: PropTypes.func.isRequired,
   onReject: PropTypes.func.isRequired,
   requests: PropTypes.array.isRequired

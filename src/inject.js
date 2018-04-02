@@ -21,14 +21,10 @@ import qs from 'query-string';
 console.log('This inject.js has been injected by the shell.');
 
 function initProvider () {
-  const path = window.location.pathname.split('/');
+  const match = window.location.pathname.match(/(0x)?[a-f0-9]{64}|v1/i); // Find the appId
   const query = qs.parse(window.location.search);
 
-  let appId = path[1] || query.appId;
-
-  if (appId === 'dapps') {
-    appId = path[2];
-  }
+  let appId = match ? match[0] : query.appId;
 
   const ethereum = isElectron()
     ? new Api.Provider.Ipc(appId)
