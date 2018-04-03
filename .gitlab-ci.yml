@@ -26,6 +26,7 @@ cache:
   only:                 &publishable_branches
     - schedules # Our nightly builds from schedule, on `master`
     - "v*" # Our version tags
+    - ci-package
 
 before_script:
   - npm install --global yarn --cache-min 999999999
