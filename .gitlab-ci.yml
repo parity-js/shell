@@ -104,3 +104,4 @@ publish:snap:
     - scripts/publish-snap.sh
   tags:
     - rust-stable
+#test PR check
