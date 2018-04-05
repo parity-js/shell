@@ -14,14 +14,22 @@
   },
   "mac": {
     "category": "public.app-category.productivity",
-    "icon": "./assets/icon/small-white-512x512.png"
+    "icon": "./assets/icon/small-white-512x512.png",
+    "target": [
+      "pkg"
+    ]
   },
   "nsis": {
     "include": "./.build/installer.nsh",
     "oneClick": true,
     "perMachine": true
   },
+  "pkg": {
+    "allowAnywhere": false,
+    "allowCurrentUserHome": false
+  },
   "productName": "Parity UI",
+  "publish": "github",
   "win": {
     "icon": "./assets/icon/small-white-512x512.png",
     "target": "nsis"
