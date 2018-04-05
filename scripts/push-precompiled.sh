@@ -1,7 +1,7 @@
 #!/bin/bash
 set -e
 
-if [ "$TRAVIS_PULL_REQUEST" != "false" -o "$TRAVIS_BRANCH" != "master" ]; then
+if [  "$CI_COMMIT_REF_NAME" != "master" ]; then
   echo "Not on master branch, skipping precompiled update"
   exit 0
 fi
@@ -10,7 +10,7 @@ fi
 PVER="1-10"
 PTYPE="shell"
 UTCDATE=`date -u "+%Y%m%d-%H%M%S"`
-PRE_REPO="js-dist-paritytech/parity-${TRAVIS_BRANCH}-${PVER}-${PTYPE}.git"
+PRE_REPO="js-dist-paritytech/parity-${CI_COMMIT_REF_NAME}-${PVER}-${PTYPE}.git"
 PRE_REPO_TOKEN="https://${GH_TOKEN}:@github.com/${PRE_REPO}"
 BASEDIR=`dirname $0`
 
@@ -22,7 +22,7 @@ git clone https://github.com/$PRE_REPO precompiled
 cd precompiled
 git config push.default simple
 git config merge.ours.driver true
-git config user.email "$GITHUB_EMAIL"
+git config user.email "$GITLAB_USER_EMAIL"
 git config user.name "GitLab Build Bot"
 git remote set-url origin $PRE_REPO_TOKEN > /dev/null 2>&1
 
