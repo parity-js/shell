@@ -113,7 +113,7 @@ describe('ParityBar', () => {
     });
 
     it('includes the Signer', () => {
-      expect(expanded.find('Connect(Embedded)')).to.have.length(1);
+      expect(expanded.find('Embedded')).to.have.length(1);
     });
   });
 
