@@ -24,9 +24,69 @@ If you run into any User Interface related issue while using Parity UI, feel fre
 
 You can download Parity UI at https://github.com/parity-js/shell/releases/latest or follow the instructions below to build from source.
 
-## Development
+## Install from the snap store
 
-TODO
+In any of the [supported Linux distros](https://snapcraft.io/docs/core/install):
+
+```bash
+sudo snap install parity-ui --beta
+```
+
+And to test the latest code landed into the master branch:
+
+```bash
+sudo snap install parity-ui --edge
+```
+
+---
+
+## Build from source
+
+Parity UI lives in the [`next`](https://github.com/Parity-JS/shell/tree/next) branch. The `master` branch contains the browser-based UI bundled inside Parity v1.9-stable. The `next` branch contains the standalone Electron app.
+
+The first step is to checkout the `next` branch:
+
+```bash
+git checkout next
+```
+
+Then run the following:
+
+```bash
+npm install
+npm run electron
+```
+
+You should see the Electron app popping up.
+
+### Build the binary (Optional)
+
+One further, albeit optional step is to create an OS-spefific binary. This is done with the following command:
+
+```bash
+npm run release
+```
+
+This command may take some time. Once finished, you will see binaries for you OS in the `dist/` folder.
+
+## Developing
+
+The best Developer Experience is achieved by running:
+
+```bash
+parity --ui-no-validation # Warning: INSECURE. Only use it when developing the UI.
+npm start
+```
+
+A new browser tab will open on `http://localhost:3000` with the UI, and this tab will refresh on any code change. This DX allows fast iterations.
+
+If you want to test the rendering in an Electron window, run parallely with the previous command:
+
+```bash
+npm run electron:dev
+```
+
+This will spawn an Electron window serving `http://localhost:3000`. Same thing, the Electron window will refresh on any code change.
 
 ## Screenshot
 ![Parity UI home](https://wiki.parity.io/images/parity-UI-0.jpg)
