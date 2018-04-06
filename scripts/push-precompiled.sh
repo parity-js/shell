@@ -1,7 +1,7 @@
 #!/bin/bash
 set -e
 
-if [  "$CI_COMMIT_REF_NAME" != "master" -o "$CI_COMMIT_REF_NAME" != "beta" ]; then
+if [  "$CI_COMMIT_REF_NAME" != "master" ]; then
   echo "Not on master branch, skipping precompiled update"
   exit 0
 fi
