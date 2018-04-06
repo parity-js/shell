@@ -26,6 +26,7 @@ let instance;
 
 function createApi () {
   return {
+    pubsub: { parity: { versionInfo: sinon.stub().resolves() } },
     updateToken: sinon.stub().resolves()
   };
 }
