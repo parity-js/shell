@@ -62,7 +62,7 @@ function renderUI (token) {
     // Take --flag options from electron if available
     const { remote } = window.require('electron');
 
-    wsUrl = `${remote.wsInterface || '127.0.0.1'}:${remote.wsPort || '8546'}`;
+    wsUrl = `${remote.getGlobal('wsInterface') || '127.0.0.1'}:${remote.getGlobal('wsPort') || '8546'}`;
   }
   const api = new SecureApi(wsUrl, token);
 

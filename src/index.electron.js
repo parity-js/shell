@@ -20,7 +20,6 @@ const dynamicRequire = typeof __non_webpack_require__ === 'undefined' ? require 
 const argv = dynamicRequire('yargs').argv;
 const electron = require('electron');
 const path = require('path');
-const pick = require('lodash/pick');
 const { spawn } = require('child_process');
 const url = require('url');
 
@@ -32,7 +31,8 @@ let mainWindow;
 
 // Will send these variables to renderers via IPC
 global.dirName = __dirname;
-Object.assign(global, pick(argv, ['wsInterface', 'wsPort']));
+global.wsInterface = argv['ws-interface'];
+global.wsPort = argv['ws-port'];
 parityInstallLocation()
   .then((location) => { global.parityInstallLocation = location; })
   .catch(() => { });
