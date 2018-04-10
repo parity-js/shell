@@ -292,6 +292,10 @@ class Connection extends Component {
           loading: isValid || false,
           validToken: isValid
         });
+        // If invalid token, we clear the token field
+        if (!isValid) {
+          this.setState({ token: '' });
+        }
       });
   }
 }
