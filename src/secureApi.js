@@ -158,14 +158,16 @@ export default class SecureApi extends Api {
           this._needsToken = false;
 
           // Emit the connected event
-          return this.emit('connected');
+          this.emit('connected');
+          return true;
         }
 
         // If not connected, we need a new token
         log.debug('needs a token');
         this._needsToken = true;
 
-        return this.emit('disconnected');
+        this.emit('disconnected');
+        return false;
       })
       .catch((error) => {
         this._isConnecting = false;
