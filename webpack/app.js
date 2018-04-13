@@ -24,6 +24,7 @@ const ExtractTextPlugin = require('extract-text-webpack-plugin');
 const WebpackErrorNotificationPlugin = require('webpack-error-notification');
 const CopyWebpackPlugin = require('copy-webpack-plugin');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
+const ServiceWorkerWebpackPlugin = require('serviceworker-webpack-plugin');
 
 const rulesEs6 = require('./rules/es6');
 const rulesParity = require('./rules/parity');
@@ -238,7 +239,12 @@ module.exports = {
             )
           ]),
           {}
-        )
+        ),
+
+        new ServiceWorkerWebpackPlugin({
+          entry: path.join(__dirname, '../src/serviceWorker.js'),
+          publicPath: path.join(__dirname, '../.build/')
+        }),
       );
     }
 
