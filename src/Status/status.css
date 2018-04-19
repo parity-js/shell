@@ -46,8 +46,12 @@ $statusHeight: 2.75em;
   }
 
   .warning {
-    background: red;
-    display: block;
+    background: orange;
+    opacity: 0.8;
+    position: absolute;
+    top: 38px;
+    z-index: 5;
+    width: 100%;
   }
 }
 
