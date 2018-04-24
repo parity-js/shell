@@ -62,10 +62,6 @@ module.exports = {
     {
       from: path.join(__dirname, '../electron/installers/windowInstaller.nsh'),
       to: 'installers/installer.nsh'
-    },
-    {
-      from: path.join(__dirname, '../electron/config.json'),
-      to: 'config.json'
     }
   ]))
 };

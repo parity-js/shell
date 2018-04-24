@@ -2,8 +2,8 @@
   "name": "parity-ui",
   "version": "0.1.1",
   "description": "The Electron app for Parity UI",
-  "main": ".build/electron.js",
-  "jsnext:main": ".build/electron.js",
+  "main": ".build/electron/index.js",
+  "jsnext:main": ".build/electron/index.js",
   "author": {
     "name": "Parity Technologies",
     "email": "admin@parity.io"

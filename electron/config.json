@@ -1,7 +1,7 @@
 {
   "appId": "io.parity.ui",
   "directories": {
-    "buildResources": "../.build/"
+    "buildResources": "."
   },
   "linux": {
     "category": "Utility",
