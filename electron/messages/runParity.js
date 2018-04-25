@@ -18,27 +18,46 @@ const { app } = require('electron');
 const flatten = require('lodash/flatten');
 const fs = require('fs');
 const { spawn } = require('child_process');
+const util = require('util');
 
 const cli = require('../cli');
 const parityPath = require('../util/parityPath');
 
 const [, parityArgv] = cli();
+const fsExists = util.promisify(fs.stat);
+const fsReadFile = util.promisify(fs.readFile);
+const fsUnlink = util.promisify(fs.unlink);
 
 module.exports = () => {
   // Create a logStream to save logs
-  var logStream = fs.createWriteStream(`${parityPath}.log`, { flags: 'a' });
+  const logFile = `${parityPath}.log`;
 
-  // Run an instance of parity if we receive the `run-parity` message
-  const parity = spawn(
-    parityPath,
-    ['--ws-origins', 'parity://*.ui.parity'] // Argument for retro-compatibility with <1.10 versions
-      .concat(
-        flatten(Object.keys(parityArgv).map(key => [`--${key}`, parityArgv[key]])) // Transform {arg: value} into [--arg, value]
-          .filter(value => value !== true) // --arg true is equivalent to --arg
-      )
-  );
+  fsExists(logFile)
+    .then(() => fsUnlink(logFile))
+    .catch(() => { })
+    .then(() => {
+      var logStream = fs.createWriteStream(logFile, { flags: 'a' });
 
-  parity.stdout.pipe(logStream);
-  parity.stderr.pipe(logStream);
-  parity.on('close', () => app.quit());
+      // Run an instance of parity if we receive the `run-parity` message
+      const parity = spawn(
+        parityPath,
+        ['--ws-origins', 'parity://*.ui.parity'] // Argument for retro-compatibility with <1.10 versions
+          .concat(
+            flatten(Object.keys(parityArgv).map(key => [`--${key}`, parityArgv[key]])) // Transform {arg: value} into [--arg, value]
+              .filter(value => value !== true) // --arg true is equivalent to --arg
+          )
+      );
+
+      parity.stdout.pipe(logStream);
+      parity.stderr.pipe(logStream);
+      parity.on('close', (exitCode) => {
+        if (exitCode === 0) { return; }
+
+        // If the exit code is not 0, then we print all the logs we had
+        fsReadFile(logFile)
+          .then(data => console.log(data.toString()))
+          .catch(console.log)
+          .then(() => app.quit());
+      });
+    });
 };
