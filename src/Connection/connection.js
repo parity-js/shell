@@ -49,7 +49,7 @@ class Connection extends Component {
 
   state = {
     loading: false,
-    parityInstallLocation: true,
+    parityInstalled: false,
     token: '',
     validToken: false
   }
@@ -59,12 +59,12 @@ class Connection extends Component {
   componentDidMount () {
     if (!isElectron()) { return; }
     const { ipcRenderer, remote } = electron;
-    const parityInstallLocation = remote.getGlobal('parityInstallLocation');
+    const parityInstalled = remote.getGlobal('parityInstalled');
 
-    this.setState({ parityInstallLocation });
+    this.setState({ parityInstalled });
 
-    // Run parity if parityInstallLocation !== null and not connected yet
-    if (!parityInstallLocation) { return; }
+    // Run parity if parityInstalled
+    if (!parityInstalled) { return; }
 
     // After 3s, check if ui is still isConnecting
     // If yes, then try to run `parity`
@@ -149,19 +149,19 @@ class Connection extends Component {
 
   renderIcon = () => {
     const { needsToken } = this.props;
-    const { parityInstallLocation } = this.state;
+    const { parityInstalled } = this.state;
 
     if (needsToken) { return <KeyIcon className={ styles.svg } />; }
-    if (!parityInstallLocation || !this.isVersionCorrect()) { return <Icon className={ styles.svg } name='warning sign' />; }
+    if (!parityInstalled || !this.isVersionCorrect()) { return <Icon className={ styles.svg } name='warning sign' />; }
     return <DashboardIcon className={ styles.svg } />;
   }
 
   renderText = () => {
     const { needsToken } = this.props;
-    const { parityInstallLocation } = this.state;
+    const { parityInstalled } = this.state;
 
     if (needsToken) { return this.renderSigner(); }
-    if (!parityInstallLocation) { return this.renderParityNotInstalled(); }
+    if (!parityInstalled) { return this.renderProgress(); }
     if (!this.isVersionCorrect()) { return this.renderIncorrectVersion(); }
     return this.renderPing();
   }
@@ -221,7 +221,7 @@ class Connection extends Component {
     );
   }
 
-  renderParityNotInstalled () {
+  renderProgress () {
     return (
       <div className={ styles.info }>
         <FormattedMessage
