@@ -19,6 +19,7 @@ const path = require('path');
 
 const rulesEs6 = require('./rules/es6');
 const rulesParity = require('./rules/parity');
+const Shared = require('./shared');
 
 const DEST = process.env.BUILD_DEST || '.build';
 const ENV = process.env.NODE_ENV || 'development';
@@ -54,5 +55,7 @@ module.exports = {
         }]
       }
     ]
-  }
+  },
+
+  plugins: Shared.getPlugins()
 };
