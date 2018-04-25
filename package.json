@@ -1,6 +1,6 @@
 {
   "name": "parity-ui",
-  "version": "0.1.1",
+  "version": "0.2.0",
   "description": "The Electron app for Parity UI",
   "main": ".build/electron/index.js",
   "jsnext:main": ".build/electron/index.js",
@@ -90,7 +90,7 @@
     "css-loader": "0.28.4",
     "ejs-loader": "0.3.0",
     "electron": "1.8.2",
-    "electron-builder": "20.2.0",
+    "electron-builder": "20.10.0",
     "empty-module": "0.0.2",
     "enzyme": "3.2.0",
     "enzyme-adapter-react-16": "1.1.0",
