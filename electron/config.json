@@ -1,7 +1,7 @@
 {
   "appId": "io.parity.ui",
   "directories": {
-    "buildResources": "."
+    "buildResources": "./"
   },
   "linux": {
     "category": "Utility",
@@ -20,7 +20,7 @@
     ]
   },
   "nsis": {
-    "include": ".build/installer.nsh",
+    "include": "./electron/installers/windows/installer.nsh",
     "oneClick": true,
     "perMachine": true
   },
