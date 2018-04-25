@@ -3,6 +3,9 @@
 set -e # fail on any error
 set -u # treat unset variables as error
 
+# TODO export in before_script not working
+VERSION=$(node -p "require('./package.json').version")
+
 case ${CI_COMMIT_REF_NAME} in
   master|ci-package) export CHANNEL="edge";;
   v0.2*) export CHANNEL="beta";;
