@@ -46,7 +46,7 @@ function createWindow () {
     width: 1200
   });
 
-  // Fetch parity is not yet installed
+  // Fetch parity if not yet installed
   fetchParity(mainWindow)
     .then(() => { global.parityInstalled = true; });
 
