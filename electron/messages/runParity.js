@@ -14,7 +14,7 @@
 // You should have received a copy of the GNU General Public License
 // along with Parity.  If not, see <http://www.gnu.org/licenses/>.
 
-const { app } = require('electron');
+const { app, dialog } = require('electron');
 const flatten = require('lodash/flatten');
 const fs = require('fs');
 const { spawn } = require('child_process');
@@ -27,6 +27,23 @@ const [, parityArgv] = cli();
 const fsExists = util.promisify(fs.stat);
 const fsReadFile = util.promisify(fs.readFile);
 const fsUnlink = util.promisify(fs.unlink);
+
+const handleError = (err) => {
+  console.error(err);
+  dialog.showMessageBox({
+    buttons: ['OK'],
+    detail: `Please attach the following debugging info:
+OS: ${process.platform}
+Arch: ${process.arch}
+Error: ${err.message}
+
+Please also attach the contents of the following file:
+${parityPath}.log`,
+    message: 'An error occured while running parity. Please file an issue at https://github.com/parity-js/shell/issues.',
+    title: 'Parity Error',
+    type: 'error'
+  }, () => app.exit(1));
+};
 
 module.exports = () => {
   // Create a logStream to save logs
@@ -50,14 +67,21 @@ module.exports = () => {
 
       parity.stdout.pipe(logStream);
       parity.stderr.pipe(logStream);
+      parity.on('error', handleError);
       parity.on('close', (exitCode) => {
         if (exitCode === 0) { return; }
 
-        // If the exit code is not 0, then we print all the logs we had
-        fsReadFile(logFile)
-          .then(data => console.log(data.toString()))
-          .catch(console.log)
-          .then(() => app.quit());
+        // If the exit code is not 0, then we show some error message
+        if (Object.keys(parityArgv).length) {
+          // If parity has been launched with some args, then most likely the
+          // args are wrong, so we show the output of parity.
+          fsReadFile(logFile)
+            .then(data => console.log(data.toString()))
+            .catch(console.log)
+            .then(() => app.quit());
+        } else {
+          handleError(new Error(`Exit code: ${exitCode}.`));
+        }
       });
     });
 };
