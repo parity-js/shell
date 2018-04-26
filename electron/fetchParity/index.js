@@ -15,9 +15,9 @@
 // along with Parity.  If not, see <http://www.gnu.org/licenses/>.
 
 const { app, dialog, webContents } = require('electron');
+const axios = require('axios');
 const { download } = require('electron-dl');
 const fs = require('fs');
-const request = require('request-promise');
 const util = require('util');
 
 const { parity: { channel } } = require('../../package.json');
@@ -61,11 +61,8 @@ module.exports = (mainWindow) => {
   // Download parity if not exist in userData
   // Fetching from https://vanity-service.parity.io/parity-binaries
   return fsExists(parityPath)
-    .catch(() => request({
-      json: true,
-      url: `https://vanity-service.parity.io/parity-binaries?version=${channel}&os=${getOs()}&arch=${getArch()}`
-    })
-      .then((response) => response[0].files.find(({ name }) => name === 'parity'))
+    .catch(() => axios.get(`https://vanity-service.parity.io/parity-binaries?version=${channel}&os=${getOs()}&arch=${getArch()}`)
+      .then((response) => response.data[0].files.find(({ name }) => name === 'parity'))
       .then(({ downloadUrl }) => download(
         mainWindow,
         downloadUrl,
