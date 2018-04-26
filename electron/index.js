@@ -31,16 +31,16 @@ let mainWindow;
 // Get arguments from cli
 const [argv] = cli();
 
-// If cli() returns false, then it means that the arguments are stopping the
-// app (e.g. --help or --version). We don't do anything more in this case.
-if (!argv) { return; }
-
 // Will send these variables to renderers via IPC
 global.dirName = __dirname;
 global.wsInterface = argv['ws-interface'];
 global.wsPort = argv['ws-port'];
 
 function createWindow () {
+  // If cli() returns false, then it means that the arguments are stopping the
+  // app (e.g. --help or --version). We don't do anything more in this case.
+  if (!argv) { return; }
+
   mainWindow = new BrowserWindow({
     height: 800,
     width: 1200
