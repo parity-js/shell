@@ -97,6 +97,14 @@ app.on('window-all-closed', () => {
 app.on('before-quit', () => {
   if (parity) {
     parity.kill();
+    parity = null;
+  }
+});
+
+app.on('will-quit', () => {
+  if (parity) {
+    parity.kill();
+    parity = null;
   }
 });
 
