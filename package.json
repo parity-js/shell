@@ -24,6 +24,9 @@
     "Ethereum",
     "Parity"
   ],
+  "parity": {
+    "channel": "beta"
+  },
   "scripts": {
     "build": "npm run build:inject && npm run build:app && npm run build:electron && npm run build:embed",
     "build:app": "webpack --config webpack/app",
@@ -184,6 +187,7 @@
     "react-tap-event-plugin": "3.0.2",
     "react-transition-group": "2.2.1",
     "redux": "3.7.2",
+    "request-promise": "4.2.2",
     "semantic-ui-react": "0.77.0",
     "solc": "ngotchac/solc-js",
     "store": "1.3.20"

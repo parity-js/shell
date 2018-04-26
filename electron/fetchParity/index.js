@@ -14,27 +14,81 @@
 // You should have received a copy of the GNU General Public License
 // along with Parity.  If not, see <http://www.gnu.org/licenses/>.
 
-const { app, webContents } = require('electron');
+const { app, dialog, webContents } = require('electron');
 const { download } = require('electron-dl');
 const fs = require('fs');
+const request = require('request-promise');
 const util = require('util');
 
+const { parity: { channel } } = require('../../package.json');
 const parityPath = require('../util/parityPath');
 
 const fsExists = util.promisify(fs.stat);
 const fsChmod = util.promisify(fs.chmod);
 
+const getArch = () => {
+  switch (process.platform) {
+    case 'darwin':
+    case 'win32':
+      return 'x86_64';
+    default: {
+      switch (process.arch) {
+        case 'arm':
+          return 'arm';
+        case 'arm64':
+          return 'aarch64';
+        case 'x32':
+          return 'i686';
+        default:
+          return 'x86_64';
+      }
+    }
+  }
+};
+
+const getOs = () => {
+  switch (process.platform) {
+    case 'darwin':
+      return 'darwin';
+    case 'win32':
+      return 'windows';
+    default:
+      return 'linux';
+  }
+};
+
 module.exports = (mainWindow) => {
   // Download parity if not exist in userData
+  // Fetching from https://vanity-service.parity.io/parity-binaries
   return fsExists(parityPath)
-    .catch(() => download(
-      mainWindow,
-      'http://d1h4xl4cr1h0mo.cloudfront.net/beta/x86_64-apple-darwin/parity',
-      {
-        directory: app.getPath('userData'),
-        onProgress: (progress) => webContents.fromId(mainWindow.id).send('parity-download-progress', progress)
-      }
-    ))
+    .catch(() => request({
+      json: true,
+      url: `https://vanity-service.parity.io/parity-binaries?version=${channel}&os=${getOs()}&arch=${getArch()}`
+    })
+      .then((response) => response[0].files.find(({ name }) => name === 'parity'))
+      .then(({ downloadUrl }) => download(
+        mainWindow,
+        downloadUrl,
+        {
+          directory: app.getPath('userData'),
+          onProgress: (progress) => webContents.fromId(mainWindow.id).send('parity-download-progress', progress)
+        }
+      ))
+    )
     .then(() => fsChmod(parityPath, '755'))
-    .then(() => parityPath);
+    .then(() => parityPath)
+    .catch((err) => {
+      console.error(err);
+      dialog.showMessageBox({
+        buttons: ['OK'],
+        detail: `Please attach the following debugging info:
+OS: ${process.platform}
+Arch: ${process.arch}
+Channel: ${channel}
+Error: ${err.message}`,
+        message: 'An error occured while downloading parity. Please file an issue at https://github.com/parity-js/shell/issues.',
+        title: 'Parity Error',
+        type: 'error'
+      }, () => app.exit(1));
+    });
 };
