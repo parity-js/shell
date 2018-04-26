@@ -136,8 +136,3 @@
 .formInput input[type=text]:focus {
   background: rgba(0, 0, 0, 0.25) !important;
 }
-
-.progress {
-  color: white;
-  width: 200px;
-}
