@@ -134,7 +134,6 @@ export default class Dapp extends Component {
     const preload = `file://${path.join(
       posixDirName,
       '..',
-      '.build',
       'inject.js'
     )}`;
 

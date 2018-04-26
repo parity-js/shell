@@ -16,7 +16,6 @@
 // along with Parity.  If not, see <http://www.gnu.org/licenses/>.
 
 const path = require('path');
-const CopyWebpackPlugin = require('copy-webpack-plugin');
 
 const rulesEs6 = require('./rules/es6');
 const rulesParity = require('./rules/parity');
@@ -30,11 +29,11 @@ const isProd = ENV === 'production';
 module.exports = {
   cache: !isProd,
   devtool: '#source-map',
-  context: path.join(__dirname, '../src'),
-  entry: { electron: './index.electron.js' },
+  context: path.join(__dirname, '../electron'),
+  entry: './index.js',
   output: {
-    path: path.join(__dirname, '../', DEST),
-    filename: '[name].js'
+    path: path.join(__dirname, '../', DEST, 'electron'),
+    filename: 'index.js'
   },
   node: {
     __dirname: false
@@ -58,8 +57,5 @@ module.exports = {
     ]
   },
 
-  plugins: Shared.getPlugins().concat(new CopyWebpackPlugin([{
-    from: path.join(__dirname, '../src/util/windowInstaller.nsh'),
-    to: 'installer.nsh'
-  }]))
+  plugins: Shared.getPlugins()
 };

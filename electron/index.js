@@ -23,10 +23,12 @@ const path = require('path');
 const { spawn } = require('child_process');
 const url = require('url');
 
+const addMenu = require('./menu');
+
 let parity; // Will hold the parity process (if spawned by node)
 const parityInstallLocation = require('./util/parityInstallLocation');
 
-const { app, BrowserWindow, ipcMain, Menu, session, shell } = electron;
+const { app, BrowserWindow, ipcMain, session } = electron;
 let mainWindow;
 
 // Will send these variables to renderers via IPC
@@ -52,7 +54,7 @@ function createWindow () {
     // TODO Check if file exists?
     mainWindow.loadURL(
       url.format({
-        pathname: path.join(__dirname, '..', '.build', 'index.html'),
+        pathname: path.join(__dirname, '..', 'index.html'),
         protocol: 'file:',
         slashes: true
       })
@@ -91,93 +93,8 @@ function createWindow () {
     }
   });
 
-  // Create the Application's main menu
-  // https://github.com/electron/electron/blob/master/docs/api/menu.md#examples
-  const template = [
-    {
-      label: 'Edit',
-      submenu: [
-        { role: 'cut' },
-        { role: 'copy' },
-        { role: 'paste' },
-        { role: 'delete' },
-        { role: 'selectall' }
-      ]
-    },
-    {
-      label: 'View',
-      submenu: [
-        { role: 'reload' },
-        { role: 'forcereload' },
-        { role: 'toggledevtools' },
-        { type: 'separator' },
-        { role: 'resetzoom' },
-        { role: 'zoomin' },
-        { role: 'zoomout' },
-        { type: 'separator' },
-        { role: 'togglefullscreen' }
-      ]
-    },
-    {
-      role: 'window',
-      submenu: [
-        { role: 'minimize' },
-        { role: 'close' }
-      ]
-    },
-    {
-      role: 'help',
-      submenu: [
-        {
-          label: 'Learn More',
-          click () { shell.openExternal('https://parity.io'); }
-        }
-      ]
-    }
-  ];
-
-  if (process.platform === 'darwin') {
-    template.unshift({
-      label: app.getName(),
-      submenu: [
-        { role: 'about' },
-        { type: 'separator' },
-        { role: 'services', submenu: [] },
-        { type: 'separator' },
-        { role: 'hide' },
-        { role: 'hideothers' },
-        { role: 'unhide' },
-        { type: 'separator' },
-        { role: 'quit' }
-      ]
-    });
-
-    // Edit menu
-    template[1].submenu.push(
-      { type: 'separator' },
-      {
-        label: 'Speech',
-        submenu: [
-          { role: 'startspeaking' },
-          { role: 'stopspeaking' }
-        ]
-      }
-    );
-
-    // Window menu
-    template[3].submenu = [
-      { role: 'close' },
-      { role: 'minimize' },
-      { role: 'zoom' },
-      { type: 'separator' },
-      { role: 'front' }
-    ];
-  }
-
-  const menu = Menu.buildFromTemplate(template);
-
-  Menu.setApplicationMenu(menu);
-  mainWindow.setAutoHideMenuBar(true);
+  // Add application menu
+  addMenu(mainWindow);
 
   // WS calls have Origin `file://` by default, which is not trusted.
   // We override Origin header on all WS connections with an authorized one.

@@ -20,7 +20,7 @@
     ]
   },
   "nsis": {
-    "include": "./.build/installer.nsh",
+    "include": "./electron/installers/windows/installer.nsh",
     "oneClick": true,
     "perMachine": true
   },
@@ -32,6 +32,7 @@
   "publish": "github",
   "win": {
     "icon": "./assets/icon/small-white-512x512.png",
+    "publisherName": "Parity Technologies (UK) Ltd.",
     "target": "nsis"
   }
 }
