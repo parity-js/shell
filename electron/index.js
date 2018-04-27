@@ -97,6 +97,7 @@ app.on('window-all-closed', () => {
 // Make sure parity stops when UI stops
 app.on('before-quit', killParity);
 app.on('will-quit', killParity);
+app.on('quit', killParity);
 
 app.on('activate', () => {
   if (mainWindow === null) {
