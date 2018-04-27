@@ -22,8 +22,7 @@ const addMenu = require('./menu');
 const cli = require('./cli');
 const fetchParity = require('./fetchParity');
 const messages = require('./messages');
-
-let parity; // Will hold the parity process (if spawned by node)
+const { killParity } = require('./messages/runParity');
 
 const { app, BrowserWindow, ipcMain, session } = electron;
 let mainWindow;
@@ -90,23 +89,14 @@ app.on('ready', createWindow);
 
 app.on('window-all-closed', () => {
   if (process.platform !== 'darwin') {
+    killParity();
     app.quit();
   }
 });
 
-app.on('before-quit', () => {
-  if (parity) {
-    parity.kill();
-    parity = null;
-  }
-});
-
-app.on('will-quit', () => {
-  if (parity) {
-    parity.kill();
-    parity = null;
-  }
-});
+// Make sure parity stops when UI stops
+app.on('before-quit', killParity);
+app.on('will-quit', killParity);
 
 app.on('activate', () => {
   if (mainWindow === null) {
