@@ -92,16 +92,14 @@ package:binaries:windows:
 publish:snap:
   stage:                publish
   only:                 *publishable_branches
-  image:                snapcore/snapcraft:stable
+  image:                parity/snapcraft:gitlab-ci
   dependencies:
     - package:binaries:linux
   variables:
     BUILD_ARCH: amd64
   before_script:
-    - apt install nodejs
     - export VERSION=$(node -p "require('./package.json').version")
   script:
     - scripts/publish-snap.sh
   tags:
     - rust-stable
-#test PR check1
