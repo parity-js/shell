@@ -179,9 +179,10 @@ class Connection extends Component {
 
   renderText = () => {
     const { needsToken } = this.props;
-    const { parityInstalled } = this.state;
+    const { parityInstalled, progress } = this.state;
 
     if (needsToken) { return this.renderSigner(); }
+    if (progress === 1) { return this.renderRunningParity(); }
     if (!parityInstalled) { return this.renderProgress(); }
     if (!this.isVersionCorrect()) { return this.renderIncorrectVersion(); }
     return this.renderPing();
@@ -279,6 +280,15 @@ class Connection extends Component {
         />
       </div>
     );
+  }
+
+  renderRunningParity () {
+    return <div className={ styles.info }>
+      <FormattedMessage
+        id='connection.runningParity'
+        defaultMessage='Running parity...'
+      />
+    </div>;
   }
 
   runParity = () => {
