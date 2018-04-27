@@ -16,8 +16,10 @@
 
 const { app } = require('electron');
 
-let parityPath = `${app.getPath('userData')}/parity`; // Cache value
+const parityPath = `${app.getPath('userData')}/parity`;
 
-// Return function instead of value directly, for more flexibility for future
-// use.
+// TODO parityPath is now in the Application Data folder by default, it would
+// be nice to first look if /usr/bin/parity exists (and return that as
+// parityPath). For now we keep Application Data as parityPath.
+// See https://github.com/parity-js/shell/issues/66
 module.exports = () => parityPath;

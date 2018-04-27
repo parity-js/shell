@@ -57,5 +57,5 @@ module.exports = {
     ]
   },
 
-  plugins: Shared.getPlugins(false)
+  plugins: Shared.getPlugins(false) // UglifyJS bugs on electron-dl, so we don't use isProd
 };
