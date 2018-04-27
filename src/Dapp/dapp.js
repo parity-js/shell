@@ -20,6 +20,7 @@ import isElectron from 'is-electron';
 import { observer } from 'mobx-react';
 import PropTypes from 'prop-types';
 import path from 'path';
+import url from 'url';
 
 import builtinDapps from '@parity/shared/lib/config/dappsBuiltin.json';
 import viewsDapps from '@parity/shared/lib/config/dappsViews.json';
@@ -78,6 +79,17 @@ export default class Dapp extends Component {
     // Log console.logs from webview
     webview.addEventListener('console-message', e => {
       console.log('[DAPP]', e.message);
+    });
+
+    // Open all <a target="_blank"> in browser
+    webview.addEventListener('new-window', (e) => {
+      const protocol = url.parse(e.url).protocol;
+
+      if (protocol === 'http:' || protocol === 'https:') {
+        const { shell } = window.require('electron');
+
+        shell.openExternal(e.url);
+      }
     });
 
     // Reput eventListeners when webview has finished loading dapp
