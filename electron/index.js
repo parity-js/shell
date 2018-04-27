@@ -55,10 +55,9 @@ function createWindow () {
     mainWindow.webContents.openDevTools();
   } else {
     // Opens file:///path/to/.build/index.html in prod mode
-    // TODO Check if file exists?
     mainWindow.loadURL(
       url.format({
-        pathname: path.join(__dirname, '..', 'index.html'),
+        pathname: path.join(__dirname, '..', '.build', 'index.html'),
         protocol: 'file:',
         slashes: true
       })

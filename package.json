@@ -2,8 +2,8 @@
   "name": "parity-ui",
   "version": "0.2.0",
   "description": "The Electron app for Parity UI",
-  "main": ".build/electron/index.js",
-  "jsnext:main": ".build/electron/index.js",
+  "main": ".build/electron.js",
+  "jsnext:main": ".build/electron.js",
   "author": {
     "name": "Parity Technologies",
     "email": "admin@parity.io"
@@ -37,8 +37,8 @@
     "ci:build": "cross-env NODE_ENV=production npm run build",
     "clean": "rimraf ./.build ./.coverage ./.happypack",
     "coveralls": "npm run testCoverage && coveralls < coverage/lcov.info",
-    "electron": "npm run build && electron .build/electron/",
-    "electron:dev": "electron electron/ --ui-dev",
+    "electron": "npm run build && electron .build/electron.js",
+    "electron:dev": "electron electron/ --dev",
     "lint": "npm run lint:css && npm run lint:js",
     "lint:cached": "npm run lint:css && npm run lint:js:cached",
     "lint:css": "stylelint ./src/**/*.css",
