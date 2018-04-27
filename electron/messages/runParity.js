@@ -91,7 +91,7 @@ module.exports = {
   killParity () {
     if (parity) {
       console.log('Stopping parity.');
-      parity.kill('SIGINT');
+      parity.kill();
       parity = null;
     }
   }
