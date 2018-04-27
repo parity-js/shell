@@ -98,6 +98,7 @@ publish:snap:
   variables:
     BUILD_ARCH: amd64
   before_script:
+    - apt install nodejs
     - export VERSION=$(node -p "require('./package.json').version")
   script:
     - scripts/publish-snap.sh
