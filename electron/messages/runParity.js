@@ -40,7 +40,7 @@ Arch: ${process.arch}
 Error: ${err.message}
 
 Please also attach the contents of the following file:
-${parityPath}.log`,
+${parityPath()}.log`,
     message: 'An error occured while running parity. Please file an issue at https://github.com/parity-js/shell/issues.',
     title: 'Parity Error',
     type: 'error'
@@ -50,7 +50,7 @@ ${parityPath}.log`,
 module.exports = {
   runParity () {
     // Create a logStream to save logs
-    const logFile = `${parityPath}.log`;
+    const logFile = `${parityPath()}.log`;
 
     fsExists(logFile)
       .then(() => fsUnlink(logFile))
@@ -60,7 +60,7 @@ module.exports = {
 
         // Run an instance of parity if we receive the `run-parity` message
         parity = spawn(
-          parityPath,
+          parityPath(),
           ['--ws-origins', 'parity://*.ui.parity'] // Argument for retro-compatibility with <1.10 versions
             .concat(
               flatten(Object.keys(parityArgv).map(key => [`--${key}`, parityArgv[key]])) // Transform {arg: value} into [--arg, value]
@@ -71,7 +71,7 @@ module.exports = {
         parity.stdout.pipe(logStream);
         parity.stderr.pipe(logStream);
         parity.on('error', handleError);
-        parity.on('close', (exitCode) => {
+        parity.on('close', (exitCode, signal) => {
           if (exitCode === 0) { return; }
 
           // If the exit code is not 0, then we show some error message
@@ -83,14 +83,15 @@ module.exports = {
               .catch(console.log)
               .then(() => app.quit());
           } else {
-            handleError(new Error(`Exit code: ${exitCode}.`));
+            handleError(new Error(`Exit code: ${exitCode} with signal: ${signal}.`));
           }
         });
       });
   },
   killParity () {
     if (parity) {
-      parity.kill();
+      console.log('Stopping parity.');
+      parity.kill('SIGINT');
       parity = null;
     }
   }

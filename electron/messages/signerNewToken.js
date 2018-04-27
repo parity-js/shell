@@ -20,7 +20,7 @@ const parityPath = require('../util/parityPath');
 
 module.exports = (event) => {
   // Generate a new token
-  const paritySigner = spawn(parityPath, ['signer', 'new-token']);
+  const paritySigner = spawn(parityPath(), ['signer', 'new-token']);
 
   // Listen to the output of the previous command
   paritySigner.stdout.on('data', (data) => {
@@ -35,5 +35,4 @@ module.exports = (event) => {
       paritySigner.kill(); // We don't need the signer anymore
     }
   });
-}
-  ;
+};

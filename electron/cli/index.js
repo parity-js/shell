@@ -35,8 +35,8 @@ let parityArgv = null; // Args to pass to `parity` command
  * @param {Array<String>} args - The arguments to pass to `parity`.
  */
 const showParityOutput = args => {
-  if (fs.existsSync(parityPath)) {
-    const parityHelp = spawn(parityPath, args);
+  if (fs.existsSync(parityPath())) {
+    const parityHelp = spawn(parityPath(), args);
 
     parityHelp.stdout.on('data', data => console.log(data.toString()));
     parityHelp.on('close', () => app.quit());

@@ -16,4 +16,8 @@
 
 const { app } = require('electron');
 
-module.exports = `${app.getPath('userData')}/parity`;
+let parityPath = `${app.getPath('userData')}/parity`; // Cache value
+
+// Return function instead of value directly, for more flexibility for future
+// use.
+module.exports = () => parityPath;
