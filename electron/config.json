@@ -5,6 +5,7 @@
   },
   "linux": {
     "category": "Utility",
+    "icon": "./assets/icon/small-white-512x512.png",
     "target": [
       "AppImage",
       "snap",

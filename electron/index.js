@@ -14,39 +14,43 @@
 // You should have received a copy of the GNU General Public License
 // along with Parity.  If not, see <http://www.gnu.org/licenses/>.
 
-// eslint-disable-next-line
-const dynamicRequire = typeof __non_webpack_require__ === 'undefined' ? require : __non_webpack_require__; // Dynamic require https://github.com/yargs/yargs/issues/781
-
-const argv = dynamicRequire('yargs').argv;
 const electron = require('electron');
 const path = require('path');
-const { spawn } = require('child_process');
 const url = require('url');
 
 const addMenu = require('./menu');
-
-let parity; // Will hold the parity process (if spawned by node)
-const parityInstallLocation = require('./util/parityInstallLocation');
+const cli = require('./cli');
+const fetchParity = require('./fetchParity');
+const messages = require('./messages');
+const { killParity } = require('./messages/runParity');
 
 const { app, BrowserWindow, ipcMain, session } = electron;
 let mainWindow;
+
+// Get arguments from cli
+const [argv] = cli();
 
 // Will send these variables to renderers via IPC
 global.dirName = __dirname;
 global.wsInterface = argv['ws-interface'];
 global.wsPort = argv['ws-port'];
-parityInstallLocation()
-  .then((location) => { global.parityInstallLocation = location; })
-  .catch(() => { });
 
 function createWindow () {
+  // If cli() returns false, then it means that the arguments are stopping the
+  // app (e.g. --help or --version). We don't do anything more in this case.
+  if (!argv) { return; }
+
   mainWindow = new BrowserWindow({
     height: 800,
     width: 1200
   });
 
-  if (argv.dev === true) {
-    // Opens http://127.0.0.1:3000 in --dev mode
+  // Fetch parity if not yet installed
+  fetchParity(mainWindow)
+    .then(() => { global.parityInstalled = true; });
+
+  if (argv['ui-dev'] === true) {
+    // Opens http://127.0.0.1:3000 in --ui-dev mode
     mainWindow.loadURL('http://127.0.0.1:3000');
     mainWindow.webContents.openDevTools();
   } else {
@@ -62,36 +66,7 @@ function createWindow () {
   }
 
   // Listen to messages from renderer process
-  ipcMain.on('asynchronous-message', (event, arg) => {
-    switch (arg) {
-      case 'run-parity': {
-        // Run an instance of parity if we receive the `run-parity` message
-        parity = spawn(global.parityInstallLocation, ['--ws-origins', 'parity://*.ui.parity']); // Argument for retro-compatibility with <1.10 versions
-        break;
-      }
-      case 'signer-new-token': {
-        // Generate a new token if we can find the parity binary
-        if (!global.parityInstallLocation) { return; }
-        const paritySigner = spawn(global.parityInstallLocation, ['signer', 'new-token']);
-
-        // Listen to the output of the previous command
-        paritySigner.stdout.on('data', (data) => {
-          // If the output line is xxxx-xxxx-xxxx-xxxx, then it's our token
-          const match = data.toString().match(/[a-zA-Z0-9]{4}(-)?[a-zA-Z0-9]{4}(-)?[a-zA-Z0-9]{4}(-)?[a-zA-Z0-9]{4}/);
-
-          if (match) {
-            const token = match[0];
-
-            // Send back the token to the renderer process
-            event.sender.send('asynchronous-reply', token);
-            paritySigner.kill(); // We don't need the signer anymore
-          }
-        });
-        break;
-      }
-      default:
-    }
-  });
+  ipcMain.on('asynchronous-message', messages);
 
   // Add application menu
   addMenu(mainWindow);
@@ -114,15 +89,15 @@ app.on('ready', createWindow);
 
 app.on('window-all-closed', () => {
   if (process.platform !== 'darwin') {
+    killParity();
     app.quit();
   }
 });
 
-app.on('will-quit', () => {
-  if (parity) {
-    parity.kill();
-  }
-});
+// Make sure parity stops when UI stops
+app.on('before-quit', killParity);
+app.on('will-quit', killParity);
+app.on('quit', killParity);
 
 app.on('activate', () => {
   if (mainWindow === null) {

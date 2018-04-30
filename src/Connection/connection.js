@@ -16,6 +16,7 @@
 
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
+import { Circle } from 'react-progress-bar.js';
 import { FormattedMessage } from 'react-intl';
 import isElectron from 'is-electron';
 import { observer } from 'mobx-react';
@@ -49,7 +50,8 @@ class Connection extends Component {
 
   state = {
     loading: false,
-    parityInstallLocation: true,
+    parityInstalled: false,
+    progress: 0,
     token: '',
     validToken: false
   }
@@ -59,12 +61,21 @@ class Connection extends Component {
   componentDidMount () {
     if (!isElectron()) { return; }
     const { ipcRenderer, remote } = electron;
-    const parityInstallLocation = remote.getGlobal('parityInstallLocation');
+    const parityInstalled = remote.getGlobal('parityInstalled');
 
-    this.setState({ parityInstallLocation });
+    this.setState({ parityInstalled });
 
-    // Run parity if parityInstallLocation !== null and not connected yet
-    if (!parityInstallLocation) { return; }
+    // Listen to messages from main process
+    ipcRenderer.on('parity-download-progress', (_, progress) => {
+      // Run parity once the installation is finished
+      if (progress === 1 && this.state.progress < 1) {
+        setTimeout(() => this.runParity(), 1000);
+      }
+      this.setState({ progress });
+    });
+
+    // Run parity if parityInstalled
+    if (!parityInstalled) { return; }
 
     // After 3s, check if ui is still isConnecting
     // If yes, then try to run `parity`
@@ -74,8 +85,7 @@ class Connection extends Component {
     // TODO Find a more reliable way to know if parity is running or not
     setTimeout(() => {
       if (!this.props.isConnecting) { return; }
-      console.log('Launching parity.');
-      ipcRenderer.send('asynchronous-message', 'run-parity');
+      this.runParity();
     }, 3000);
   }
 
@@ -149,19 +159,31 @@ class Connection extends Component {
 
   renderIcon = () => {
     const { needsToken } = this.props;
-    const { parityInstallLocation } = this.state;
+    const { parityInstalled, progress } = this.state;
 
     if (needsToken) { return <KeyIcon className={ styles.svg } />; }
-    if (!parityInstallLocation || !this.isVersionCorrect()) { return <Icon className={ styles.svg } name='warning sign' />; }
+    if (!parityInstalled || progress) {
+      return (
+        <Circle
+          containerStyle={ { height: '100px', marginTop: '-75px', width: '100px' } }
+          initialAnimate
+          options={ { color: 'rgb(208, 208, 208)', strokeWidth: 5 } }
+          progress={ progress }
+          text={ `${Math.round(progress * 100)}%` }
+        />
+      );
+    }
+    if (!this.isVersionCorrect()) { return <Icon className={ styles.svg } name='warning sign' />; }
     return <DashboardIcon className={ styles.svg } />;
   }
 
   renderText = () => {
     const { needsToken } = this.props;
-    const { parityInstallLocation } = this.state;
+    const { parityInstalled, progress } = this.state;
 
     if (needsToken) { return this.renderSigner(); }
-    if (!parityInstallLocation) { return this.renderParityNotInstalled(); }
+    if (progress === 1) { return this.renderRunningParity(); }
+    if (!parityInstalled) { return this.renderProgress(); }
     if (!this.isVersionCorrect()) { return this.renderIncorrectVersion(); }
     return this.renderPing();
   }
@@ -221,13 +243,12 @@ class Connection extends Component {
     );
   }
 
-  renderParityNotInstalled () {
+  renderProgress () {
     return (
       <div className={ styles.info }>
         <FormattedMessage
-          id='connection.noParity'
-          defaultMessage="We couldn't find any Parity installation on this computer. If you have it installed, please run it now. If not, please follow the instructions on {link} to install Parity first."
-          values={ { link: <a href='#' onClick={ this.handleOpenWebsite }>https://parity.io</a> } }
+          id='connection.installingParity'
+          defaultMessage='Please wait while we are fetching the latest version of Parity and installing it. This may take a few minutes.'
         />
       </div>
     );
@@ -259,6 +280,22 @@ class Connection extends Component {
         />
       </div>
     );
+  }
+
+  renderRunningParity () {
+    return <div className={ styles.info }>
+      <FormattedMessage
+        id='connection.runningParity'
+        defaultMessage='Running parity...'
+      />
+    </div>;
+  }
+
+  runParity = () => {
+    const { ipcRenderer } = electron;
+
+    console.log('Launching parity.');
+    ipcRenderer.send('asynchronous-message', 'run-parity');
   }
 
   validateToken = (_token) => {

@@ -24,6 +24,9 @@
     "Ethereum",
     "Parity"
   ],
+  "parity": {
+    "channel": "beta"
+  },
   "scripts": {
     "build": "npm run build:inject && npm run build:app && npm run build:electron && npm run build:embed",
     "build:app": "webpack --config webpack/app",
@@ -35,7 +38,7 @@
     "clean": "rimraf ./.build ./.coverage ./.happypack",
     "coveralls": "npm run testCoverage && coveralls < coverage/lcov.info",
     "electron": "npm run build && electron .build/electron/",
-    "electron:dev": "electron electron/ --dev",
+    "electron:dev": "electron electron/ --ui-dev",
     "lint": "npm run lint:css && npm run lint:js",
     "lint:cached": "npm run lint:css && npm run lint:js:cached",
     "lint:css": "stylelint ./src/**/*.css",
@@ -89,7 +92,7 @@
     "cross-env": "5.1.1",
     "css-loader": "0.28.4",
     "ejs-loader": "0.3.0",
-    "electron": "1.8.2",
+    "electron": "1.8.4",
     "electron-builder": "20.10.0",
     "empty-module": "0.0.2",
     "enzyme": "3.2.0",
@@ -160,7 +163,9 @@
     "@parity/plugin-signer-qr": "github:parity-js/plugin-signer-qr#c275ba13524e9f6759079fabd10faf49cc00cfc0",
     "@parity/shared": "2.2.25",
     "@parity/ui": "3.1.4",
+    "axios": "0.18.0",
     "command-exists": "1.2.2",
+    "electron-dl": "1.11.0",
     "is-electron": "2.1.0",
     "keythereum": "1.0.2",
     "lodash.flatten": "4.4.0",
@@ -176,6 +181,7 @@
     "react-dom": "16.1.1",
     "react-intl": "2.4.0",
     "react-markdown": "3.0.2",
+    "react-progress-bar.js": "0.2.3",
     "react-redux": "^5.0.6",
     "react-router": "3.2.0",
     "react-router-redux": "4.0.8",
