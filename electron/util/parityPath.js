@@ -16,7 +16,7 @@
 
 const { app } = require('electron');
 
-const parityPath = `${app.getPath('userData')}/parity`;
+const parityPath = `${app.getPath('userData')}/parity${process.platform === 'win32' ? '.exe' : ''}`;
 
 // TODO parityPath is now in the Application Data folder by default, it would
 // be nice to first look if /usr/bin/parity exists (and return that as

@@ -62,7 +62,7 @@ module.exports = (mainWindow) => {
   // Fetching from https://vanity-service.parity.io/parity-binaries
   return fsExists(parityPath())
     .catch(() => axios.get(`https://vanity-service.parity.io/parity-binaries?version=${channel}&os=${getOs()}&architecture=${getArch()}`)
-      .then((response) => response.data[0].files.find(({ name }) => name === 'parity'))
+      .then((response) => response.data[0].files.find(({ name }) => name === 'parity' || name === 'parity.exe'))
       .then(({ downloadUrl }) => download(
         mainWindow,
         downloadUrl,
