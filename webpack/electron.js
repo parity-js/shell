@@ -32,8 +32,8 @@ module.exports = {
   context: path.join(__dirname, '../electron'),
   entry: './index.js',
   output: {
-    path: path.join(__dirname, '../', DEST, 'electron'),
-    filename: 'index.js'
+    path: path.join(__dirname, '../', DEST),
+    filename: 'electron.js'
   },
   node: {
     __dirname: false
