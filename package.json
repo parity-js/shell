@@ -38,7 +38,7 @@
     "clean": "rimraf ./.build ./.coverage ./.happypack",
     "coveralls": "npm run testCoverage && coveralls < coverage/lcov.info",
     "electron": "npm run build && electron .build/electron.js",
-    "electron:dev": "electron electron/ --dev",
+    "electron:dev": "electron electron/ --ui--dev",
     "lint": "npm run lint:css && npm run lint:js",
     "lint:cached": "npm run lint:css && npm run lint:js:cached",
     "lint:css": "stylelint ./src/**/*.css",
