@@ -98,9 +98,8 @@ publish:snap:
   variables:
     BUILD_ARCH: amd64
   before_script:
-    - export VERSION=$(node -p "require('./package.json').version")
+    - export VERSION=$(grep -m 1 "version" package.json | awk '{print $2}' | tr -d '",' | tr -d "\n")&&echo "Version:" $VERSION
   script:
     - scripts/publish-snap.sh
   tags:
     - rust-stable
-#test PR check1
