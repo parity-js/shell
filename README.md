@@ -29,6 +29,12 @@ You can download Parity UI at https://github.com/parity-js/shell/releases/latest
 In any of the [supported Linux distros](https://snapcraft.io/docs/core/install):
 
 ```bash
+sudo snap install parity-ui
+```
+
+Or, if you want to contribute testing the upcoming release:
+
+```bash
 sudo snap install parity-ui --beta
 ```
 
@@ -41,16 +47,6 @@ sudo snap install parity-ui --edge
 ---
 
 ## Build from source
-
-Parity UI lives in the [`next`](https://github.com/Parity-JS/shell/tree/next) branch. The `master` branch contains the browser-based UI bundled inside Parity v1.9-stable. The `next` branch contains the standalone Electron app.
-
-The first step is to checkout the `next` branch:
-
-```bash
-git checkout next
-```
-
-Then run the following:
 
 ```bash
 npm install
@@ -67,7 +63,7 @@ One further, albeit optional step is to create an OS-spefific binary. This is do
 npm run release
 ```
 
-This command may take some time. Once finished, you will see binaries for you OS in the `dist/` folder.
+This command may take some time. Once finished, you will see binaries for your OS in the `dist/` folder.
 
 ## Developing
 
