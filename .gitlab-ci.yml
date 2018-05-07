@@ -20,8 +20,6 @@ cache:
     - "v*" # Our version tags
     - ci-package
     - master
-    - beta
-    - stable
     - tags
 
 .publishable_branches:  # list of git refs for publishing builds to the "production" locations
