@@ -4,7 +4,7 @@ set -e # fail on any error
 set -u # treat unset variables as error
 
 case ${CI_COMMIT_REF_NAME} in
-  master|ci-package) export CHANNEL="edge";;
+  master|ci-package|v0.3*) export CHANNEL="edge";;
   v0.2*) export CHANNEL="beta";;
   v0.1*) export CHANNEL="stable";;
   *) echo "No release" exit 0;;
