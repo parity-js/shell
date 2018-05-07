@@ -17,15 +17,14 @@ cache:
 .releaseable_branches:  # list of git refs for building GitLab artifacts (think "pre-release binaries")
   only:                 &releaseable_branches
     - schedules # Our nightly builds from schedule, on `master`
-    - "v*" # Our version tags
+    - /^v[0-9]+\.[0-9]+\.[0-9]+$/ # Our version tags
     - ci-package
     - master
-    - tags
 
 .publishable_branches:  # list of git refs for publishing builds to the "production" locations
   only:                 &publishable_branches
     - schedules # Our nightly builds from schedule, on `master`
-    - "v*" # Our version tags
+    - /^v[0-9]+\.[0-9]+\.[0-9]+$/ # Our version tags
     - ci-package
     - master
 
