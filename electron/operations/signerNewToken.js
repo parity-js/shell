@@ -16,16 +16,20 @@
 
 const { spawn } = require('child_process');
 
-const parityPath = require('../util/parityPath');
+const parityPath = require('../utils/parityPath');
 
-module.exports = (event) => {
+module.exports = event => {
   // Generate a new token
   const paritySigner = spawn(parityPath(), ['signer', 'new-token']);
 
   // Listen to the output of the previous command
-  paritySigner.stdout.on('data', (data) => {
+  paritySigner.stdout.on('data', data => {
     // If the output line is xxxx-xxxx-xxxx-xxxx, then it's our token
-    const match = data.toString().match(/[a-zA-Z0-9]{4}(-)?[a-zA-Z0-9]{4}(-)?[a-zA-Z0-9]{4}(-)?[a-zA-Z0-9]{4}/);
+    const match = data
+      .toString()
+      .match(
+        /[a-zA-Z0-9]{4}(-)?[a-zA-Z0-9]{4}(-)?[a-zA-Z0-9]{4}(-)?[a-zA-Z0-9]{4}/
+      );
 
     if (match) {
       const token = match[0];
