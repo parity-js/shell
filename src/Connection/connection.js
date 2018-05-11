@@ -74,17 +74,20 @@ class Connection extends Component {
       this.setState({ progress });
     });
 
-    // Run parity if parityInstalled
-    if (!parityInstalled) { return; }
+    // Next step: if we're not connected, and parity is installed, then we
+    // run parity.
+    if (this.props.isConnected || !parityInstalled) {
+      return;
+    }
 
     // After 3s, check if ui is still isConnecting
     // If yes, then try to run `parity`
     // The reason why we do this after 3s, is that even when parity is
-    // running, isConnecting is true on componentWillMount (lag to ping the
+    // running, isConnecting is true on componentDidMount (lag to ping the
     // node). -Amaury 13.03.2018
     // TODO Find a more reliable way to know if parity is running or not
     setTimeout(() => {
-      if (!this.props.isConnecting) { return; }
+      if (this.props.isConnected || !this.props.isConnecting) { return; }
       this.runParity();
     }, 3000);
   }

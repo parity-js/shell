@@ -60,7 +60,7 @@ module.exports = {
         parity.stdout.pipe(logStream);
         parity.stderr.pipe(logStream);
         parity.on('error', err => {
-          throw new Error(err);
+          handleError(new Error(err), 'An error occured while running parity.');
         });
         parity.on('close', (exitCode, signal) => {
           if (exitCode === 0) {
@@ -75,7 +75,7 @@ module.exports = {
               console.log(data.toString())
             );
           } else {
-            throw new Error(`Exit code ${exitCode}, with signal ${signal}.`);
+            handleError(new Error(`Exit code ${exitCode}, with signal ${signal}.`), 'An error occured while running parity.');
           }
         });
       })

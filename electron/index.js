@@ -24,7 +24,7 @@ const doesParityExist = require('./operations/doesParityExist');
 const fetchParity = require('./operations/fetchParity');
 const handleError = require('./operations/handleError');
 const messages = require('./messages');
-const { killParity, runParity } = require('./operations/runParity');
+const { killParity } = require('./operations/runParity');
 
 const { app, BrowserWindow, ipcMain, session } = electron;
 let mainWindow;
@@ -49,7 +49,6 @@ function createWindow () {
 
   doesParityExist()
     .catch(() => fetchParity(mainWindow)) // Install parity if not present
-    .then(() => runParity(mainWindow))
     .catch(handleError); // Errors should be handled before, this is really just in case
 
   if (argv['ui-dev'] === true) {
