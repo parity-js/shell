@@ -17,7 +17,7 @@
 const fs = require('fs');
 const util = require('util');
 
-const parityPath = require('../util/parityPath');
+const parityPath = require('../utils/parityPath');
 
 const fsExists = util.promisify(fs.stat);
 

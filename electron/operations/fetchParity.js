@@ -24,7 +24,7 @@ const handleError = require('./handleError');
 const {
   parity: { channel }
 } = require('../../package.json');
-const parityPath = require('../util/parityPath');
+const parityPath = require('../utils/parityPath');
 
 const fsChmod = util.promisify(fs.chmod);
 
