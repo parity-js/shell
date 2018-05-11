@@ -25,18 +25,20 @@ module.exports = (err, message = 'An error occurred.') => {
   console.error(err);
   dialog.showMessageBox(
     {
-      buttons: ['Cancel', 'Quit'],
+      buttons: ['Quit', 'Cancel'],
       detail: `Please attach the following debugging info:
 OS: ${process.platform}
 Arch: ${process.arch}
 Channel: ${channel}
 Error: ${err.message}
 Please also attach the contents of the following file:
-${parityPath()}.log`,
-      message: `${message} Please file an issue at https://github.com/parity-js/shell/issues.`,
+${parityPath()}.log
+
+Please quit the app and retry again. If the error message persists, please file an issue at https://github.com/parity-js/shell/issues.`,
+      message: `${message}`,
       title: 'Parity Error',
       type: 'error'
     },
-    (buttonIndex) => { if (buttonIndex === 1) { app.exit(1); } }
+    (buttonIndex) => { if (buttonIndex === 0) { app.exit(1); } }
   );
 };
