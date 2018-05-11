@@ -20,34 +20,36 @@ const url = require('url');
 
 const addMenu = require('./menu');
 const cli = require('./cli');
-const fetchParity = require('./fetchParity');
+const doesParityExist = require('./operations/doesParityExist');
+const fetchParity = require('./operations/fetchParity');
+const handleError = require('./operations/handleError');
 const messages = require('./messages');
-const { killParity } = require('./messages/runParity');
+const { killParity } = require('./operations/runParity');
 
 const { app, BrowserWindow, ipcMain, session } = electron;
 let mainWindow;
 
 // Get arguments from cli
-const [argv] = cli();
-
-// Will send these variables to renderers via IPC
-global.dirName = __dirname;
-global.wsInterface = argv['ws-interface'];
-global.wsPort = argv['ws-port'];
+const argv = cli()[0];
 
 function createWindow () {
   // If cli() returns false, then it means that the arguments are stopping the
   // app (e.g. --help or --version). We don't do anything more in this case.
-  if (!argv) { return; }
+  if (!argv) { return app.quit(); }
+
+  // Will send these variables to renderers via IPC
+  global.dirName = __dirname;
+  global.wsInterface = argv['ws-interface'];
+  global.wsPort = argv['ws-port'];
 
   mainWindow = new BrowserWindow({
     height: 800,
     width: 1200
   });
 
-  // Fetch parity if not yet installed
-  fetchParity(mainWindow)
-    .then(() => { global.parityInstalled = true; });
+  doesParityExist()
+    .catch(() => fetchParity(mainWindow)) // Install parity if not present
+    .catch(handleError); // Errors should be handled before, this is really just in case
 
   if (argv['ui-dev'] === true) {
     // Opens http://127.0.0.1:3000 in --ui-dev mode

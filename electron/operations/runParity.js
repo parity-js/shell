@@ -14,41 +14,31 @@
 // You should have received a copy of the GNU General Public License
 // along with Parity.  If not, see <http://www.gnu.org/licenses/>.
 
-const { app, dialog } = require('electron');
 const flatten = require('lodash/flatten');
 const fs = require('fs');
 const { spawn } = require('child_process');
 const util = require('util');
 
 const cli = require('../cli');
-const parityPath = require('../util/parityPath');
+const handleError = require('./handleError');
+const parityPath = require('../utils/parityPath');
 
-const [, parityArgv] = cli();
 const fsExists = util.promisify(fs.stat);
 const fsReadFile = util.promisify(fs.readFile);
 const fsUnlink = util.promisify(fs.unlink);
 
 let parity = null; // Will hold the running parity instance
 
-const handleError = (err) => {
-  console.error(err);
-  dialog.showMessageBox({
-    buttons: ['OK'],
-    detail: `Please attach the following debugging info:
-OS: ${process.platform}
-Arch: ${process.arch}
-Error: ${err.message}
-
-Please also attach the contents of the following file:
-${parityPath()}.log`,
-    message: 'An error occured while running parity. Please file an issue at https://github.com/parity-js/shell/issues.',
-    title: 'Parity Error',
-    type: 'error'
-  }, () => app.exit(1));
-};
-
 module.exports = {
-  runParity () {
+  runParity (mainWindow) {
+    const argv = cli()[0];
+    const parityArgv = cli()[1];
+
+    // Do not run parity with --no-run-parity
+    if (argv.runParity === false) {
+      return;
+    }
+
     // Create a logStream to save logs
     const logFile = `${parityPath()}.log`;
 
@@ -56,36 +46,46 @@ module.exports = {
       .then(() => fsUnlink(logFile))
       .catch(() => { })
       .then(() => {
-        var logStream = fs.createWriteStream(logFile, { flags: 'a' });
+        const logStream = fs.createWriteStream(logFile, { flags: 'a' });
 
         // Run an instance of parity if we receive the `run-parity` message
         parity = spawn(
           parityPath(),
-          ['--ws-origins', 'parity://*.ui.parity'] // Argument for retro-compatibility with <1.10 versions
-            .concat(
-              flatten(Object.keys(parityArgv).map(key => [`--${key}`, parityArgv[key]])) // Transform {arg: value} into [--arg, value]
-                .filter(value => value !== true) // --arg true is equivalent to --arg
-            )
+          flatten(
+            Object.keys(parityArgv).map(key => [`--${key}`, parityArgv[key]]) // Transform {arg: value} into [--arg, value]
+          )
+            .filter(value => value !== true) // --arg true is equivalent to --arg
         );
 
         parity.stdout.pipe(logStream);
         parity.stderr.pipe(logStream);
-        parity.on('error', handleError);
+        parity.on('error', err => {
+          handleError(new Error(err), 'An error occured while running parity.');
+        });
         parity.on('close', (exitCode, signal) => {
-          if (exitCode === 0) { return; }
+          if (exitCode === 0) {
+            return;
+          }
 
           // If the exit code is not 0, then we show some error message
           if (Object.keys(parityArgv).length) {
             // If parity has been launched with some args, then most likely the
             // args are wrong, so we show the output of parity.
-            fsReadFile(logFile)
-              .then(data => console.log(data.toString()))
-              .catch(console.log)
-              .then(() => app.quit());
+            return fsReadFile(logFile).then(data =>
+              console.log(data.toString())
+            );
           } else {
-            handleError(new Error(`Exit code: ${exitCode} with signal: ${signal}.`));
+            handleError(new Error(`Exit code ${exitCode}, with signal ${signal}.`), 'An error occured while running parity.');
           }
         });
+      })
+      .then(() => {
+        // Notify the renderers
+        // mainWindow.webContents.send('parity-running', true);
+        global.isParityRunning = true; // Send this variable to renderes via IPC
+      })
+      .catch(err => {
+        handleError(err, 'An error occured while running parity.');
       });
   },
   killParity () {

@@ -14,22 +14,12 @@
 // You should have received a copy of the GNU General Public License
 // along with Parity.  If not, see <http://www.gnu.org/licenses/>.
 
-const { runParity } = require('../operations/runParity');
-const signerNewToken = require('../operations/signerNewToken');
+const fs = require('fs');
+const util = require('util');
 
-/**
- * Handle all asynchronous messages from renderer to main.
- */
-module.exports = (event, arg) => {
-  switch (arg) {
-    case 'run-parity': {
-      runParity();
-      break;
-    }
-    case 'signer-new-token': {
-      signerNewToken(event);
-      break;
-    }
-    default:
-  }
-};
+const parityPath = require('../utils/parityPath');
+
+const fsExists = util.promisify(fs.stat);
+
+module.exports = () => fsExists(parityPath())
+  .then(() => { global.isParityInstalled = true; });
