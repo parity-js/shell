@@ -14,8 +14,8 @@
 // You should have received a copy of the GNU General Public License
 // along with Parity.  If not, see <http://www.gnu.org/licenses/>.
 
-const { runParity } = require('./runParity');
-const signerNewToken = require('./signerNewToken');
+const { runParity } = require('../operations/runParity');
+const signerNewToken = require('../operations/signerNewToken');
 
 /**
  * Handle all asynchronous messages from renderer to main.

@@ -14,25 +14,12 @@
 // You should have received a copy of the GNU General Public License
 // along with Parity.  If not, see <http://www.gnu.org/licenses/>.
 
-const { spawn } = require('child_process');
+const fs = require('fs');
+const util = require('util');
 
 const parityPath = require('../util/parityPath');
 
-module.exports = (event) => {
-  // Generate a new token
-  const paritySigner = spawn(parityPath(), ['signer', 'new-token']);
+const fsExists = util.promisify(fs.stat);
 
-  // Listen to the output of the previous command
-  paritySigner.stdout.on('data', (data) => {
-    // If the output line is xxxx-xxxx-xxxx-xxxx, then it's our token
-    const match = data.toString().match(/[a-zA-Z0-9]{4}(-)?[a-zA-Z0-9]{4}(-)?[a-zA-Z0-9]{4}(-)?[a-zA-Z0-9]{4}/);
-
-    if (match) {
-      const token = match[0];
-
-      // Send back the token to the renderer process
-      event.sender.send('asynchronous-reply', token);
-      paritySigner.kill(); // We don't need the signer anymore
-    }
-  });
-};
+module.exports = () => fsExists(parityPath())
+  .then(() => { global.isParityInstalled = true; });
