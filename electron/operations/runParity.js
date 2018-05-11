@@ -23,7 +23,6 @@ const cli = require('../cli');
 const handleError = require('./handleError');
 const parityPath = require('../util/parityPath');
 
-const [, parityArgv] = cli();
 const fsExists = util.promisify(fs.stat);
 const fsReadFile = util.promisify(fs.readFile);
 const fsUnlink = util.promisify(fs.unlink);
@@ -39,7 +38,8 @@ module.exports = {
       .then(() => fsUnlink(logFile))
       .catch(() => { })
       .then(() => {
-        var logStream = fs.createWriteStream(logFile, { flags: 'a' });
+        const logStream = fs.createWriteStream(logFile, { flags: 'a' });
+        const parityArgv = cli()[1];
 
         // Run an instance of parity if we receive the `run-parity` message
         parity = spawn(
