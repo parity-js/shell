@@ -61,7 +61,7 @@ class Connection extends Component {
   componentDidMount () {
     if (!isElectron()) { return; }
     const { ipcRenderer, remote } = electron;
-    const parityInstalled = remote.getGlobal('parityInstalled');
+    const parityInstalled = remote.getGlobal('isParityInstalled');
 
     this.setState({ parityInstalled });
 

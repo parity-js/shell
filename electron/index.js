@@ -20,9 +20,11 @@ const url = require('url');
 
 const addMenu = require('./menu');
 const cli = require('./cli');
-const fetchParity = require('./fetchParity');
+const doesParityExist = require('./operations/doesParityExist');
+const fetchParity = require('./operations/fetchParity');
+const handleError = require('./operations/handleError');
 const messages = require('./messages');
-const { killParity } = require('./messages/runParity');
+const { killParity, runParity } = require('./operations/runParity');
 
 const { app, BrowserWindow, ipcMain, session } = electron;
 let mainWindow;
@@ -45,9 +47,10 @@ function createWindow () {
     width: 1200
   });
 
-  // Fetch parity if not yet installed
-  fetchParity(mainWindow)
-    .then(() => { global.parityInstalled = true; });
+  doesParityExist()
+    .catch(() => fetchParity(mainWindow)) // Install parity if not present
+    .then(() => runParity(mainWindow))
+    .catch(handleError); // Errors should be handled before, this is really just in case
 
   if (argv['ui-dev'] === true) {
     // Opens http://127.0.0.1:3000 in --ui-dev mode
