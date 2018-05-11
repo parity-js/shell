@@ -35,7 +35,7 @@ module.exports = {
     const parityArgv = cli()[1];
 
     // Do not run parity with --no-run-parity
-    if (!argv.runParity === false) {
+    if (argv.runParity === false) {
       return;
     }
 
