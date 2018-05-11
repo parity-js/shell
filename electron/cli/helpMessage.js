@@ -14,4 +14,6 @@ Operating Options:
 
     --ws-port=[PORT]
         Specify the port portion of the WebSockets server Parity UI will connect to. (default: 8546)
+
+All other flags passed to Parity UI will be passed down to parity when trying to launch it.
 `;
