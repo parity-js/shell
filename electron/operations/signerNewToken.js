@@ -16,7 +16,7 @@
 
 const { spawn } = require('child_process');
 
-const parityPath = require('../util/parityPath');
+const parityPath = require('../utils/parityPath');
 
 module.exports = event => {
   // Generate a new token

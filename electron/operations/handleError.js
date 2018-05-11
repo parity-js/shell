@@ -19,7 +19,7 @@ const { app, dialog } = require('electron');
 const {
   parity: { channel }
 } = require('../../package.json');
-const parityPath = require('../util/parityPath');
+const parityPath = require('../utils/parityPath');
 
 module.exports = (err, message = 'An error occurred.') => {
   console.error(err);

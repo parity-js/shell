@@ -21,7 +21,7 @@ const util = require('util');
 
 const cli = require('../cli');
 const handleError = require('./handleError');
-const parityPath = require('../util/parityPath');
+const parityPath = require('../utils/parityPath');
 
 const fsExists = util.promisify(fs.stat);
 const fsReadFile = util.promisify(fs.readFile);
