@@ -35,7 +35,7 @@ const argv = cli()[0];
 function createWindow () {
   // If cli() returns false, then it means that the arguments are stopping the
   // app (e.g. --help or --version). We don't do anything more in this case.
-  if (!argv) { return; }
+  if (!argv) { return app.quit(); }
 
   // Will send these variables to renderers via IPC
   global.dirName = __dirname;
