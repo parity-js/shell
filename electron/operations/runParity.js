@@ -31,6 +31,14 @@ let parity = null; // Will hold the running parity instance
 
 module.exports = {
   runParity (mainWindow) {
+    const argv = cli()[0];
+    const parityArgv = cli()[1];
+
+    // Do not run parity with --no-run-parity
+    if (!argv.runParity === false) {
+      return;
+    }
+
     // Create a logStream to save logs
     const logFile = `${parityPath()}.log`;
 
@@ -39,7 +47,6 @@ module.exports = {
       .catch(() => { })
       .then(() => {
         const logStream = fs.createWriteStream(logFile, { flags: 'a' });
-        const parityArgv = cli()[1];
 
         // Run an instance of parity if we receive the `run-parity` message
         parity = spawn(
@@ -74,7 +81,7 @@ module.exports = {
       })
       .then(() => {
         // Notify the renderers
-        mainWindow.webContents.send('parity-running', true);
+        // mainWindow.webContents.send('parity-running', true);
         global.isParityRunning = true; // Send this variable to renderes via IPC
       })
       .catch(err => {
