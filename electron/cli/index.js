@@ -27,7 +27,7 @@ const { version } = require('../../package.json');
  * @see https://github.com/electron/electron/issues/4690#issuecomment-217435222
  */
 if (process.defaultApp !== true) {
-  process.argv.unshift(null);
+  process.argv.unshift('');
 }
 
 cli
