@@ -69,7 +69,7 @@ const parityArgv = cli.rawArgs
       return true;
     }
 
-    const previousKey = camelcase(array[index - 1].substring(2));
+    const previousKey = camelcase(array[index - 1].replace('--', '').replace('no-', ''));
 
     if (cli[previousKey] === item) {
       // If it's an argument of an option consumed by commander.js, then we
