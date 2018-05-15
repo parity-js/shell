@@ -24,16 +24,19 @@ function getAppId () {
   // Dapps built into the shell; URL: file://path-to-shell/.build/dapps/0x0587.../index.html
   // Dapps installed from the registry and served by Parity; URL: http://127.0.0.1:8545/ff19...
   const [hash] = window.location.pathname.match(/(0x)?[a-f0-9]{64}/i) || [];
-  if (hash) return hash;
+
+  if (hash) { return hash; }
 
   // Dapps served in development mode on a dedicated port; URL: http://localhost:3001/?appId=dapp-name
   const fromQuery = qs.parse(window.location.search).appId;
-  if (fromQuery) return fromQuery;
+
+  if (fromQuery) { return fromQuery; }
 
   // Dapps built locally and served by Parity; URL: http://127.0.0.1:8545/dapp-name
   const [, fromParity] = window.location.pathname.match(/^\/?([^/]+)\/?$/) || [];
-  if (fromParity) return fromParity;
-  
+
+  if (fromParity) { return fromParity; }
+
   console.error('Could not find appId');
 }
 
