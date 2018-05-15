@@ -18,6 +18,17 @@ const cli = require('commander');
 
 const { version } = require('../../package.json');
 
+/**
+ * Process.argv arguments length is different in electron mode and in packaged
+ * mode. This small line is to harmonize the behavior for consistent parsing.
+ *
+ * @see https://github.com/tj/commander.js/issues/512
+ * @see https://github.com/electron/electron/issues/4690#issuecomment-217435222
+ */
+if (process.defaultApp !== true) {
+  process.argv.unshift(null);
+}
+
 cli
   .version(version)
   .allowUnknownOption()
