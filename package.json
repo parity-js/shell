@@ -1,6 +1,6 @@
 {
   "name": "parity-ui",
-  "version": "0.2.1",
+  "version": "0.2.3",
   "description": "The Electron app for Parity UI",
   "main": ".build/electron.js",
   "jsnext:main": ".build/electron.js",
@@ -25,7 +25,7 @@
     "Parity"
   ],
   "parity": {
-    "channel": "nightly"
+    "channel": "beta"
   },
   "scripts": {
     "build": "npm run build:inject && npm run build:app && npm run build:electron && npm run build:embed",
