@@ -20,11 +20,28 @@ import qs from 'query-string';
 
 console.log('This inject.js has been injected by the shell.');
 
-function initProvider () {
-  const match = window.location.pathname.match(/(0x)?[a-f0-9]{64}|v1/i); // Find the appId
-  const query = qs.parse(window.location.search);
+function getAppId () {
+  // Dapps built into the shell; URL: file://path-to-shell/.build/dapps/0x0587.../index.html
+  // Dapps installed from the registry and served by Parity; URL: http://127.0.0.1:8545/ff19...
+  const [hash] = window.location.pathname.match(/(0x)?[a-f0-9]{64}/i) || [];
 
-  let appId = match ? match[0] : query.appId;
+  if (hash) { return hash; }
+
+  // Dapps served in development mode on a dedicated port; URL: http://localhost:3001/?appId=dapp-name
+  const fromQuery = qs.parse(window.location.search).appId;
+
+  if (fromQuery) { return fromQuery; }
+
+  // Dapps built locally and served by Parity; URL: http://127.0.0.1:8545/dapp-name
+  const [, fromParity] = window.location.pathname.match(/^\/?([^/]+)\/?$/) || [];
+
+  if (fromParity) { return fromParity; }
+
+  console.error('Could not find appId');
+}
+
+function initProvider () {
+  const appId = getAppId();
 
   const ethereum = isElectron()
     ? new Api.Provider.Ipc(appId)
