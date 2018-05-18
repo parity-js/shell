@@ -22,8 +22,8 @@ import PropTypes from 'prop-types';
 import path from 'path';
 import url from 'url';
 
-import builtinDapps from '@parity/shared/lib/config/dappsBuiltin.json';
-import DappsStore from '@parity/shared/lib/mobx/dappsStore';
+import builtinDapps from '../Dapps/dappsBuiltin.json';
+import DappsStore from '../Dapps/store';
 import HistoryStore from '@parity/shared/lib/mobx/historyStore';
 
 import RequestsStore from '../DappRequests/store';

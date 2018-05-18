@@ -17,7 +17,7 @@
 import * as mobx from 'mobx';
 import flatten from 'lodash.flatten';
 
-import DappsStore from '@parity/shared/lib/mobx/dappsStore';
+import DappsStore from './Dapps/store';
 import RequestStore from './DappRequests/store';
 import methodGroups from './DappRequests/methodGroups';
 

@@ -18,7 +18,7 @@ import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { FormattedMessage } from 'react-intl';
 
-import DappsStore from '@parity/shared/lib/mobx/dappsStore';
+import DappsStore from '../../Dapps/store';
 
 import RequestGroupSubItem from './RequestGroupSubItem';
 import styles from './RequestGroups.css';
