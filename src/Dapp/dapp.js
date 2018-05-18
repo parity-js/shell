@@ -23,14 +23,13 @@ import path from 'path';
 import url from 'url';
 
 import builtinDapps from '@parity/shared/lib/config/dappsBuiltin.json';
-import viewsDapps from '@parity/shared/lib/config/dappsViews.json';
 import DappsStore from '@parity/shared/lib/mobx/dappsStore';
 import HistoryStore from '@parity/shared/lib/mobx/historyStore';
 
 import RequestsStore from '../DappRequests/store';
 import styles from './dapp.css';
 
-const internalDapps = [].concat(viewsDapps, builtinDapps);
+const internalDapps = builtinDapps;
 
 @observer
 export default class Dapp extends Component {
