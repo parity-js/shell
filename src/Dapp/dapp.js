@@ -29,8 +29,6 @@ import HistoryStore from '@parity/shared/lib/mobx/historyStore';
 import RequestsStore from '../DappRequests/store';
 import styles from './dapp.css';
 
-const internalDapps = builtinDapps;
-
 @observer
 export default class Dapp extends Component {
   static contextTypes = {
@@ -53,7 +51,7 @@ export default class Dapp extends Component {
   componentWillMount () {
     const { id } = this.props.params;
 
-    if (!internalDapps[id] || !internalDapps[id].skipHistory) {
+    if (!builtinDapps[id] || !builtinDapps[id].skipHistory) {
       this.historyStore.add(id);
     }
 
