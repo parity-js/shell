@@ -31,9 +31,7 @@ const rulesParity = require('./rules/parity');
 const Shared = require('./shared');
 
 const DAPPS_BUILTIN = require('@parity/shared/lib/config/dappsBuiltin.json');
-const DAPPS_VIEWS = require('@parity/shared/lib/config/dappsViews.json');
-const DAPPS_ALL = []
-  .concat(DAPPS_BUILTIN, DAPPS_VIEWS)
+const DAPPS_ALL = DAPPS_BUILTIN
   .filter((dapp) => !dapp.skipBuild)
   .filter((dapp) => dapp.package);
 
