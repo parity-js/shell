@@ -20,10 +20,17 @@ import { pick, range, uniq } from 'lodash';
 import { bytesToHex } from '@parity/api/lib/util/format';
 import { IconCache } from '@parity/ui';
 
-import builtinJson from '../Dapps/dappsBuiltin.json';
+import builtinApps from '../Dapps/dappsBuiltin.json';
 import Contracts from '@parity/shared/lib/contracts';
 
-const builtinApps = builtinJson.filter((app) => app.id);
+import path from 'path';
+
+const util = require('util');
+
+require('util.promisify').shim();
+
+const fs = window.require('fs');
+const fsReadFileAsync = util.promisify(fs.readFile);
 
 export function subscribeToChanges (api, dappReg, callback) {
   return dappReg
@@ -73,19 +80,48 @@ export function subscribeToChanges (api, dappReg, callback) {
 }
 
 export function fetchBuiltinApps (api) {
-  const { dappReg } = Contracts.get(api);
+  const remote = window.require('electron').remote;
+  const initialApps = builtinApps.filter(app => app.id);
 
   return Promise
-    .all(builtinApps.map((app) => dappReg.getImage(app.id)))
-    .then((imageIds) => {
-      return builtinApps.map((app, index) => {
-        app.type = 'builtin';
-        app.image = IconCache.hashToImage(imageIds[index]);
-        return app;
-      });
-    })
-    .catch((error) => {
-      console.warn('DappsStore:fetchBuiltinApps', error);
+    .all(initialApps.map(app => {
+      // Replace all backslashes by front-slashes (happens in Windows)
+      // Note: `dirName` contains backslashes in Windows. One would assume that
+      // path.join in Windows would handle everything for us, but after some time
+      // I realized that even in Windows path.join here bahaves like POSIX (maybe
+      // it's electron, maybe browser env?). Switching to '/'. -Amaury 12.03.2018
+      const posixDirName = remote.getGlobal('dirName').replace(/\\/g, '/');
+      const manifestPath = path.join(
+        posixDirName,
+        '..',
+        '.build',
+        'dapps',
+        app.id,
+        'manifest.json'
+      );
+
+      if (fs.existsSync(manifestPath)) {
+        return fsReadFileAsync(manifestPath).then(r => {
+          try {
+            return JSON.parse(r);
+          } catch (e) {
+            console.error(`Couldn't parse manifest.json for ${app.id}`, e);
+            return {};
+          }
+        });
+      } else {
+        return {};
+      }
+    }))
+    .then((manifests) => {
+      return initialApps
+        .map((app, index) => {
+          const iconUrl = manifests[index].iconUrl || 'icon.png';
+
+          app.type = 'builtin';
+          app.image = `dapps/${app.id}/${iconUrl}`;
+          return app;
+        });
     });
 }
 
