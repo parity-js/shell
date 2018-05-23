@@ -55,8 +55,8 @@
   },
   "devDependencies": {
     "@parity/dapp-console": "parity-js/dapp-console#6a48e07ce930443c72f93032c45186db7753db33",
-    "@parity/dapp-dapp-methods": "js-dist-paritytech/dapp-dapp-methods",
-    "@parity/dapp-dapp-visible": "js-dist-paritytech/dapp-dapp-visible",
+    "@parity/dapp-dapp-methods": "js-dist-paritytech/dapp-dapp-methods#31626823b6cea962efdbec86ffa5b11dc9918af3",
+    "@parity/dapp-dapp-visible": "js-dist-paritytech/dapp-dapp-visible#593c64e1f8a3c99d76a0937178e0eb602adddf69",
     "@parity/dapp-dappreg": "parity-js/dapp-dappreg#66f2e52dfa9a783cc0ca616505460e5e34ebdf54",
     "@parity/dapp-develop": "js-dist-paritytech/dapp-develop#3bb84c11bd40687586de6ec758759d9019805d4e",
     "@parity/dapp-githubhint": "parity-js/dapp-githubhint#b5cdef016e8bead7669ca077be526897ee42f83a",
