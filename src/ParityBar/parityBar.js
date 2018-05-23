@@ -32,7 +32,7 @@ import GradientBg from '@parity/ui/lib/GradientBg';
 import SelectionList from '@parity/ui/lib/SelectionList';
 import { CancelIcon } from '@parity/ui/lib/Icons';
 
-import DappsStore from '@parity/shared/lib/mobx/dappsStore';
+import DappsStore from '../Dapps/store';
 import Signer from '../Signer/Embedded';
 import SignerPending from './SignerPending';
 

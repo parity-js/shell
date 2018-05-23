@@ -20,17 +20,15 @@ import isElectron from 'is-electron';
 import { observer } from 'mobx-react';
 import PropTypes from 'prop-types';
 import path from 'path';
+import { getBuildPath } from '../util/host';
 import url from 'url';
 
-import builtinDapps from '@parity/shared/lib/config/dappsBuiltin.json';
-import viewsDapps from '@parity/shared/lib/config/dappsViews.json';
-import DappsStore from '@parity/shared/lib/mobx/dappsStore';
+import builtinDapps from '../Dapps/dappsBuiltin.json';
+import DappsStore from '../Dapps/store';
 import HistoryStore from '@parity/shared/lib/mobx/historyStore';
-
 import RequestsStore from '../DappRequests/store';
-import styles from './dapp.css';
 
-const internalDapps = [].concat(viewsDapps, builtinDapps);
+import styles from './dapp.css';
 
 @observer
 export default class Dapp extends Component {
@@ -54,7 +52,7 @@ export default class Dapp extends Component {
   componentWillMount () {
     const { id } = this.props.params;
 
-    if (!internalDapps[id] || !internalDapps[id].skipHistory) {
+    if (!builtinDapps[id] || !builtinDapps[id].skipHistory) {
       this.historyStore.add(id);
     }
 
@@ -136,17 +134,8 @@ export default class Dapp extends Component {
   )
 
   renderWebview = (src, hash) => {
-    const remote = window.require('electron').remote;
-    // Replace all backslashes by front-slashes (happens in Windows)
-    // Note: `dirName` contains backslashes in Windows. One would assume that
-    // path.join in Windows would handle everything for us, but after some time
-    // I realized that even in Windows path.join here bahaves like POSIX (maybe
-    // it's electron, maybe browser env?). Switching to '/'. -Amaury 12.03.2018
-    const posixDirName = remote.getGlobal('dirName').replace(/\\/g, '/');
     const preload = `file://${path.join(
-      posixDirName,
-      '..',
-      '.build',
+      getBuildPath(),
       'inject.js'
     )}`;
 

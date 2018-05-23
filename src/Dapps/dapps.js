@@ -23,7 +23,7 @@ import PropTypes from 'prop-types';
 import Checkbox from '@parity/ui/lib/Form/Checkbox';
 import Page from '@parity/ui/lib/Page';
 
-import DappsStore from '@parity/shared/lib/mobx/dappsStore';
+import DappsStore from './store';
 
 import DappCard from './DappCard';
 
