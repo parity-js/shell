@@ -14,6 +14,9 @@
 // You should have received a copy of the GNU General Public License
 // along with Parity.  If not, see <http://www.gnu.org/licenses/>.
 
+import isElectron from 'is-electron';
+import path from 'path';
+
 export function createLocation (token, location = window.location) {
   const { hash, port, protocol } = location;
   let query = '';
@@ -37,4 +40,21 @@ export function redirectLocalhost (token) {
   window.location.assign(createLocation(token, window.location));
 
   return true;
+}
+
+export function getBuildPath () {
+  const basePath = isElectron() ? window.require('electron').remote.getGlobal('dirName') : path.join(__dirname, '..');
+
+  // Replace all backslashes by front-slashes (happens in Windows)
+  // Note: `dirName` contains backslashes in Windows. One would assume that
+  // path.join in Windows would handle everything for us, but after some time
+  // I realized that even in Windows path.join here bahaves like POSIX (maybe
+  // it's electron, maybe browser env?). Switching to '/'. -Amaury 12.03.2018
+  const posixDirName = basePath.replace(/\\/g, '/');
+  const buildPath = path.join(
+    posixDirName,
+    '..',
+    '.build');
+
+  return buildPath;
 }
