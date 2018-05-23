@@ -25,6 +25,7 @@ import Contracts from '@parity/shared/lib/contracts';
 import Store, { LS_KEY_DISPLAY } from './store';
 
 const APPID_DAPPREG = '0x7bbc4f1a27628781b96213e781a1b8eec6982c1db8fac739af6e4c5a55862c03';
+const APPID_DAPPDEVELOP = '0x89682fd2c0ffa4ff53a8dc2c5f6a65c6e31de8f659fa2935a07a678e711a58a3';
 const APPID_DAPPWALLET = 'v1';
 const APPID_DAPPVISIBLE = '0xa48bd8fd56c90c899135281967a6cf90865c221b46f27f9fbe2a236d74a64ea2';
 const APPID_LOCALTX = '0xae74ad174b95cdbd01c88ac5b73a296d33e9088fc2a200e76bcedf3a94a7815d';
@@ -207,6 +208,16 @@ describe('Dapps/DappStore', () => {
 
     it('keeps non-specified enabled keys', () => {
       expect(store.displayApps[APPID_LOCALTX].visible).to.be.true;
+    });
+  });
+
+  describe('built-in dapps', () => {
+    beforeEach(() => {
+      return create().loadAllApps();
+    });
+
+    it('are properly loaded', () => {
+      expect(store.displayApps[APPID_DAPPDEVELOP].visible).to.be.true;
     });
   });
 });
