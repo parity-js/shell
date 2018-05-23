@@ -19,17 +19,18 @@ import { pick, range, uniq } from 'lodash';
 
 import { bytesToHex } from '@parity/api/lib/util/format';
 import { IconCache } from '@parity/ui';
+import isElectron from 'is-electron';
 
 import builtinApps from '../Dapps/dappsBuiltin.json';
 import Contracts from '@parity/shared/lib/contracts';
 
 import path from 'path';
 
-const util = require('util');
+const util = isElectron() ? window.require('util') : require('util');
 
 require('util.promisify').shim();
 
-const fs = window.require('fs');
+const fs = isElectron() ? window.require('fs') : require('fs');
 const fsReadFileAsync = util.promisify(fs.readFile);
 
 export function subscribeToChanges (api, dappReg, callback) {
@@ -80,7 +81,7 @@ export function subscribeToChanges (api, dappReg, callback) {
 }
 
 export function fetchBuiltinApps (api) {
-  const remote = window.require('electron').remote;
+  const basePath = isElectron() ? window.require('electron').remote.getGlobal('dirName') : path.join(__dirname, '..');
   const initialApps = builtinApps.filter(app => app.id);
 
   return Promise
@@ -90,7 +91,7 @@ export function fetchBuiltinApps (api) {
       // path.join in Windows would handle everything for us, but after some time
       // I realized that even in Windows path.join here bahaves like POSIX (maybe
       // it's electron, maybe browser env?). Switching to '/'. -Amaury 12.03.2018
-      const posixDirName = remote.getGlobal('dirName').replace(/\\/g, '/');
+      const posixDirName = basePath.replace(/\\/g, '/');
       const manifestPath = path.join(
         posixDirName,
         '..',
