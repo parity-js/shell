@@ -141,7 +141,7 @@ export default class Dapp extends Component {
     return <webview
       className={ styles.frame }
       id='dappFrame'
-      nodeintegration='true'
+      nodeintegration='false'
       preload={ preload }
       ref={ this.handleWebview }
       src={ `${src}${hash}` }
