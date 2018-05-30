@@ -324,7 +324,14 @@ export default class DappsStore extends EventEmitter {
 
   @action addApps = (_apps = [], _local = false) => {
     transaction(() => {
-      const apps = _apps.filter((app) => app);
+      const builtinAppsIds = this.apps
+        .filter((app) => app.id && app.type === 'builtin')
+        .map((app) => app.id);
+
+      // Disallow overwriting built-in dapps (ignore v1 served by Parity)
+      const apps = _apps
+        .filter((app) => app)
+        .filter((app) => !app.id || !builtinAppsIds.includes(app.id));
 
       // Get new apps IDs if available
       const newAppsIds = apps
