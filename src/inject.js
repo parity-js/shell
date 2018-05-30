@@ -22,6 +22,12 @@ console.log('This inject.js has been injected by the shell.');
 
 function getAppId () {
   // Dapps built into the shell; URL: file://path-to-shell/.build/dapps/0x0587.../index.html
+  if (window.location.protocol === 'file:') {
+    const [, id] = window.location.pathname.match(/dapps\/([^/]+)\//) || [];
+
+    if (id) { return id; }
+  }
+
   // Dapps installed from the registry and served by Parity; URL: http://127.0.0.1:8545/ff19...
   const [hash] = window.location.pathname.match(/(0x)?[a-f0-9]{64}/i) || [];
 
