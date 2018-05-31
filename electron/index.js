@@ -74,6 +74,18 @@ function createWindow () {
     callback({ requestHeaders: details.requestHeaders });
   });
 
+  // Do not accept all kind of web permissions
+  // https://electronjs.org/docs/tutorial/security#4-handle-session-permission-requests-from-remote-content
+  session.defaultSession
+    .setPermissionRequestHandler((webContents, permission, callback) => {
+      if (!url.startsWith('file:')) {
+        // Denies the permissions request for all non-file://
+        return callback(false);
+      }
+
+      return callback(true);
+    });
+
   // Verify WebView Options Before Creation
   // https://electronjs.org/docs/tutorial/security#12-verify-webview-options-before-creation
   mainWindow.webContents.on('will-attach-webview', (event, webPreferences, params) => {

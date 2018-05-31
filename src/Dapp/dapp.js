@@ -139,7 +139,6 @@ export default class Dapp extends Component {
       'inject.js'
     )}`;
 
-    // https://electronjs.org/docs/tutorial/security#3-enable-context-isolation-for-remote-content
     return <webview
       className={ styles.frame }
       id='dappFrame'
