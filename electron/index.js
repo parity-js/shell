@@ -74,6 +74,24 @@ function createWindow () {
     callback({ requestHeaders: details.requestHeaders });
   });
 
+  // Verify WebView Options Before Creation
+  // https://electronjs.org/docs/tutorial/security#12-verify-webview-options-before-creation
+  mainWindow.webContents.on('will-attach-webview', (event, webPreferences, params) => {
+    // Strip away preload scripts if unused
+    delete webPreferences.preload;
+    // Verify the location of our prelaod script is legitimate (unless uiDev has been passed)
+    if (webPreferences.preloadURL !== url.format({
+      pathname: path.join(__dirname, 'inject.js'),
+      protocol: 'file:',
+      slashes: true
+    }) && !cli.uiDev) {
+      throw new Error(`Unknown preload inject.js is being injected, quitting for security reasons. ${webPreferences.preloadURL}`);
+    }
+
+    // Disable Node.js integration
+    webPreferences.nodeIntegration = false;
+  });
+
   mainWindow.on('closed', () => {
     mainWindow = null;
   });

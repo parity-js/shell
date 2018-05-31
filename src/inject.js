@@ -14,7 +14,12 @@
 // You should have received a copy of the GNU General Public License
 // along with Parity.  If not, see <http://www.gnu.org/licenses/>.
 
+// This needs to be run before importing @parity/api, as it will populate
+// window.parity.electron, which the IPC Provider will use.
+initIpc();
+
 import Api from '@parity/api';
+import { ipcRenderer } from 'electron';
 import isElectron from 'is-electron';
 import qs from 'query-string';
 
@@ -38,6 +43,26 @@ function getAppId () {
   if (fromParity) { return fromParity; }
 
   console.error('Could not find appId');
+}
+
+function initIpc () {
+  // Ipc object to be injected into window
+  if (typeof window !== 'undefined') {
+    if (!window.parity) {
+      window.parity = {};
+    }
+    window.parity.electron = {
+      onReceiveMessage (fn) {
+        ipcRenderer.on('PARITY_SHELL_IPC_CHANNEL', fn);
+      },
+      onReceivePing (fn) {
+        ipcRenderer.once('ping', fn);
+      },
+      sendToHost (data) {
+        ipcRenderer.sendToHost('parity', data);
+      }
+    };
+  }
 }
 
 function initProvider () {
@@ -86,4 +111,10 @@ if (typeof window !== 'undefined' && !window.isParity) {
   initParity(ethereum);
 
   console.warn('Deprecation: Dapps should only used the exposed EthereumProvider on `window.ethereum`, the use of `window.parity` and `window.web3` will be removed in future versions of this injector');
+
+  // Disable eval() for dapps
+  // https://electronjs.org/docs/tutorial/security#7-override-and-disable-eval
+  window.eval = global.eval = function () { // eslint-disable-line
+    throw new Error(`Sorry, this app does not support window.eval().`);
+  };
 }

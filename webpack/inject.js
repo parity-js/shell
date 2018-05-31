@@ -37,6 +37,8 @@ module.exports = {
     libraryTarget: 'umd'
   },
 
+  target: 'electron-renderer',
+
   resolve: {
     alias: {}
   },
@@ -52,12 +54,12 @@ module.exports = {
       {
         test: /\.js$/,
         exclude: /node_modules/,
-        use: [ {
+        use: [{
           loader: 'happypack/loader',
           options: {
             id: 'babel'
           }
-        } ]
+        }]
       },
       {
         test: /\.json$/,
@@ -65,12 +67,12 @@ module.exports = {
       },
       {
         test: /\.html$/,
-        use: [ {
+        use: [{
           loader: 'file-loader',
           options: {
             name: '[name].[ext]'
           }
-        } ]
+        }]
       }
     ]
   },
