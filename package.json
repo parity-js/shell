@@ -66,6 +66,7 @@
     "@parity/dapp-status": "js-dist-paritytech/dapp-status",
     "@parity/dapp-tokendeploy": "parity-js/dapp-tokendeploy#0f6f9f2adb82c02e35056dba792a75e95f440cdd",
     "@parity/dapp-tokenreg": "parity-js/dapp-tokenreg#9750a2c10a934f9ae0e6e7fd6fa5b9e25a7b0785",
+    "@parity/dapp-wallet": "github:js-dist-paritytech/dapp-wallet#037638fec1d3146bc3d3980597cee62b37617373",
     "babel-cli": "6.26.0",
     "babel-core": "6.26.0",
     "babel-eslint": "7.1.1",
@@ -157,7 +158,6 @@
   },
   "dependencies": {
     "@parity/api": "2.1.20",
-    "@parity/dapp-wallet": "github:js-dist-paritytech/dapp-wallet#037638fec1d3146bc3d3980597cee62b37617373",
     "@parity/mobx": "1.1.2",
     "@parity/plugin-signer-account": "github:parity-js/plugin-signer-account#05294dce59b7cd7c4f1b26dc604fc6a04dd02bc8",
     "@parity/plugin-signer-default": "github:parity-js/plugin-signer-default#dcf8cf23bb050070b6a691413b974b5c2d7d1ce6",
