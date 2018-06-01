@@ -14,9 +14,6 @@
 // You should have received a copy of the GNU General Public License
 // along with Parity.  If not, see <http://www.gnu.org/licenses/>.
 
-// This needs to be run before importing @parity/api, as it will populate
-// window.parity.electron, which the IPC Provider will use.
-
 import Api from '@parity/api';
 import qs from 'query-string';
 
