@@ -93,17 +93,15 @@ export default class Dapp extends Component {
     // Reput eventListeners when webview has finished loading dapp
     webview.addEventListener('did-finish-load', () => {
       this.setState({ loading: false });
-      // Listen to IPC messages from this webview
-      webview.addEventListener('ipc-message', event =>
-        this.requestsStore.receiveMessage({
-          ...event.args[0],
-          source: event.target
-        }));
-      // Send ping message to tell dapp we're ready to listen to its ipc messages
-      webview.send('ping');
     });
 
-    this.onDappLoad();
+    // Listen to IPC messages from this webview
+    webview.addEventListener('ipc-message', event => {
+      this.requestsStore.receiveMessage({
+        ...event.args[0],
+        source: event.target
+      });
+    });
   };
 
   loadApp (id) {
@@ -125,7 +123,6 @@ export default class Dapp extends Component {
       frameBorder={ 0 }
       id='dappFrame'
       name={ name }
-      onLoad={ this.onDappLoad }
       ref={ this.handleIframe }
       sandbox='allow-forms allow-popups allow-same-origin allow-scripts allow-top-navigation'
       scrolling='auto'
@@ -136,15 +133,17 @@ export default class Dapp extends Component {
   renderWebview = (src, hash) => {
     const preload = `file://${path.join(
       getBuildPath(),
-      'inject.js'
+      'preload.js'
     )}`;
 
+    // https://electronjs.org/docs/tutorial/security#3-enable-context-isolation-for-remote-content
     return <webview
       className={ styles.frame }
       id='dappFrame'
       preload={ preload }
       ref={ this.handleWebview }
       src={ `${src}${hash}` }
+      webpreferences='contextIsolation'
            />;
   }
 
@@ -209,11 +208,5 @@ export default class Dapp extends Component {
     return isElectron()
       ? this.renderWebview(src, hash)
       : this.renderIframe(src, hash);
-  }
-
-  onDappLoad = () => {
-    const frame = document.getElementById('dappFrame');
-
-    frame.style.opacity = 1;
   }
 }

@@ -32,7 +32,7 @@ const rendererCsp = [
   ...shared,
   // Allow <webview> which are objects
   "object-src 'self';",
-  // Allow scripts, unfortunately needs unsafe-eval TODO
+  // Allow scripts
   "script-src 'self';"
 ];
 

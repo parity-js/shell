@@ -16,14 +16,9 @@
 
 // This needs to be run before importing @parity/api, as it will populate
 // window.parity.electron, which the IPC Provider will use.
-initIpc();
 
 import Api from '@parity/api';
-import { ipcRenderer } from 'electron';
-import isElectron from 'is-electron';
 import qs from 'query-string';
-
-console.log('This inject.js has been injected by the shell.');
 
 function getAppId () {
   // Dapps built into the shell; URL: file://path-to-shell/.build/dapps/0x0587.../index.html
@@ -45,32 +40,10 @@ function getAppId () {
   console.error('Could not find appId');
 }
 
-function initIpc () {
-  // Ipc object to be injected into window
-  if (typeof window !== 'undefined') {
-    if (!window.parity) {
-      window.parity = {};
-    }
-    window.parity.electron = {
-      onReceiveMessage (fn) {
-        ipcRenderer.on('PARITY_SHELL_IPC_CHANNEL', fn);
-      },
-      onReceivePing (fn) {
-        ipcRenderer.once('ping', fn);
-      },
-      sendToHost (data) {
-        ipcRenderer.sendToHost('parity', data);
-      }
-    };
-  }
-}
-
 function initProvider () {
   const appId = getAppId();
 
-  const ethereum = isElectron()
-    ? new Api.Provider.Ipc(appId)
-    : new Api.Provider.PostMessage(appId);
+  const ethereum = new Api.Provider.PostMessage(appId);
 
   console.log(`Requesting API communications token for ${appId}`);
 
