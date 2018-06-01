@@ -93,11 +93,11 @@ function createWindow () {
     delete webPreferences.preload;
     // Verify the location of our prelaod script is legitimate (unless uiDev has been passed)
     if (webPreferences.preloadURL !== url.format({
-      pathname: path.join(__dirname, 'inject.js'),
+      pathname: path.join(__dirname, 'preload.js'),
       protocol: 'file:',
       slashes: true
     }) && !cli.uiDev) {
-      throw new Error(`Unknown preload inject.js is being injected, quitting for security reasons. ${webPreferences.preloadURL}`);
+      throw new Error(`Unknown preload preload.js is being injected, quitting for security reasons. ${webPreferences.preloadURL}`);
     }
 
     // Disable Node.js integration
