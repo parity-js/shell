@@ -53,7 +53,7 @@ module.exports = {
   cache: !isProd,
   devtool: isProd
     ? false
-    : isEmbed ? '#source-map' : '#eval',
+    : '#source-map',
   context: path.join(__dirname, '../src'),
   entry,
   output: {

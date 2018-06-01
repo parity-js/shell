@@ -33,7 +33,7 @@ const rendererCsp = [
   // Allow <webview> which are objects
   "object-src 'self';",
   // Allow scripts, unfortunately needs unsafe-eval TODO
-  "script-src 'self' 'unsafe-eval';"
+  "script-src 'self';"
 ];
 
 module.exports = {
