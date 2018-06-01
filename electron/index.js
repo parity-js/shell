@@ -89,7 +89,7 @@ function createWindow () {
   // Verify WebView Options Before Creation
   // https://electronjs.org/docs/tutorial/security#12-verify-webview-options-before-creation
   mainWindow.webContents.on('will-attach-webview', (event, webPreferences, params) => {
-    // Strip away preload scripts if unused
+    // Strip away inline preload scripts, ours is at preloadURL
     delete webPreferences.preload;
     // Verify the location of our prelaod script is legitimate (unless uiDev has been passed)
     if (webPreferences.preloadURL !== url.format({
@@ -102,6 +102,7 @@ function createWindow () {
 
     // Disable Node.js integration
     webPreferences.nodeIntegration = false;
+    webPreferences.contextIsolation = true;
   });
 
   mainWindow.on('closed', () => {
