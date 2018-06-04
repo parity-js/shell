@@ -19,9 +19,11 @@ import { ipcRenderer, remote, webFrame } from 'electron';
 import path from 'path';
 
 // The following two lines is just a proxy between the webview and the renderer process.
-// If we receive an IPC message, we send it to the webview as postMessage
+// If we receive an IPC message from the shell, we relay it to the webview as
+// postMessage.
 ipcRenderer.on('PARITY_SHELL_IPC_CHANNEL', (_, data) => window.postMessage(data, '*'));
-// If we receive a postMessage, we transfer it to the renderer as an IPC message
+// If we receive a postMessage from the webview, we transfer it to the renderer
+// as an IPC message.
 window.addEventListener('message', (event) => {
   ipcRenderer.sendToHost('PARITY_SHELL_IPC_CHANNEL', { data: event.data });
 });

@@ -95,7 +95,8 @@ export default class Dapp extends Component {
       this.setState({ loading: false });
     });
 
-    // Listen to IPC messages from this webview
+    // Listen to IPC messages from this webview. More particularly, to IPC
+    // messages coming from the preload.js injected in this webview.
     webview.addEventListener('ipc-message', event => {
       this.requestsStore.receiveMessage({
         ...event.args[0],

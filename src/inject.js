@@ -40,6 +40,8 @@ function getAppId () {
 function initProvider () {
   const appId = getAppId();
 
+  // The dapp will use the PostMessage provider, send postMessages to
+  // preload.js, and preload.js will relay those messages to the shell.
   const ethereum = new Api.Provider.PostMessage(appId);
 
   console.log(`Requesting API communications token for ${appId}`);

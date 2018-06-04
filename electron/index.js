@@ -79,10 +79,14 @@ function createWindow () {
   session.defaultSession
     .setPermissionRequestHandler((webContents, permission, callback) => {
       if (!url.startsWith('file:')) {
-        // Denies the permissions request for all non-file://
+        // Denies the permissions request for all non-file://. Currently all
+        // network dapps are loaded on http://127.0.0.1:8545, so they won't
+        // have any permissions.
         return callback(false);
       }
 
+      // All others loaded on file:// (shell, builtin, local) can have those
+      // permissions.
       return callback(true);
     });
 
