@@ -74,7 +74,7 @@ function createWindow () {
     callback({ requestHeaders: details.requestHeaders });
   });
 
-  // Do not accept all kind of web permissions
+  // Do not accept all kind of web permissions (camera, location...)
   // https://electronjs.org/docs/tutorial/security#4-handle-session-permission-requests-from-remote-content
   session.defaultSession
     .setPermissionRequestHandler((webContents, permission, callback) => {
