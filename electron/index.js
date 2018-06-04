@@ -78,7 +78,7 @@ function createWindow () {
   // https://electronjs.org/docs/tutorial/security#4-handle-session-permission-requests-from-remote-content
   session.defaultSession
     .setPermissionRequestHandler((webContents, permission, callback) => {
-      if (!url.startsWith('file:')) {
+      if (!webContents.getURL().startsWith('file:')) {
         // Denies the permissions request for all non-file://. Currently all
         // network dapps are loaded on http://127.0.0.1:8545, so they won't
         // have any permissions.
@@ -96,12 +96,12 @@ function createWindow () {
     // Strip away inline preload scripts, ours is at preloadURL
     delete webPreferences.preload;
     // Verify the location of our prelaod script is legitimate (unless uiDev has been passed)
-    if (webPreferences.preloadURL !== url.format({
+    if (webPreferences.preloadURL !== encodeURI(url.format({
       pathname: path.join(__dirname, 'preload.js'),
       protocol: 'file:',
       slashes: true
-    }) && !cli.uiDev) {
-      throw new Error(`Unknown preload preload.js is being injected, quitting for security reasons. ${webPreferences.preloadURL}`);
+    })) && !cli.uiDev) {
+      throw new Error(`Unknown preload.js is being injected, quitting for security reasons. ${webPreferences.preloadURL}`);
     }
 
     // Disable Node.js integration
