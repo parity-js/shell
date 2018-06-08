@@ -15,10 +15,7 @@
 // along with Parity.  If not, see <http://www.gnu.org/licenses/>.
 
 import Api from '@parity/api';
-import isElectron from 'is-electron';
 import qs from 'query-string';
-
-console.log('This inject.js has been injected by the shell.');
 
 function getAppId () {
   // Dapps built into the shell; URL: file://path-to-shell/.build/dapps/0x0587.../index.html
@@ -43,9 +40,9 @@ function getAppId () {
 function initProvider () {
   const appId = getAppId();
 
-  const ethereum = isElectron()
-    ? new Api.Provider.Ipc(appId)
-    : new Api.Provider.PostMessage(appId);
+  // The dapp will use the PostMessage provider, send postMessages to
+  // preload.js, and preload.js will relay those messages to the shell.
+  const ethereum = new Api.Provider.PostMessage(appId);
 
   console.log(`Requesting API communications token for ${appId}`);
 
@@ -86,4 +83,19 @@ if (typeof window !== 'undefined' && !window.isParity) {
   initParity(ethereum);
 
   console.warn('Deprecation: Dapps should only used the exposed EthereumProvider on `window.ethereum`, the use of `window.parity` and `window.web3` will be removed in future versions of this injector');
+
+  // Disable eval() for dapps
+  // https://electronjs.org/docs/tutorial/security#7-override-and-disable-eval
+  //
+  // TODO Currently Web3 Console dapp needs eval(), and is the only builtin
+  // that needs it, so we cannot blindly disable it as per the recommendation.
+  // One idea is to check here in inject.js if allowJsEval is set to true, but
+  // this requires more work (future PR).
+  // For now we simply allow eval(). All builtin dapps are trusted and can use
+  // eval(), and all network dapps are served on 127.0.0.1:8545, which have CSP
+  // that disallow eval(). So security-wise it should be enough.
+  //
+  // window.eval = global.eval = function () { // eslint-disable-line
+  //   throw new Error(`Sorry, this app does not support window.eval().`);
+  // };
 }
