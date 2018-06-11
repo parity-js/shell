@@ -112,14 +112,9 @@ function createWindow () {
   mainWindow.webContents.on('will-attach-webview', (event, webPreferences, params) => {
     // Strip away inline preload scripts, ours is at preloadURL
     delete webPreferences.preload;
-    // Verify the location of our prelaod script is legitimate (unless uiDev has been passed)
-    if (webPreferences.preloadURL !== encodeURI(url.format({
-      pathname: path.join(__dirname, 'preload.js'),
-      protocol: 'file:',
-      slashes: true
-    }))) {
-      throw new Error(`Unknown preload.js is being injected, quitting for security reasons. ${webPreferences.preloadURL}`);
-    }
+
+    // TODO Verify that the location of webPreferences.preloadURL is:
+    // `file://path/to/app.asar/.build/preload.js`
 
     // Disable Node.js integration
     webPreferences.nodeIntegration = false;
