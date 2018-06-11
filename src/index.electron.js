@@ -91,6 +91,41 @@ function createWindow () {
     }
   });
 
+  // Do not accept all kind of web permissions (camera, location...)
+  // https://electronjs.org/docs/tutorial/security#4-handle-session-permission-requests-from-remote-content
+  session.defaultSession
+    .setPermissionRequestHandler((webContents, permission, callback) => {
+      if (!webContents.getURL().startsWith('file:')) {
+        // Denies the permissions request for all non-file://. Currently all
+        // network dapps are loaded on http://127.0.0.1:8545, so they won't
+        // have any permissions.
+        return callback(false);
+      }
+
+      // All others loaded on file:// (shell, builtin, local) can have those
+      // permissions.
+      return callback(true);
+    });
+
+  // Verify WebView Options Before Creation
+  // https://electronjs.org/docs/tutorial/security#12-verify-webview-options-before-creation
+  mainWindow.webContents.on('will-attach-webview', (event, webPreferences, params) => {
+    // Strip away inline preload scripts, ours is at preloadURL
+    delete webPreferences.preload;
+    // Verify the location of our prelaod script is legitimate (unless uiDev has been passed)
+    if (webPreferences.preloadURL !== encodeURI(url.format({
+      pathname: path.join(__dirname, 'preload.js'),
+      protocol: 'file:',
+      slashes: true
+    }))) {
+      throw new Error(`Unknown preload.js is being injected, quitting for security reasons. ${webPreferences.preloadURL}`);
+    }
+
+    // Disable Node.js integration
+    webPreferences.nodeIntegration = false;
+    webPreferences.contextIsolation = true;
+  });
+
   // Create the Application's main menu
   // https://github.com/electron/electron/blob/master/docs/api/menu.md#examples
   const template = [
