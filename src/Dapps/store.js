@@ -191,7 +191,7 @@ export default class DappsStore extends EventEmitter {
   }
 
   fetchLocalApps () {
-    return fetchLocalApps(this._api);
+    return fetchLocalApps();
   }
 
   fetchRegistryAppIds (force = false) {

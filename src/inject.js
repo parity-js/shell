@@ -18,6 +18,12 @@ import Api from '@parity/api';
 import qs from 'query-string';
 
 function getAppId () {
+  // Local dapps: file:///home/username/.config/Parity-UI/dapps/mydapp/index.html?appId=LOCAL-dapp-name
+  // Local dapps served in development mode on a dedicated port: http://localhost:3001/?appId=LOCAL-dapp-name
+  const fromQuery = qs.parse(window.location.search).appId;
+
+  if (fromQuery) { return fromQuery; }
+
   // Built-in dapps: file://path-to-shell/.build/dapps/0x0587.../index.html
   // Built-in dapps when running Electron in dev mode: http://127.0.0.1:3000/dapps/v1/index.html
   const [, id] = window.location.pathname.match(/dapps\/([^/]+)\//) || [];
@@ -28,16 +34,6 @@ function getAppId () {
   const [hash] = window.location.pathname.match(/(0x)?[a-f0-9]{64}/i) || [];
 
   if (hash) { return hash; }
-
-  // Dapps served in development mode on a dedicated port: http://localhost:3001/?appId=dapp-name
-  const fromQuery = qs.parse(window.location.search).appId;
-
-  if (fromQuery) { return fromQuery; }
-
-  // Dapps built locally and served by Parity: http://127.0.0.1:8545/dapp-name
-  const [, fromParity] = window.location.pathname.match(/^\/?([^/]+)\/?$/) || [];
-
-  if (fromParity) { return fromParity; }
 
   console.error('Could not find appId');
 }
