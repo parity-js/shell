@@ -27,6 +27,7 @@ const messages = require('./messages');
 const { killParity } = require('./operations/runParity');
 
 const { app, BrowserWindow, ipcMain, session } = electron;
+
 let mainWindow;
 
 function createWindow () {
@@ -128,3 +129,5 @@ app.on('activate', () => {
     createWindow();
   }
 });
+
+app.setPath('userData', path.join(app.getPath('appData'), 'Parity-UI'));

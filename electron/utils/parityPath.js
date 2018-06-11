@@ -16,10 +16,11 @@
 
 const { app } = require('electron');
 
-const parityPath = `${app.getPath('userData')}/parity${process.platform === 'win32' ? '.exe' : ''}`;
-
 // TODO parityPath is now in the Application Data folder by default, it would
 // be nice to first look if /usr/bin/parity exists (and return that as
 // parityPath). For now we keep Application Data as parityPath.
 // See https://github.com/parity-js/shell/issues/66
-module.exports = () => parityPath;
+
+// We cannot use app.getPath('userData') outside of the exports because
+// it would then be executed before app.setPath('userData') in index.js
+module.exports = () => `${app.getPath('userData')}/parity${process.platform === 'win32' ? '.exe' : ''}`;
