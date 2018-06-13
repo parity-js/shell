@@ -101,18 +101,20 @@ export function fetchBuiltinApps (api) {
         'manifest.json'
       );
 
-      if (fs.existsSync(manifestPath)) {
-        return fsReadFile(manifestPath).then(r => {
+      return fsReadFile(manifestPath)
+        .then(r => {
           try {
             return JSON.parse(r);
           } catch (e) {
             console.error(`Couldn't parse manifest.json for ${app.id}`, e);
             return {};
           }
+        })
+        .catch(e => {
+          // We don't require built-in dapps to have manifest.json files;
+          // their manifest information is in dappsBuiltin.json
+          return {};
         });
-      } else {
-        return {};
-      }
     }))
     .then((manifests) => {
       return initialApps
@@ -148,19 +150,17 @@ export function fetchLocalApps (api) {
       Promise.all(dappsFolders.map(({ filePath, filename }) => {
         const manifestPath = path.join(filePath, 'manifest.json');
 
-        if (fs.existsSync(manifestPath)) {
-          return fsReadFile(manifestPath).then(r => {
-            try {
-              return { filename, manifest: JSON.parse(r) };
-            } catch (e) {
-              console.error(`Couldn't parse manifest.json for local dapp ${filePath}`, e);
-              return { filename };
-            }
-          });
-        } else {
-          console.error(`No manifest.json found for local dapp ${filePath}`);
+        return fsReadFile(manifestPath).then(r => {
+          try {
+            return { filename, manifest: JSON.parse(r) };
+          } catch (e) {
+            console.error(`Couldn't parse manifest.json for local dapp ${filePath}`, e);
+            return { filename };
+          }
+        }).catch(e => {
+          console.error(`Couldn't read manifest.json for ${filePath}`);
           return { filename };
-        }
+        });
       })))
     .then(dapps =>
       dapps.filter(({ manifest }) => manifest))
