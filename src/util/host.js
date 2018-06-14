@@ -14,8 +14,8 @@
 // You should have received a copy of the GNU General Public License
 // along with Parity.  If not, see <http://www.gnu.org/licenses/>.
 
-import isElectron from 'is-electron';
 import path from 'path';
+import isElectron from 'is-electron';
 
 export function createLocation (token, location = window.location) {
   const { hash, port, protocol } = location;
@@ -43,7 +43,10 @@ export function redirectLocalhost (token) {
 }
 
 export function getBuildPath () {
-  const basePath = isElectron() ? window.require('electron').remote.getGlobal('dirName') : path.join(__dirname, '..');
+  // Condition necessary for store.spec.js
+  const basePath = isElectron()
+    ? window.require('electron').remote.getGlobal('dirName')
+    : path.join(__dirname, '..');
 
   // Replace all backslashes by front-slashes (happens in Windows)
   // Note: `dirName` contains backslashes in Windows. One would assume that
@@ -57,4 +60,13 @@ export function getBuildPath () {
     '.build');
 
   return buildPath;
+}
+
+export function getLocalDappsPath () {
+  // Condition necessary for store.spec.js
+  const userData = isElectron()
+    ? window.require('electron').remote.app.getPath('userData')
+    : path.join(__dirname, 'dapps');
+
+  return path.join(userData, 'dapps');
 }

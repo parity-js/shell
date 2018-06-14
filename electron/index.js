@@ -15,8 +15,10 @@
 // along with Parity.  If not, see <http://www.gnu.org/licenses/>.
 
 const electron = require('electron');
+const fs = require('fs');
 const path = require('path');
 const url = require('url');
+const util = require('util');
 
 const addMenu = require('./menu');
 const { cli } = require('./cli');
@@ -25,8 +27,14 @@ const fetchParity = require('./operations/fetchParity');
 const handleError = require('./operations/handleError');
 const messages = require('./messages');
 const { killParity } = require('./operations/runParity');
+const { getLocalDappsPath } = require('./utils/paths');
+const { name: appName } = require('../package.json');
 
 const { app, BrowserWindow, ipcMain, session } = electron;
+
+const fsExists = util.promisify(fs.stat); // eslint-disable-line
+const fsMkdir = util.promisify(fs.mkdir);
+
 let mainWindow;
 
 function createWindow () {
@@ -39,6 +47,11 @@ function createWindow () {
     height: 800,
     width: 1200
   });
+
+  const localDappsPath = getLocalDappsPath();
+
+  fsExists(localDappsPath)
+    .catch(() => fsMkdir(localDappsPath));
 
   doesParityExist()
     .catch(() => fetchParity(mainWindow)) // Install parity if not present
@@ -128,3 +141,10 @@ app.on('activate', () => {
     createWindow();
   }
 });
+
+// userData value is derived from the Electron app name by default. However,
+// Electron doesn't know the app name defined in package.json because we
+// execute Electron directly on a file. Running Electron on a folder (either
+// .build/ or electron/) doesn't solve the issue because the package.json
+// is located in the parent directory.
+app.setPath('userData', path.join(app.getPath('appData'), appName));

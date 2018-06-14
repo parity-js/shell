@@ -19,7 +19,7 @@ import { pick, range, uniq } from 'lodash';
 
 import { bytesToHex } from '@parity/api/lib/util/format';
 import { IconCache } from '@parity/ui';
-import { getBuildPath } from './host';
+import { getBuildPath, getLocalDappsPath } from './host';
 import isElectron from 'is-electron';
 
 import builtinApps from '../Dapps/dappsBuiltin.json';
@@ -32,7 +32,9 @@ const util = isElectron() ? window.require('util') : require('util');
 require('util.promisify').shim();
 
 const fs = isElectron() ? window.require('fs') : require('fs');
-const fsReadFileAsync = util.promisify(fs.readFile);
+const fsReadFile = util.promisify(fs.readFile);
+const fsReaddir = util.promisify(fs.readdir);
+const fsStat = util.promisify(fs.stat);
 
 export function subscribeToChanges (api, dappReg, callback) {
   return dappReg
@@ -81,7 +83,7 @@ export function subscribeToChanges (api, dappReg, callback) {
     });
 }
 
-export function fetchBuiltinApps (api) {
+export function fetchBuiltinApps () {
   const initialApps = builtinApps.filter(app => app.id);
 
   const builtinDappsPath = path.join(
@@ -97,18 +99,20 @@ export function fetchBuiltinApps (api) {
         'manifest.json'
       );
 
-      if (fs.existsSync(manifestPath)) {
-        return fsReadFileAsync(manifestPath).then(r => {
+      return fsReadFile(manifestPath)
+        .then(r => {
           try {
             return JSON.parse(r);
           } catch (e) {
             console.error(`Couldn't parse manifest.json for ${app.id}`, e);
             return {};
           }
+        })
+        .catch(e => {
+          // We don't require built-in dapps to have manifest.json files;
+          // their manifest information is in dappsBuiltin.json
+          return {};
         });
-      } else {
-        return {};
-      }
     }))
     .then((manifests) => {
       return initialApps
@@ -116,28 +120,57 @@ export function fetchBuiltinApps (api) {
           const iconUrl = manifests[index].iconUrl || 'icon.png';
 
           app.type = 'builtin';
-          app.image = `file://${path.join(
-            builtinDappsPath,
-            app.id,
-            iconUrl
-          )}`;
+          app.localUrl = `file://${builtinDappsPath}/${app.id}/index.html`;
+          app.image = `file://${builtinDappsPath}/${app.id}/${iconUrl}`;
 
           return app;
         });
     });
 }
 
-export function fetchLocalApps (api) {
-  return api.parity.dappsList()
-    .then((apps) => {
-      return apps
-        .map((app) => {
-          app.type = 'local';
-          app.visible = true;
-          return app;
-        })
-        .filter((app) => app.id && !['ui'].includes(app.id));
-    })
+export function fetchLocalApps () {
+  const dappsPath = getLocalDappsPath();
+
+  return fsReaddir(dappsPath) // List files
+    .then(filenames => // Gather info about files
+      Promise.all(filenames.map(filename => {
+        const filePath = path.join(dappsPath, filename);
+
+        return fsStat(filePath).then(stat => ({ isDirectory: stat.isDirectory(), filePath, filename }));
+      }))
+    )
+    .then(files => // Only keep directories
+      files.filter(({ isDirectory }) => isDirectory))
+    .then(dappsFolders => // Parse manifests
+      Promise.all(dappsFolders.map(({ filePath, filename }) => {
+        const manifestPath = path.join(filePath, 'manifest.json');
+
+        return fsReadFile(manifestPath).then(r => {
+          try {
+            return { filename, manifest: JSON.parse(r) };
+          } catch (e) {
+            console.error(`Couldn't parse manifest.json for local dapp ${filePath}`, e);
+            return { filename };
+          }
+        }).catch(e => {
+          console.error(`Couldn't read manifest.json for ${filePath}`);
+          return { filename };
+        });
+      })))
+    .then(dapps =>
+      dapps.filter(({ manifest }) => manifest))
+    .then(dapps =>
+      dapps.map(({ filename, manifest: { id, localUrl, iconUrl, ...rest } }) => (
+        {
+          ...rest,
+          type: 'local',
+          // Prevent using the appId of an existing non-local dapp with already approved permissions
+          id: `LOCAL-${id}`,
+          visible: true,
+          localUrl: localUrl || `file://${dappsPath}/${filename}/index.html`,
+          image: `file://${dappsPath}/${filename}/${iconUrl}`
+        }
+    )))
     .catch((error) => {
       console.warn('DappsStore:fetchLocal', error);
     });
