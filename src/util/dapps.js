@@ -83,7 +83,7 @@ export function subscribeToChanges (api, dappReg, callback) {
     });
 }
 
-export function fetchBuiltinApps (api) {
+export function fetchBuiltinApps () {
   const initialApps = builtinApps.filter(app => app.id);
 
   const builtinDappsPath = path.join(
@@ -128,7 +128,7 @@ export function fetchBuiltinApps (api) {
     });
 }
 
-export function fetchLocalApps (api) {
+export function fetchLocalApps () {
   const dappsPath = getLocalDappsPath();
 
   return fsReaddir(dappsPath) // List files

@@ -181,7 +181,7 @@ export default class DappsStore extends EventEmitter {
       return Promise.resolve(this._cachedApps[BUILTIN_APPS_KEY]);
     }
 
-    this._cachedApps[BUILTIN_APPS_KEY] = fetchBuiltinApps(this._api)
+    this._cachedApps[BUILTIN_APPS_KEY] = fetchBuiltinApps()
       .then((apps) => {
         this._cachedApps[BUILTIN_APPS_KEY] = apps;
         return apps;
