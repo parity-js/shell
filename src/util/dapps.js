@@ -120,11 +120,8 @@ export function fetchBuiltinApps (api) {
           const iconUrl = manifests[index].iconUrl || 'icon.png';
 
           app.type = 'builtin';
-          app.image = `file://${path.join(
-            builtinDappsPath,
-            app.id,
-            iconUrl
-          )}`;
+          app.localUrl = `file://${builtinDappsPath}/${app.id}/index.html`;
+          app.image = `file://${builtinDappsPath}/${app.id}/${iconUrl}`;
 
           return app;
         });

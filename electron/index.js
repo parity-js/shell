@@ -28,6 +28,7 @@ const handleError = require('./operations/handleError');
 const messages = require('./messages');
 const { killParity } = require('./operations/runParity');
 const { getLocalDappsPath } = require('./utils/paths');
+const { name: appName } = require('../package.json');
 
 const { app, BrowserWindow, ipcMain, session } = electron;
 
@@ -141,4 +142,9 @@ app.on('activate', () => {
   }
 });
 
-app.setPath('userData', path.join(app.getPath('appData'), 'Parity-UI'));
+// userData value is derived from the Electron app name by default. However,
+// Electron doesn't know the app name defined in package.json because we
+// execute Electron directly on a file. Running Electron on a folder (either
+// .build/ or electron/) doesn't solve the issue because the package.json
+// is located in the parent directory.
+app.setPath('userData', path.join(app.getPath('appData'), appName));

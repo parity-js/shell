@@ -174,27 +174,12 @@ export default class Dapp extends Component {
 
     switch (app.type) {
       case 'local':
+      case 'builtin':
         src = `${app.localUrl}?appId=${app.id}`;
         break;
 
       case 'network':
         src = `${dappsUrl}/${app.contentHash}/`;
-        break;
-
-      default:
-        let dapphost = process.env.DAPPS_URL || (
-          process.env.NODE_ENV === 'production'
-            ? `${dappsUrl}/ui`
-            : ''
-        );
-
-        if (dapphost === '/') {
-          dapphost = '';
-        }
-
-        src = window.location.protocol === 'file:'
-          ? `dapps/${app.id}/index.html`
-          : `${dapphost}/dapps/${app.id}/index.html`;
         break;
     }
 
