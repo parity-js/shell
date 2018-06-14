@@ -27,7 +27,7 @@ const fetchParity = require('./operations/fetchParity');
 const handleError = require('./operations/handleError');
 const messages = require('./messages');
 const { killParity } = require('./operations/runParity');
-const { getLocalDappsPath } = require('../src/util/host');
+const { getLocalDappsPath } = require('./utils/paths');
 
 const { app, BrowserWindow, ipcMain, session } = electron;
 

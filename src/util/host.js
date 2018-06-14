@@ -14,9 +14,9 @@
 // You should have received a copy of the GNU General Public License
 // along with Parity.  If not, see <http://www.gnu.org/licenses/>.
 
-const path = require('path');
+import path from 'path';
 
-function createLocation (token, location = window.location) {
+export function createLocation (token, location = window.location) {
   const { hash, port, protocol } = location;
   let query = '';
 
@@ -30,7 +30,7 @@ function createLocation (token, location = window.location) {
   return `${protocol}//127.0.0.1:${port}/${query}`;
 }
 
-function redirectLocalhost (token) {
+export function redirectLocalhost (token) {
   // we don't want localhost, rather we want 127.0.0.1
   if (window.location.hostname !== 'localhost') {
     return false;
@@ -41,7 +41,7 @@ function redirectLocalhost (token) {
   return true;
 }
 
-function getBuildPath () {
+export function getBuildPath () {
   const basePath = window.require('electron').remote.getGlobal('dirName');
 
   // Replace all backslashes by front-slashes (happens in Windows)
@@ -58,21 +58,8 @@ function getBuildPath () {
   return buildPath;
 }
 
-function getLocalDappsPath () {
-  // FIXME
-  const userData = typeof window !== 'undefined'
-    ? window.require('electron').remote.app.getPath('userData')
-    : require('electron').app.getPath('userData');
+export function getLocalDappsPath () {
+  const userData = window.require('electron').remote.app.getPath('userData');
 
   return path.join(userData, 'dapps');
 }
-
-// FIXME
-// Need to find a better way to be able to import this file
-// from electron/ as well as src/
-module.exports = {
-  createLocation,
-  redirectLocalhost,
-  getBuildPath,
-  getLocalDappsPath
-};

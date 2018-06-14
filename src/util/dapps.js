@@ -27,8 +27,6 @@ import Contracts from '@parity/shared/lib/contracts';
 
 import path from 'path';
 
-const electron = window.require('electron');
-
 const util = isElectron() ? window.require('util') : require('util');
 
 require('util.promisify').shim();
