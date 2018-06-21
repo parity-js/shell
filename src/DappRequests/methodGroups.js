@@ -22,8 +22,6 @@ const methodGroups = {
   },
   dapps: {
     methods: [
-      'parity_dappsRefresh',
-      'parity_dappsUrl',
       'shell_getApps',
       'shell_getMethodPermissions'
     ]
