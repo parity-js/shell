@@ -15,10 +15,9 @@
 // along with Parity.  If not, see <http://www.gnu.org/licenses/>.
 
 const electron = require('electron');
-const fs = require('fs');
 const path = require('path');
 const url = require('url');
-const util = require('util');
+const { ensureDir: fsEnsureDir } = require('fs-extra');
 
 const addMenu = require('./menu');
 const { cli } = require('./cli');
@@ -32,10 +31,15 @@ const { name: appName } = require('../package.json');
 
 const { app, BrowserWindow, ipcMain, session } = electron;
 
-const fsExists = util.promisify(fs.stat); // eslint-disable-line
-const fsMkdir = util.promisify(fs.mkdir);
-
 let mainWindow;
+
+function runApp () {
+  doesParityExist()
+    .catch(() => fetchParity(mainWindow)) // Install parity if not present
+    .catch(handleError); // Errors should be handled before, this is really just in case
+
+  return fsEnsureDir(getLocalDappsPath()).then(createWindow);
+}
 
 function createWindow () {
   // Will send these variables to renderers via IPC
@@ -45,17 +49,9 @@ function createWindow () {
 
   mainWindow = new BrowserWindow({
     height: 800,
-    width: 1200
+    width: 1200,
+    webPreferences: { nodeIntegrationInWorker: true }
   });
-
-  const localDappsPath = getLocalDappsPath();
-
-  fsExists(localDappsPath)
-    .catch(() => fsMkdir(localDappsPath));
-
-  doesParityExist()
-    .catch(() => fetchParity(mainWindow)) // Install parity if not present
-    .catch(handleError); // Errors should be handled before, this is really just in case
 
   if (cli.uiDev === true) {
     // Opens http://127.0.0.1:3000 in --ui-dev mode
@@ -122,7 +118,7 @@ function createWindow () {
   });
 }
 
-app.on('ready', createWindow);
+app.on('ready', runApp);
 
 app.on('window-all-closed', () => {
   if (process.platform !== 'darwin') {

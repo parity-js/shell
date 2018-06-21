@@ -169,6 +169,8 @@
     "command-exists": "1.2.2",
     "commander": "2.15.1",
     "electron-dl": "1.11.0",
+    "follow-redirects": "1.5.0",
+    "fs-extra": "6.0.1",
     "is-electron": "2.1.0",
     "keythereum": "1.0.2",
     "lodash.flatten": "4.4.0",
@@ -194,6 +196,7 @@
     "semantic-ui-react": "0.77.0",
     "solc": "ngotchac/solc-js",
     "store": "1.3.20",
+    "unzipper": "0.8.14",
     "util.promisify": "1.0.0"
   }
 }

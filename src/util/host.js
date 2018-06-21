@@ -62,11 +62,20 @@ export function getBuildPath () {
   return buildPath;
 }
 
+export function getHashFetchPath () {
+  // Condition necessary for store.spec.js
+  const userData = isElectron()
+    ? window.require('electron').remote.app.getPath('userData')
+    : path.join(__dirname, 'userData');
+
+  return path.join(userData, 'hashfetch');
+}
+
 export function getLocalDappsPath () {
   // Condition necessary for store.spec.js
   const userData = isElectron()
     ? window.require('electron').remote.app.getPath('userData')
-    : path.join(__dirname, 'dapps');
+    : path.join(__dirname, 'userData');
 
   return path.join(userData, 'dapps');
 }

@@ -149,39 +149,36 @@ export default class Dapp extends Component {
   }
 
   render () {
-    const { dappsUrl } = this.context.api;
     const { params } = this.props;
     const { app, loading } = this.state;
 
     if (loading) {
-      return null;
+      return (
+        <div className={ styles.full }>
+          <p className={ styles.loading }>
+            <FormattedMessage
+              id='dapp.loading'
+              defaultMessage='Loading...'
+            />
+          </p>
+        </div>
+      );
     }
 
     if (!app) {
       return (
         <div className={ styles.full }>
-          <div className={ styles.text }>
+          <p>
             <FormattedMessage
               id='dapp.unavailable'
               defaultMessage='The dapp cannot be reached'
             />
-          </div>
+          </p>
         </div>
       );
     }
 
-    let src = null;
-
-    switch (app.type) {
-      case 'local':
-      case 'builtin':
-        src = `${app.localUrl}?appId=${app.id}`;
-        break;
-
-      case 'network':
-        src = `${dappsUrl}/${app.contentHash}/`;
-        break;
-    }
+    let src = `${app.localUrl}?appId=${app.id}`;
 
     let hash = '';
 

@@ -15,11 +15,11 @@
 // along with Parity.  If not, see <http://www.gnu.org/licenses/>.
 
 import BigNumber from 'bignumber.js';
-import { pick, range, uniq } from 'lodash';
+import { range, uniq } from 'lodash';
 
 import { bytesToHex } from '@parity/api/lib/util/format';
-import { IconCache } from '@parity/ui';
 import { getBuildPath, getLocalDappsPath } from './host';
+import HashFetch from './hashFetch';
 import isElectron from 'is-electron';
 
 import builtinApps from '../Dapps/dappsBuiltin.json';
@@ -200,6 +200,7 @@ export function fetchRegistryAppIds (api) {
     });
 }
 
+// Returns undefined if dapp is invalid
 export function fetchRegistryApp (api, dappReg, appId) {
   return Promise
     .all([
@@ -208,63 +209,50 @@ export function fetchRegistryApp (api, dappReg, appId) {
       dappReg.getManifest(appId)
     ])
     .then(([imageId, contentId, manifestId]) => {
-      const app = {
-        id: appId,
-        image: IconCache.hashToImage(imageId),
-        contentHash: bytesToHex(contentId).substr(2),
-        manifestHash: bytesToHex(manifestId).substr(2),
-        type: 'network',
-        visible: true
-      };
+      const imageHash = bytesToHex(imageId).substr(2);
+      const contentHash = bytesToHex(contentId).substr(2);
+      const manifestHash = bytesToHex(manifestId).substr(2);
 
-      return fetchManifest(api, app.manifestHash)
-        .then((manifest) => {
-          if (manifest) {
-            app.manifestHash = null;
+      return Promise.all([
+        HashFetch.get().fetch(api, imageHash, 'file').catch((e) => { console.warn(`Couldn't download icon for dapp ${appId}`, e); }),
+        HashFetch.get().fetch(api, manifestHash, 'file').catch((e) => { throw new Error(`Couldn't download manifest ${e.toString()}`); })
+      ]).then(([imagePath, manifestPath]) =>
+        fsReadFile(manifestPath)
+          .then(manifestJson => {
+            try {
+              const manifest = JSON.parse(manifestJson);
 
-            // Add usefull manifest fields to app
-            Object.assign(app, pick(manifest, ['author', 'description', 'name', 'version']));
-          }
+              if (!manifest.id) {
+                throw new Error(`Missing app id in manifest.json ${manifest}`);
+              }
 
-          return app;
-        });
-    })
-    .then((app) => {
-      // Keep dapps that has a Manifest File and an Id
-      const dapp = (app.manifestHash || !app.id) ? null : app;
+              return manifest;
+            } catch (e) {
+              throw new Error(`Couldn't parse manifest.json ${e}`);
+            }
+          })
+          .catch(e => {
+            throw new Error(`Couldn't read manifest.json file locally (${manifestPath}) ${e}`);
+          })
+          .then(manifest => {
+            const { author, description, name, version } = manifest;
+            const app = {
+              id: appId,
+              type: 'network',
+              author,
+              description,
+              name: name || '',
+              version,
+              visible: true, // Display by default
+              image: `file://${imagePath}`,
+              contentHash
+            };
 
-      return dapp;
-    })
-    .catch((error) => {
-      console.warn('DappsStore:fetchRegistryApp', error);
-    });
-}
-
-export function fetchManifest (api, manifestHash) {
-  if (/^(0x)?0+/.test(manifestHash)) {
-    return Promise.resolve(null);
-  }
-
-  return api.parity
-    .dappsUrl()
-    .then(dappsUrl => {
-      const protocol = window.location.protocol === 'https:' ? 'https:' : 'http:';
-
-      return fetch(
-        `${protocol}//${dappsUrl}/api/content/${manifestHash}/`,
-        { redirect: 'follow', mode: 'cors' }
+            return app;
+          })
       );
     })
-    .then((response) => {
-      return response.ok
-        ? response.json()
-        : null;
-    })
-    .then((manifest) => {
-      return manifest;
-    })
-    .catch((error) => {
-      console.warn('DappsStore:fetchManifest', error);
-      return null;
-    });
+      .catch((error) => {
+        console.warn('DappsStore:fetchRegistryApp', appId, error);
+      });
 }
