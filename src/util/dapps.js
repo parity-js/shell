@@ -27,11 +27,11 @@ import Contracts from '@parity/shared/lib/contracts';
 
 import path from 'path';
 
-const util = isElectron() ? window.require('util') : require('util');
+const util = require('util');
 
 require('util.promisify').shim();
 
-const fs = isElectron() ? window.require('fs') : require('fs');
+const fs = require('fs');
 const fsReadFile = util.promisify(fs.readFile);
 const fsReaddir = util.promisify(fs.readdir);
 const fsStat = util.promisify(fs.stat);

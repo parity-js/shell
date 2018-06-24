@@ -33,7 +33,7 @@ import styles from './connection.css';
 let electron;
 
 if (isElectron()) {
-  electron = window.require('electron');
+  electron = require('electron');
 }
 
 @observer

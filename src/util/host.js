@@ -45,7 +45,7 @@ export function redirectLocalhost (token) {
 export function getBuildPath () {
   // Condition necessary for store.spec.js
   const basePath = isElectron()
-    ? window.require('electron').remote.getGlobal('dirName')
+    ? require('electron').remote.getGlobal('dirName')
     : path.join(__dirname, '..');
 
   // Replace all backslashes by front-slashes (happens in Windows)
@@ -65,8 +65,8 @@ export function getBuildPath () {
 export function getHashFetchPath () {
   // Condition necessary for store.spec.js
   const userData = isElectron()
-    ? window.require('electron').remote.app.getPath('userData')
-    : path.join(__dirname, 'userData');
+    ? require('electron').remote.app.getPath('userData')
+    : path.join(__dirname, '../../test/tmp');
 
   return path.join(userData, 'hashfetch');
 }
@@ -74,8 +74,8 @@ export function getHashFetchPath () {
 export function getLocalDappsPath () {
   // Condition necessary for store.spec.js
   const userData = isElectron()
-    ? window.require('electron').remote.app.getPath('userData')
-    : path.join(__dirname, 'userData');
+    ? require('electron').remote.app.getPath('userData')
+    : path.join(__dirname, '../../test/tmp');
 
   return path.join(userData, 'dapps');
 }
