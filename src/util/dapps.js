@@ -20,7 +20,6 @@ import { range, uniq } from 'lodash';
 import { bytesToHex } from '@parity/api/lib/util/format';
 import { getBuildPath, getLocalDappsPath } from './host';
 import HashFetch from './hashFetch';
-import isElectron from 'is-electron';
 
 import builtinApps from '../Dapps/dappsBuiltin.json';
 import Contracts from '@parity/shared/lib/contracts';
