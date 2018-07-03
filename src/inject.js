@@ -81,10 +81,9 @@ if (typeof window !== 'undefined' && !window.isParity) {
   // https://electronjs.org/docs/tutorial/security#7-override-and-disable-eval
   //
   // TODO Currently Web3 Console dapp needs eval(), so we cannot blindly disable
-  // it as per the recommendation.
+  // it as per the recommendation. For now we simply allow eval() for all dapps.
   // One idea is to check here in inject.js if allowJsEval is set to true, but
   // this requires more work (future PR).
-  // For now we simply allow eval() for all dapps.
   //
   // window.eval = global.eval = function () { // eslint-disable-line
   //   throw new Error(`Sorry, this app does not support window.eval().`);
