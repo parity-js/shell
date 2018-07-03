@@ -18,7 +18,6 @@ const electron = require('electron');
 const fs = require('fs');
 const path = require('path');
 const url = require('url');
-const { URL, URLSearchParams } = url;
 const util = require('util');
 
 const addMenu = require('./menu');
@@ -32,6 +31,7 @@ const { getLocalDappsPath } = require('./utils/paths');
 const { name: appName } = require('../package.json');
 
 const { app, BrowserWindow, ipcMain, session } = electron;
+const { URL } = url;
 
 const fsExists = util.promisify(fs.stat); // eslint-disable-line
 const fsMkdir = util.promisify(fs.mkdir);
