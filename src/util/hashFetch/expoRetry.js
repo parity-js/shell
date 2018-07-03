@@ -14,12 +14,9 @@
 // You should have received a copy of the GNU General Public License
 // along with Parity.  If not, see <http://www.gnu.org/licenses/>.
 
-const fs = require('fs');
-const util = require('util');
 const path = require('path');
 
 import { readJson as fsReadJson, writeJson as fsWriteJson } from 'fs-extra';
-const fsExists = util.promisify(fs.stat);
 
 import { getHashFetchPath } from '../host';
 
@@ -64,17 +61,11 @@ export default class ExpoRetry {
   load () {
     const filePath = this._getFilePath();
 
-    return fsExists(filePath)
-        .then(() =>
-          fsReadJson(filePath)
-            .catch(e => {
-              throw new Error(`Couldn't parse JSON for ExpoRetry file ${filePath} ${e}`);
-            })
-        )
-        .then(failHistory => {
-          this.failHistory = failHistory;
-        })
-        .catch(() => fsWriteJson(filePath, this.failHistory));
+    return fsReadJson(filePath)
+      .then(failHistory => {
+        this.failHistory = failHistory;
+      })
+      .catch(() => fsWriteJson(filePath, this.failHistory));
   }
 
   canAttemptDownload (hash, url) {
@@ -113,6 +104,8 @@ export default class ExpoRetry {
 
         return fsWriteJson(this._getFilePath(), this.failHistory);
       }
+    }).catch(() => {
+      console.error(`Couldn't write to ${this._getFilePath()}`);
     });
   }
 }

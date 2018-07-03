@@ -23,18 +23,13 @@ import unzip from 'unzipper';
 import { getHashFetchPath } from '../host';
 import ExpoRetry from './expoRetry';
 import Contracts from '@parity/shared/lib/contracts';
-import { sha3 } from '@parity/api/lib/util/sha3';
 import { bytesToHex } from '@parity/api/lib/util/format';
-import { ensureDir as fsEnsureDir, emptyDir as fsEmptyDir } from 'fs-extra';
+import { ensureDir as fsEnsureDir, emptyDir as fsEmptyDir, move, pathExists, remove } from 'fs-extra';
 import { http, https } from 'follow-redirects';
+import { keccak256 } from 'js-sha3';
 
-const fsExists = util.promisify(fs.stat);
 const fsStat = util.promisify(fs.stat);
-const fsRename = util.promisify(fs.rename);
-const fsReadFile = util.promisify(fs.readFile);
-const fsUnlink = util.promisify(fs.unlink);
 const fsReaddir = util.promisify(fs.readdir);
-const fsRmdir = util.promisify(fs.rmdir);
 
 const MAX_DOWNLOADED_FILE_SIZE_BYTES = 10485760; // 20MB
 
@@ -43,9 +38,24 @@ function registerFailedAttemptAndThrow (hash, url, e) {
   throw e;
 }
 
-function checkHashMatch (hash, path) {
-  return fsReadFile(path).then(content => {
-    if (sha3(content) !== `0x${hash}`) { throw new Error(`Hashes don't match: expected 0x${hash}, got ${sha3(content)}`); }
+function checkHashMatch (expectedHash, path) {
+  return new Promise((resolve, reject) => {
+    const hasher = keccak256.create();
+    const fileReadStream = fs.createReadStream(path);
+
+    fileReadStream.on('end', () => {
+      const actualHash = hasher.hex();
+
+      if (actualHash !== expectedHash) {
+        reject(`Hashes don't match: expected ${expectedHash}, got ${actualHash}`);
+      } else {
+        resolve();
+      }
+    });
+
+    fileReadStream.on('data', (chunk) => {
+      hasher.update(chunk);
+    });
   });
 }
 
@@ -75,7 +85,7 @@ function rawUnzipTo (zipPath, extractPath) {
 
 function unzipThroughTo (tempPath, extractPath, finalPath) {
   return rawUnzipTo(tempPath, extractPath)
-    .then(() => fsUnlink(tempPath))
+    .then(() => remove(tempPath))
     .then(() => ls(extractPath))
     .then(files => {
       // Check if the zip file contained a root folder
@@ -83,20 +93,31 @@ function unzipThroughTo (tempPath, extractPath, finalPath) {
         // Rename the root folder (contaning the dapp) to finalPath
         const rootFolderPath = files[0].filePath;
 
-        return fsRename(rootFolderPath, finalPath)
-            .then(() => fsRmdir(extractPath));
+        return move(rootFolderPath, finalPath)
+            .then(() => remove(extractPath));
       } else {
         // No root folder: extractPath contains the dapp
-        return fsRename(extractPath, finalPath);
+        return move(extractPath, finalPath);
       }
     });
 }
 
 function download (url, destinationPath) {
-  const file = fs.createWriteStream(destinationPath); // Will replace any existing file
-
   return new Promise((resolve, reject) => {
-    const httpx = url.startsWith('https:') ? https : http;
+    url = url.toLowerCase();
+
+    let httpx;
+
+    if (url.startsWith('https:')) {
+      httpx = https;
+    } else if (url.startsWith('http:')) {
+      httpx = http;
+    } else {
+      reject(`Aborted attempt to download non-HTTP/HTTPS URL ${url}`);
+      return;
+    }
+
+    const file = fs.createWriteStream(destinationPath); // Will replace any existing file
 
     httpx.get(url, response => {
       var size = 0;
@@ -107,9 +128,13 @@ function download (url, destinationPath) {
         if (size > MAX_DOWNLOADED_FILE_SIZE_BYTES) {
           response.destroy();
           response.unpipe(file);
-          fsUnlink(destinationPath);
+          remove(destinationPath);
           reject(`File download aborted: exceeded maximum size of ${MAX_DOWNLOADED_FILE_SIZE_BYTES} bytes`);
         }
+      });
+
+      response.on('error', (e) => {
+        reject(`File download failed: ${e}`);
       });
 
       response.pipe(file);
@@ -128,11 +153,12 @@ function hashDownload (hash, url, zip = false) {
   const finalPath = path.join(getHashFetchPath(), 'files', hash);
 
   return download(url, tempPath)
-      // Don't register a failed attempt if the download failed; the user might be offline.
-      .then(() => checkHashMatch(hash, tempPath).catch(e => registerFailedAttemptAndThrow(hash, url, e)))
+      .then(() => checkHashMatch(hash, tempPath))
+      // @TODO Don't register a failed attempt if the download failed becuse the user was offline.
+      .catch(e => registerFailedAttemptAndThrow(hash, url, e))
       .then(() => { // Hashes match
         if (!zip) {
-          return fsRename(tempPath, finalPath);
+          return move(tempPath, finalPath);
         } else {
           const extractPath = path.join(getHashFetchPath(), 'partial-extract', tempFilename);
 
@@ -224,8 +250,15 @@ export default class HashFetch {
       });
   }
 
-  // Returns a Promise that resolves with the path to the file or directory.
-  // `expected` is either 'file' or 'dapp'.
+  /**
+   * Download a file or dapp based on its contents hash;
+   * returns a promise of the path to the downloaded file or directory.
+   *
+   * @param {String} api
+   * @param {String} hash - Keccak256 hexadecimal hash of the file without 0x
+   * @param {String} expected - Either 'file' or 'dapp'
+   * @return {Promise} A Promise that resolves with the path to the file or directory
+   */
   fetch (api, hash, expected) {
     hash = hash.toLowerCase();
 
@@ -235,7 +268,7 @@ export default class HashFetch {
       const filePath = path.join(getHashFetchPath(), 'files', hash);
 
       if (!(hash in this.promises)) { // There is no ongoing or resolved fetch for this hash
-        this.promises[hash] = fsExists(filePath)
+        this.promises[hash] = pathExists(filePath)
           .catch(() => queryRegistryAndDownload(api, hash, expected))
           .then(() => checkExpectedMatch(hash, filePath, expected))
           .then(() => filePath)
