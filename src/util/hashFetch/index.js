@@ -24,10 +24,11 @@ import { getHashFetchPath } from '../host';
 import ExpoRetry from './expoRetry';
 import Contracts from '@parity/shared/lib/contracts';
 import { bytesToHex } from '@parity/api/lib/util/format';
-import { ensureDir as fsEnsureDir, emptyDir as fsEmptyDir, move, pathExists, remove } from 'fs-extra';
+import { ensureDir as fsEnsureDir, emptyDir as fsEmptyDir, move, remove } from 'fs-extra';
 import { http, https } from 'follow-redirects';
 import { keccak256 } from 'js-sha3';
 
+const fsExists = util.promisify(fs.stat);
 const fsStat = util.promisify(fs.stat);
 const fsReaddir = util.promisify(fs.readdir);
 
@@ -268,7 +269,7 @@ export default class HashFetch {
       const filePath = path.join(getHashFetchPath(), 'files', hash);
 
       if (!(hash in this.promises)) { // There is no ongoing or resolved fetch for this hash
-        this.promises[hash] = pathExists(filePath)
+        this.promises[hash] = fsExists(filePath)
           .catch(() => queryRegistryAndDownload(api, hash, expected))
           .then(() => checkExpectedMatch(hash, filePath, expected))
           .then(() => filePath)
