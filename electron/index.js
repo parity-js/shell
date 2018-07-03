@@ -31,6 +31,7 @@ const { getLocalDappsPath } = require('./utils/paths');
 const { name: appName } = require('../package.json');
 
 const { app, BrowserWindow, ipcMain, session } = electron;
+const { URL } = url;
 
 const fsExists = util.promisify(fs.stat); // eslint-disable-line
 const fsMkdir = util.promisify(fs.mkdir);
@@ -115,6 +116,49 @@ function createWindow () {
     // Disable Node.js integration
     webPreferences.nodeIntegration = false;
     webPreferences.contextIsolation = true;
+  });
+
+  // Listen to the creation of (dapp) webviews to attach event listeners to them
+  mainWindow.webContents.on('did-attach-webview', (event, webContents) => {
+    let baseUrl;
+    let appId;
+
+    // Keep track of the first URL of the webview (index.html of the dapp).
+    // This defines what files the webview is allowed to navigate to within
+    // the same frame. For example, my-dapp/index.html can navigate to
+    // my-dapp/some/folder/hi.html and then back to my-dapp/index.html
+    webContents.once('did-navigate', (e, initialUrl) => {
+      const initialURL = new URL(initialUrl);
+
+      appId = initialURL.searchParams.get('appId');
+
+      initialURL.hash = '';
+      initialURL.search = '';
+
+      baseUrl = initialURL.href.substr(0, initialURL.href.lastIndexOf('/') + 1);
+    });
+
+    // The event handler for will-navigate needs to be set in the main process
+    // in order to be able to prevent the navigation: https://git.io/f4SNW
+    webContents.on('will-navigate', (e, targetUrl) => {
+      e.preventDefault();
+
+      if (targetUrl.startsWith(baseUrl)) {
+        // The target URL is located inside the dapp folder: allow in-frame
+        // navigation but enforce appId query parameter for inject.js
+
+        const newURL = new URL(targetUrl);
+
+        newURL.searchParams.set('appId', appId);
+
+        webContents.loadURL(newURL.href);
+      } else {
+        // Open all links to resources outside the dapp root in the browser
+        // (or with the default desktop app for protocols other than http)
+
+        electron.shell.openExternal(targetUrl);
+      }
+    });
   });
 
   mainWindow.on('closed', () => {
