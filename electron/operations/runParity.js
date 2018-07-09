@@ -54,7 +54,7 @@ module.exports = {
       .then(() => fsChmod(parityPath(), '755')) // Should already be 755 after download, just to be sure
       .then(() => {
         const logStream = fs.createWriteStream(logFile, { flags: 'a' });
-        let logLastLine; // Always contains last line of the logFile
+        let logLastLine = ''; // Always contains last line of the logFile
 
         // Run an instance of parity with the correct args
         parity = spawn(parityPath(), parityArgv);

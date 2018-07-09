@@ -157,9 +157,7 @@ module.exports = {
     unsafeCache: true
   },
 
-  node: {
-    fs: 'empty'
-  },
+  target: 'electron-renderer',
 
   plugins: (function () {
     let plugins = Shared.getPlugins().concat(

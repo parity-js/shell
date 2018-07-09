@@ -60,7 +60,7 @@ function renderUI (token) {
 
   if (isElectron()) {
     // Take --flag options from electron if available
-    const { remote } = window.require('electron');
+    const { remote } = require('electron');
 
     wsUrl = `${remote.getGlobal('wsInterface') || '127.0.0.1'}:${remote.getGlobal('wsPort') || '8546'}`;
   }

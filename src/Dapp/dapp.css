@@ -29,6 +29,29 @@
 
 .full {
   font-family: 'Roboto', sans-serif;
-  font-size: 16px;
+  font-size: 2em;
   font-weight: 300;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #999;
 }
+
+.loading {
+  opacity: 0;
+  animation-duration: 0.5s;
+  animation-name: fadeIn;
+  animation-delay: 1.5s;
+  animation-fill-mode: forwards;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+
+  to {
+    opacity: 1;
+  }
+}
+

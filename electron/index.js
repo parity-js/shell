@@ -15,10 +15,9 @@
 // along with Parity.  If not, see <http://www.gnu.org/licenses/>.
 
 const electron = require('electron');
-const fs = require('fs');
 const path = require('path');
 const url = require('url');
-const util = require('util');
+const { ensureDir: fsEnsureDir } = require('fs-extra');
 
 const addMenu = require('./menu');
 const { cli } = require('./cli');
@@ -33,10 +32,15 @@ const { name: appName } = require('../package.json');
 const { app, BrowserWindow, ipcMain, session } = electron;
 const { URL } = url;
 
-const fsExists = util.promisify(fs.stat); // eslint-disable-line
-const fsMkdir = util.promisify(fs.mkdir);
-
 let mainWindow;
+
+function runApp () {
+  doesParityExist()
+    .catch(() => fetchParity(mainWindow)) // Install parity if not present
+    .catch(handleError); // Errors should be handled before, this is really just in case
+
+  return fsEnsureDir(getLocalDappsPath()).then(createWindow);
+}
 
 function createWindow () {
   // Will send these variables to renderers via IPC
@@ -46,17 +50,9 @@ function createWindow () {
 
   mainWindow = new BrowserWindow({
     height: 800,
-    width: 1200
+    width: 1200,
+    webPreferences: { nodeIntegrationInWorker: true }
   });
-
-  const localDappsPath = getLocalDappsPath();
-
-  fsExists(localDappsPath)
-    .catch(() => fsMkdir(localDappsPath));
-
-  doesParityExist()
-    .catch(() => fetchParity(mainWindow)) // Install parity if not present
-    .catch(handleError); // Errors should be handled before, this is really just in case
 
   if (cli.uiDev === true) {
     // Opens http://127.0.0.1:3000 in --ui-dev mode
@@ -88,22 +84,6 @@ function createWindow () {
     callback({ requestHeaders: details.requestHeaders });
   });
 
-  // Do not accept all kind of web permissions (camera, location...)
-  // https://electronjs.org/docs/tutorial/security#4-handle-session-permission-requests-from-remote-content
-  session.defaultSession
-    .setPermissionRequestHandler((webContents, permission, callback) => {
-      if (!webContents.getURL().startsWith('file:')) {
-        // Denies the permissions request for all non-file://. Currently all
-        // network dapps are loaded on http://127.0.0.1:8545, so they won't
-        // have any permissions.
-        return callback(false);
-      }
-
-      // All others loaded on file:// (shell, builtin, local) can have those
-      // permissions.
-      return callback(true);
-    });
-
   // Verify WebView Options Before Creation
   // https://electronjs.org/docs/tutorial/security#12-verify-webview-options-before-creation
   mainWindow.webContents.on('will-attach-webview', (event, webPreferences, params) => {
@@ -120,6 +100,14 @@ function createWindow () {
 
   // Listen to the creation of (dapp) webviews to attach event listeners to them
   mainWindow.webContents.on('did-attach-webview', (event, webContents) => {
+    // Do not accept all kinds of web permissions (camera, location...)
+    // https://electronjs.org/docs/tutorial/security#4-handle-session-permission-requests-from-remote-content
+    webContents.session
+      .setPermissionRequestHandler((webContents, permission, callback) => {
+        // Deny all permissions for dapps
+        return callback(false);
+      });
+
     let baseUrl;
     let appId;
 
@@ -166,7 +154,7 @@ function createWindow () {
   });
 }
 
-app.on('ready', createWindow);
+app.on('ready', runApp);
 
 app.on('window-all-closed', () => {
   if (process.platform !== 'darwin') {

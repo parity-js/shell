@@ -29,7 +29,6 @@ export default class SecureApi extends Api {
   _needsToken = false;
   _tokens = [];
 
-  _dappsUrl = null;
   _wsUrl = null;
 
   static getWsProvider (url, protocol, sysuiToken) {
@@ -73,44 +72,7 @@ export default class SecureApi extends Api {
     wsProvider.on('close', this.connect, this);
 
     this
-      .connect() // Connect with token
-      .then(() => this._fetchSettings()); // Update this._dappsUrl
-  }
-
-  get _dappsAddress () {
-    if (!this._dappsUrl) {
-      return {
-        host: null,
-        port: 8545
-      };
-    }
-
-    const [host, port] = this._dappsUrl.split(':');
-
-    return {
-      host,
-      port: port ? parseInt(port, 10) : null
-    };
-  }
-
-  get dappsPort () {
-    return this._dappsAddress.port;
-  }
-
-  get dappsUrl () {
-    const { port } = this._dappsAddress;
-
-    return port
-      ? `${this.protocol()}//${this.hostname}:${port}`
-      : `${this.protocol()}//${this.hostname}`;
-  }
-
-  get hostname () {
-    if (window.location.hostname === 'home.parity') {
-      return 'dapps.parity';
-    }
-
-    return this._dappsAddress.host || '127.0.0.1';
+      .connect(); // Connect with token
   }
 
   get isConnecting () {
@@ -319,18 +281,6 @@ export default class SecureApi extends Api {
         // The token is invalid
         log.debug('tried with a wrong token', token);
         return false;
-      });
-  }
-
-  /**
-   * Retrieve the correct ports from the Node
-   */
-  _fetchSettings () {
-    return this.parity
-      .dappsUrl()
-      .catch(() => null)
-      .then((dappsUrl) => {
-        this._dappsUrl = this._resolveHost(dappsUrl);
       });
   }
 

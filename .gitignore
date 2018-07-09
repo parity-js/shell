@@ -4,6 +4,7 @@ npm-debug.log
 build
 dist
 docs
+test/tmp
 .build
 .coverage
 .dist

@@ -15,6 +15,7 @@
 // along with Parity.  If not, see <http://www.gnu.org/licenses/>.
 
 const webpack = require('webpack');
+const UglifyJsPlugin = require('uglifyjs-webpack-plugin');
 
 const HappyPack = require('happypack');
 const PackageJson = require('../package.json');
@@ -57,14 +58,13 @@ function getPlugins (_isProd = isProd) {
   if (_isProd) {
     plugins.push(
       new webpack.optimize.ModuleConcatenationPlugin(),
-      new webpack.optimize.UglifyJsPlugin({
+      new UglifyJsPlugin({
         sourceMap: true,
-        screwIe8: true,
-        compress: {
-          warnings: false
-        },
-        output: {
-          comments: false
+        uglifyOptions: {
+          ecma: 8,
+          compress: {
+            warnings: false
+          }
         }
       })
     );
