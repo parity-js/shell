@@ -103,4 +103,4 @@ publish:snap:
     - scripts/publish-snap.sh
   tags:
     - rust-stable
-#test sync 1
+#test sync 2
