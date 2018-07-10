@@ -150,10 +150,17 @@ function createWindow () {
 
     // Block in-page requests to resources outside the dapp folder
     webContents.session.webRequest.onBeforeRequest({ urls: ['file://*'] }, (details, callback) => {
-      if (baseUrl && !details.url.startsWith(baseUrl)) {
+      if (baseUrl &&
+          !details.url.startsWith(baseUrl) &&
+          // dapp-dapp-visible needs to be able to display the icons of other
+          // dapps, so as a temporary fix we allow access to all .png files
+          !url.parse(details.url).pathname.endsWith('.png')) {
         const sanitizedUrl = details.url.replace(/'/, '');
 
-        webContents.executeJavaScript(`console.warn('Parity UI blocked a request to access ${sanitizedUrl}')`);
+        if (!webContents.isDestroyed()) {
+          webContents.executeJavaScript(`console.warn('Parity UI blocked a request to access ${sanitizedUrl}')`);
+        }
+
         callback({ cancel: true });
       } else {
         callback({ cancel: false });
