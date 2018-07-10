@@ -34,6 +34,12 @@ const { URL } = url;
 
 let mainWindow;
 
+// Disable gpu acceleration on linux
+// https://github.com/parity-js/shell/issues/157
+if (!['darwin', 'win32'].includes(process.platform)) {
+  app.disableHardwareAcceleration();
+}
+
 function runApp () {
   doesParityExist()
     .catch(() => fetchParity(mainWindow)) // Install parity if not present
