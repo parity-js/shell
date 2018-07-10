@@ -117,10 +117,11 @@ function createWindow () {
     let baseUrl;
     let appId;
 
-    // Keep track of the first URL of the webview (index.html of the dapp).
-    // This defines what files the webview is allowed to navigate to within
-    // the same frame. For example, my-dapp/index.html can navigate to
-    // my-dapp/some/folder/hi.html and then back to my-dapp/index.html
+    // Derive the dapp baseUrl (.../my-dapp/) from the first URL of the webview
+    // (.../my-dapp/index.html). The baseUrl defines what files the webview is
+    // allowed to navigate to within the same frame.
+    // For example, my-dapp/index.html can navigate to my-dapp/some/dir/hi.html
+    // and then back to my-dapp/index.html
     webContents.once('did-navigate', (e, initialUrl) => {
       const initialURL = new URL(initialUrl);
 
@@ -128,7 +129,6 @@ function createWindow () {
 
       initialURL.hash = '';
       initialURL.search = '';
-
       baseUrl = initialURL.href.substr(0, initialURL.href.lastIndexOf('/') + 1);
     });
 
@@ -138,7 +138,7 @@ function createWindow () {
       e.preventDefault();
 
       if (targetUrl.startsWith(baseUrl)) {
-        // The target URL is located inside the dapp folder: allow in-frame
+        // The target resource is located inside the dapp folder: allow in-frame
         // navigation but enforce appId query parameter for inject.js
 
         const newURL = new URL(targetUrl);
@@ -151,6 +151,25 @@ function createWindow () {
         // (or with the default desktop app for protocols other than http)
 
         electron.shell.openExternal(targetUrl);
+      }
+    });
+
+    // Block in-page requests to resources outside the dapp folder
+    webContents.session.webRequest.onBeforeRequest({ urls: ['file://*'] }, (details, callback) => {
+      if (baseUrl &&
+          !details.url.startsWith(baseUrl) &&
+          // dapp-dapp-visible needs to be able to display the icons of other
+          // dapps, so as a temporary fix we allow access to all .png files
+          !url.parse(details.url).pathname.endsWith('.png')) {
+        const sanitizedUrl = details.url.replace(/'/, '');
+
+        if (!webContents.isDestroyed()) {
+          webContents.executeJavaScript(`console.warn('Parity UI blocked a request to access ${sanitizedUrl}')`);
+        }
+
+        callback({ cancel: true });
+      } else {
+        callback({ cancel: false });
       }
     });
   });
