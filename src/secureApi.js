@@ -165,7 +165,7 @@ export default class SecureApi extends Api {
    * otherwise (HEAD request to the Node)
    */
   isNodeUp () {
-    return fetch(`${this.protocol()}//${this._wsUrl}/api/ping`, { method: 'HEAD', mode: 'no-cors' })
+    return fetch(`${this.protocol()}//${this._wsUrl}`, { method: 'HEAD', mode: 'no-cors' })
       .then(() => true)
       .catch(() => false);
   }
