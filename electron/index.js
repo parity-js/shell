@@ -159,8 +159,8 @@ function createWindow () {
       if (baseUrl &&
           !details.url.startsWith(baseUrl) &&
           // dapp-dapp-visible needs to be able to display the icons of other
-          // dapps, so as a temporary fix we allow access to all .png files
-          !url.parse(details.url).pathname.endsWith('.png')) {
+          // dapps, so as a temporary fix we allow access to all images requests
+          details.resourceType !== 'image') {
         const sanitizedUrl = details.url.replace(/'/, '');
 
         if (!webContents.isDestroyed()) {
