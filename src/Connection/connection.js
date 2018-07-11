@@ -121,7 +121,7 @@ class Connection extends Component {
     if (!versionInfo) { return true; } // Simpler to return true when pinging for parity_versionInfo
     const { version: { major, minor } } = versionInfo;
 
-    return major > 1 || (major === 1 && minor >= 10);
+    return major === 1 && minor >= 10 && minor <= 11;
   }
 
   handleOpenWebsite = () => {
@@ -275,7 +275,7 @@ class Connection extends Component {
       <div className={ styles.info }>
         <FormattedMessage
           id='connection.incorrectVersion'
-          defaultMessage='We found parity version {version} running. Parity UI requires parity >=1.10 to run. Please visit {link} to install Parity 1.10 first.'
+          defaultMessage='We found parity version {version} running. This version of Parity UI requires Parity 1.10 or 1.11 to run. Please either upgrade Parity UI, or visit {link} to install the correct version of Parity.'
           values={ {
             link: <a href='#' onClick={ this.handleOpenWebsite }>https://parity.io</a>,
             version: `${major}.${minor}.${patch}`
