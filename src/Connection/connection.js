@@ -113,7 +113,7 @@ class Connection extends Component {
   }
 
   /**
-   * Electron UI requires parity version >=1.10.0
+   * Parity UI requires parity version 1.10 or 1.11
    */
   isVersionCorrect = () => {
     const { versionInfo } = this.versionInfoStore;
