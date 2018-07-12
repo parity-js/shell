@@ -21,12 +21,20 @@ import SyncWarning from './';
 
 let component;
 
-function createApi (syncing = null) {
+function createApi () {
   return {
     pubsub: {
+      eth: {
+        syncing: callback =>
+          setImmediate(() => callback(null, false))
+
+      },
       parity: {
-        nodeHealth: callback =>
-          setImmediate(() => callback(null, { peers: 2 }))
+        netPeers: callback =>
+          setImmediate(() => callback(null, {
+            connected: { eq: (v) => v === 5, toFormat: () => 5 }, // Mock BigNumber.js
+            max: { eq: (v) => v === 25, toFormat: () => 25 }
+          }))
 
       }
     }
