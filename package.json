@@ -25,7 +25,7 @@
     "Parity"
   ],
   "parity": {
-    "channel": "nightly"
+    "channel": "beta"
   },
   "scripts": {
     "build": "npm run build:inject && npm run build:app && npm run build:electron && npm run build:embed",
