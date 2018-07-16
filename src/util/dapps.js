@@ -171,7 +171,7 @@ export function fetchLocalApps () {
           localUrl: localUrl || `file://${dappsPath}/${filename}/index.html`,
           image: `file://${dappsPath}/${filename}/${iconUrl}`
         }
-    )))
+      )))
     .catch((error) => {
       console.warn('DappsStore:fetchLocal', error);
     });
@@ -253,7 +253,7 @@ export function fetchRegistryApp (api, dappReg, appId) {
           })
       );
     })
-      .catch((error) => {
-        console.warn('DappsStore:fetchRegistryApp', appId, error);
-      });
+    .catch((error) => {
+      console.warn('DappsStore:fetchRegistryApp', appId, error);
+    });
 }
