@@ -19,7 +19,7 @@ Be sure to check out [our wiki](https://wiki.parity.io/Parity-Wallet) for more i
 ## About Parity UI
 
 Parity UI is a User Interface desktop application for [Parity Ethereum Client](https://github.com/paritytech/parity/blob/master/README.md) >=v1.10. It features a Wallet supporting Ether and ERC-20 Tokens, a Contract development environment, and so much more. Parity UI will download and run [Parity Ethereum Client](https://github.com/paritytech/parity/blob/master/README.md) in the background if it is not found on the system. 
-By default Parity UI will try connect to a Parity Ethereum node using Websocket port 8545. You can use alternative ports, see [CLI Options](#cli-options) below.
+By default Parity UI will try connect to a Parity Ethereum node using Websocket port 8546. You can use alternative ports, see [CLI Options](#cli-options) below.
 
 You can download Parity UI [here](https://github.com/parity-js/shell/releases/latest) or follow the instructions below to build from source.
 
