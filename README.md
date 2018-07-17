@@ -1,6 +1,7 @@
-# Parity UI - User Interface Desktop Application for Parity Ethereum Client
+# Parity UI
+## This project is not actively maintained by Parity Technologies anymore. This is a community maintained project.
 
-## [» Download the latest release «](https://github.com/parity-js/shell/releases/latest)
+### [Download the latest release](https://github.com/parity-js/shell/releases/latest)
 
 [![GPLv3](https://img.shields.io/badge/license-GPL%20v3-green.svg)](https://www.gnu.org/licenses/gpl-3.0.en.html)
 
@@ -17,12 +18,10 @@ Be sure to check out [our wiki](https://wiki.parity.io/Parity-Wallet) for more i
 ----
 ## About Parity UI
 
-Parity UI is a User Interface desktop application for [Parity Ethereum Client](https://github.com/paritytech/parity/blob/master/README.md) >=v1.10. In order to use Parity UI, you must have [Parity Ethereum Client](https://github.com/paritytech/parity/blob/master/README.md) >=v1.10 installed on your system. 
-By default Parity UI will listen to any running Parity client on your system and connect to it. If none was found, a Parity Ethereum Client process will be launched in background and connect to Ethereum mainnet.
+Parity UI is a User Interface desktop application for [Parity Ethereum Client](https://github.com/paritytech/parity/blob/master/README.md) >=v1.10. It features a Wallet supporting Ether and ERC-20 Tokens, a Contract development environment, and so much more. Parity UI will download and run [Parity Ethereum Client](https://github.com/paritytech/parity/blob/master/README.md) in the background if it is not found on the system. 
+By default Parity UI will try connect to a Parity Ethereum node using Websocket port 8546. You can use alternative ports, see [CLI Options](#cli-options) below.
 
-If you run into any User Interface related issue while using Parity UI, feel free to file one in this repository or hop on our Gitter or Riot chat room to ask a question. We are glad to help!
-
-You can download Parity UI at https://github.com/parity-js/shell/releases/latest or follow the instructions below to build from source.
+You can download Parity UI [here](https://github.com/parity-js/shell/releases/latest) or follow the instructions below to build from source.
 
 ## Install from the snap store
 
@@ -84,5 +83,24 @@ npm run electron:dev
 
 This will spawn an Electron window serving `http://localhost:3000`. Same thing, the Electron window will refresh on any code change.
 
-## Screenshot
-![Parity UI home](https://wiki.parity.io/images/parity-UI-0.jpg)
+## CLI Options
+All other flags passed to Parity UI will be passed down to parity when trying to launch it.
+```bash
+Operating Options:
+    --no-run-parity
+        Parity UI will not attempt to run 
+        the locally installed parity.
+
+    --ui-dev
+        Parity UI will load http://localhost:3000. 
+        WARNING: Only use this is you plan on developing on Parity UI.
+
+    --ws-interface=[IP]
+        Specify the hostname portion of the WebSockets server 
+        Parity UI will connect to. IP should be an 
+        interface's IP address. (default: 127.0.0.1)
+
+    --ws-port=[PORT]
+        Specify the port portion of the WebSockets 
+        server Parity UI will connect to. (default: 8546)
+```
