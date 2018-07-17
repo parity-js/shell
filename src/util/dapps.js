@@ -31,6 +31,7 @@ const util = require('util');
 require('util.promisify').shim();
 
 const fs = require('fs');
+const { ensureDir: fsEnsureDir } = require('fs-extra');
 const fsReadFile = util.promisify(fs.readFile);
 const fsReaddir = util.promisify(fs.readdir);
 const fsStat = util.promisify(fs.stat);
@@ -130,7 +131,8 @@ export function fetchBuiltinApps () {
 export function fetchLocalApps () {
   const dappsPath = getLocalDappsPath();
 
-  return fsReaddir(dappsPath) // List files
+  return fsEnsureDir(dappsPath)
+    .then(() => fsReaddir(dappsPath)) // List files
     .then(filenames => // Gather info about files
       Promise.all(filenames.map(filename => {
         const filePath = path.join(dappsPath, filename);
@@ -169,7 +171,7 @@ export function fetchLocalApps () {
           localUrl: localUrl || `file://${dappsPath}/${filename}/index.html`,
           image: `file://${dappsPath}/${filename}/${iconUrl}`
         }
-    )))
+      )))
     .catch((error) => {
       console.warn('DappsStore:fetchLocal', error);
     });
@@ -251,7 +253,7 @@ export function fetchRegistryApp (api, dappReg, appId) {
           })
       );
     })
-      .catch((error) => {
-        console.warn('DappsStore:fetchRegistryApp', appId, error);
-      });
+    .catch((error) => {
+      console.warn('DappsStore:fetchRegistryApp', appId, error);
+    });
 }
