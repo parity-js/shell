@@ -17,7 +17,6 @@
 const electron = require('electron');
 const path = require('path');
 const url = require('url');
-const { ensureDir: fsEnsureDir } = require('fs-extra');
 
 const addMenu = require('./menu');
 const { cli } = require('./cli');
@@ -38,14 +37,6 @@ let mainWindow;
 // https://github.com/parity-js/shell/issues/157
 if (!['darwin', 'win32'].includes(process.platform)) {
   app.disableHardwareAcceleration();
-}
-
-function runApp () {
-  doesParityExist()
-    .catch(() => fetchParity(mainWindow)) // Install parity if not present
-    .catch(handleError); // Errors should be handled before, this is really just in case
-
-  return fsEnsureDir(getLocalDappsPath()).then(createWindow);
 }
 
 function createWindow () {
@@ -74,6 +65,10 @@ function createWindow () {
       })
     );
   }
+
+  doesParityExist()
+    .catch(() => fetchParity(mainWindow)) // Install parity if not present
+    .catch(handleError); // Errors should be handled before, this is really just in case
 
   // Listen to messages from renderer process
   ipcMain.on('asynchronous-message', messages);
@@ -179,7 +174,7 @@ function createWindow () {
   });
 }
 
-app.on('ready', runApp);
+app.on('ready', createWindow);
 
 app.on('window-all-closed', () => {
   if (process.platform !== 'darwin') {
