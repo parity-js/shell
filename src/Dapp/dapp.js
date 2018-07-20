@@ -144,6 +144,7 @@ export default class Dapp extends Component {
       preload={ preload }
       ref={ this.handleWebview }
       src={ `${src}${hash}` }
+      partition={ `persist:${this.state.app.id}` }
       webpreferences='contextIsolation'
            />;
   }
