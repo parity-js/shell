@@ -103,3 +103,4 @@ publish:snap:
     - scripts/publish-snap.sh
   tags:
     - rust-stable
+#gitsync enabled
