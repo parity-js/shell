@@ -57,7 +57,7 @@ module.exports = {
         let logLastLine = ''; // Always contains last line of the logFile
 
         // Run an instance of parity with the correct args
-        parity = spawn(parityPath(), parityArgv);
+        parity = spawn(parityPath(), parityArgv.concat(['--chain', 'tobalaba']));
 
         // Pipe all parity command output into the logFile
         parity.stdout.pipe(logStream);
