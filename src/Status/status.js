@@ -49,7 +49,7 @@ function Status ({ className = '', upgradeStore }, { api }) {
           <a href='#/' className={ styles.home }>
             <HomeIcon />
           </a>
-          <ClientVersion className={ styles.version } />
+          <ClientVersion className={ styles.version } uiName='Energy Web' />
           <div className={ styles.upgrade }>
             <Consensus upgradeStore={ upgradeStore } />
             <Upgrade upgradeStore={ upgradeStore } />
