@@ -17,36 +17,24 @@
 import Api from '@parity/api';
 import qs from 'query-string';
 
-function getAppId () {
-  // Local dapps: file:///home/username/.config/parity-ui/dapps/mydapp/index.html?appId=LOCAL-dapp-name
-  // Local dapps served in development mode on a dedicated port: http://localhost:3001/?appId=LOCAL-dapp-name
-  // Built-in dapps: file://path-to-shell/.build/dapps/0x0587.../index.html?appId=dapp-name
-  // Built-in dapps when running Electron in dev mode: http://127.0.0.1:3000/dapps/v1/index.html?appId=dapp-name
-  // Network dapps: file:///home/username/.config/parity-ui/hashfetch/files/0x8075.../index.html?appId=dapp-name
-  const fromQuery = qs.parse(window.location.search).appId;
-
-  if (fromQuery) { return fromQuery; }
-
-  console.error('Could not find appId');
-}
-
 function initProvider () {
-  const appId = getAppId();
+  const queryParams = qs.parse(window.location.search);
+
+  // Local dapps: file:///home/username/.config/parity-ui/dapps/mydapp/index.html?appId=LOCAL-dapp-name&token=0x...
+  // Local dapps served in development mode on a dedicated port: http://localhost:3001/?appId=LOCAL-dapp-name&token=0x...
+  // Built-in dapps: file://path-to-shell/.build/dapps/0x0587.../index.html?appId=dapp-name&token=0x...
+  // Built-in dapps when running Electron in dev mode: http://127.0.0.1:3000/dapps/v1/index.html?appId=dapp-name&token=0x...
+  // Network dapps: file:///home/username/.config/parity-ui/hashfetch/files/0x8075.../index.html?appId=dapp-name&token=0x...
+  const appId = queryParams.shellAppId;
+  const token = queryParams.shellToken;
 
   // The dapp will use the PostMessage provider, send postMessages to
   // preload.js, and preload.js will relay those messages to the shell.
+  console.log(`Initializing provider with appId ${appId} and token ${token}`);
   const ethereum = new Api.Provider.PostMessage(appId);
 
-  console.log(`Requesting API communications token for ${appId}`);
-
   ethereum
-    .requestNewToken()
-    .then((tokenId) => {
-      console.log(`Received API communications token ${tokenId}`);
-    })
-    .catch((error) => {
-      console.error('Unable to retrieve communications token', error);
-    });
+    .setToken(token);
 
   window.ethereum = ethereum;
   window.isParity = true;
