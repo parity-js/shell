@@ -28,11 +28,7 @@ window.addEventListener('message', (event) => {
   ipcRenderer.sendToHost('PARITY_SHELL_IPC_CHANNEL', { data: event.data });
 });
 
-// Load inject.js as a string, and inject it into the webview with executeJavaScript
-fs.readFile(path.join(remote.getGlobal('dirName'), '..', '.build', 'inject.js'), 'utf8', (err, injectFile) => {
-  if (err) {
-    console.error(err);
-    return;
-  }
-  webFrame.executeJavaScript(injectFile);
-});
+// Load inject.js as a string to inject it into the webview with executeJavaScript
+const injectFile = fs.readFileSync(path.join(remote.getGlobal('dirName'), '..', '.build', 'inject.js'), 'utf8');
+
+webFrame.executeJavaScript(injectFile);

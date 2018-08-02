@@ -146,17 +146,13 @@ export default class Store {
   }
 
   createToken = appId => {
-    const token = sha3(`${appId}:${Date.now()}`);
+    const token = sha3(`${appId}:${Math.random()}:${Date.now()}`);
 
     this.tokens[token] = appId;
     return token;
   };
 
   hasValidToken = (method, appId, token) => {
-    if (!token) {
-      return method === 'shell_requestNewToken';
-    }
-
     return this.tokens[token] === appId;
   };
 
