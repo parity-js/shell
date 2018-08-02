@@ -43,4 +43,4 @@ Get in touch with Parity on Gitter:
 Or join the Parity community on Matrix:
 [![Riot: +Parity](https://img.shields.io/badge/riot-%2Bparity%3Amatrix.parity.io-orange.svg)](https://riot.im/app/#/group/+parity:matrix.parity.io)
 
-Check the Parity wiki [our wiki](https://wiki.parity.io/Parity-Wallet) for more information.
+Check the [Parity Wiki](https://wiki.parity.io/Parity-Wallet) for more information.
