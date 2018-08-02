@@ -69,11 +69,6 @@ export default function execute (appId, method, params, callback) {
       return true;
     }
 
-    case 'shell_requestNewToken': {
-      callback(null, requestStore.createToken(appId));
-      return true;
-    }
-
     case 'shell_setAppPinned': {
       const [appId, pinned] = params;
 
