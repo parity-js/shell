@@ -19,12 +19,10 @@ const fs = require('fs');
 const path = require('path');
 const rimraf = require('rimraf');
 const flatten = require('lodash.flatten');
-// const ReactIntlAggregatePlugin = require('react-intl-aggregate-webpack-plugin');
 const ExtractTextPlugin = require('extract-text-webpack-plugin');
 const WebpackErrorNotificationPlugin = require('webpack-error-notification');
 const CopyWebpackPlugin = require('copy-webpack-plugin');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
-const ServiceWorkerWebpackPlugin = require('serviceworker-webpack-plugin');
 
 const { rendererCsp } = require('../src/util/csp');
 const rulesEs6 = require('./rules/es6');
@@ -234,11 +232,6 @@ module.exports = {
           ]),
           {}
         ),
-
-        new ServiceWorkerWebpackPlugin({
-          entry: path.join(__dirname, '../src/serviceWorker.js'),
-          publicPath: path.join(__dirname, '../.build/')
-        }),
       );
     }
 
