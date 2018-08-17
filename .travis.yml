@@ -16,20 +16,20 @@ before_install:
   - npm install --global yarn --cache-min 999999999
 install:
   - npm install
-#script:
-#  - ./scripts/lint.sh
-#  - ./scripts/test.sh
-#  - ./scripts/build.sh
+script:
+  - ./scripts/lint.sh
+  - ./scripts/test.sh
+  - ./scripts/build.sh
 deploy:
   - provider: script
     script: npm run release -- --win --linux
     skip_cleanup: true
     on:
       condition: $TRAVIS_OS_NAME = linux
-      branch: am-travis
+      branch: master
   - provider: script
     script: npm run release -- --mac
     skip_cleanup: true
     on:
       condition: $TRAVIS_OS_NAME = osx
-      branch: am-travis
+      branch: master

@@ -18,7 +18,7 @@
   "license": "GPL-3.0",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/parity-js/shell.git"
+    "url": "git+https://github.com/energywebfoundation/shell.git"
   },
   "keywords": [
     "Ethereum",
