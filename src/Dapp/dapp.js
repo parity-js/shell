@@ -42,7 +42,8 @@ export default class Dapp extends Component {
 
   state = {
     app: null,
-    loading: true
+    loading: true,
+    token: null
   };
 
   store = DappsStore.get(this.context.api);
@@ -111,7 +112,7 @@ export default class Dapp extends Component {
     this.store
       .loadApp(id)
       .then((app) => {
-        this.setState({ loading: false, app });
+        this.setState({ loading: false, app, token: this.requestsStore.createToken(app.id) });
       })
       .catch(() => {
         this.setState({ loading: false });
@@ -144,13 +145,14 @@ export default class Dapp extends Component {
       preload={ preload }
       ref={ this.handleWebview }
       src={ `${src}${hash}` }
+      partition={ `persist:${this.state.app.id}` }
       webpreferences='contextIsolation'
            />;
   }
 
   render () {
     const { params } = this.props;
-    const { app, loading } = this.state;
+    const { app, loading, token } = this.state;
 
     if (loading) {
       return (
@@ -178,7 +180,7 @@ export default class Dapp extends Component {
       );
     }
 
-    let src = `${app.localUrl}?appId=${app.id}`;
+    let src = `${app.localUrl}?shellAppId=${app.id}&shellToken=${token}`;
 
     let hash = '';
 
