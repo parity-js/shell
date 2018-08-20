@@ -22,13 +22,13 @@ script:
   - ./scripts/build.sh
 deploy:
   - provider: script
-    script: npm run release -- --win --linux
+    script: npm run release -- --linux
     skip_cleanup: true
     on:
       condition: $TRAVIS_OS_NAME = linux
       branch: master
   - provider: script
-    script: npm run release -- --mac
+    script: npm run release -- --mac --win
     skip_cleanup: true
     on:
       condition: $TRAVIS_OS_NAME = osx
