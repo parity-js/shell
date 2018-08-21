@@ -1,0 +1,35 @@
+language: node_js
+env:
+  global:
+    - ELECTRON_CACHE=$HOME/.cache/electron
+    - ELECTRON_BUILDER_CACHE=$HOME/.cache/electron-builder
+os:
+  - linux
+  - osx
+node_js:
+  - '8'
+cache:
+  yarn: true
+  directories:
+    - node_modules
+before_install:
+  - npm install --global yarn --cache-min 999999999
+install:
+  - npm install
+script:
+  - ./scripts/lint.sh
+  - ./scripts/test.sh
+  - ./scripts/build.sh
+deploy:
+  - provider: script
+    script: npm run release -- --linux
+    skip_cleanup: true
+    on:
+      condition: $TRAVIS_OS_NAME = linux
+      branch: master
+  - provider: script
+    script: npm run release -- --mac --win
+    skip_cleanup: true
+    on:
+      condition: $TRAVIS_OS_NAME = osx
+      branch: master

@@ -25,7 +25,6 @@ const fetchParity = require('./operations/fetchParity');
 const handleError = require('./operations/handleError');
 const messages = require('./messages');
 const { killParity } = require('./operations/runParity');
-const { getLocalDappsPath } = require('./utils/paths');
 const { name: appName } = require('../package.json');
 
 const { app, BrowserWindow, ipcMain, session } = electron;
@@ -111,6 +110,7 @@ function createWindow () {
 
     let baseUrl;
     let appId;
+    let token;
 
     // Derive the dapp baseUrl (.../my-dapp/) from the first URL of the webview
     // (.../my-dapp/index.html). The baseUrl defines what files the webview is
@@ -120,7 +120,8 @@ function createWindow () {
     webContents.once('did-navigate', (e, initialUrl) => {
       const initialURL = new URL(initialUrl);
 
-      appId = initialURL.searchParams.get('appId');
+      appId = initialURL.searchParams.get('shellAppId');
+      token = initialURL.searchParams.get('shellToken');
 
       initialURL.hash = '';
       initialURL.search = '';
@@ -138,7 +139,8 @@ function createWindow () {
 
         const newURL = new URL(targetUrl);
 
-        newURL.searchParams.set('appId', appId);
+        newURL.searchParams.set('shellAppId', appId);
+        newURL.searchParams.set('shellToken', token);
 
         webContents.loadURL(newURL.href);
       } else {
