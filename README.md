@@ -6,7 +6,7 @@ To quickly get started just download the binary for your OS and install the soft
 
 [Mac](https://github.com/energywebfoundation/energyweb-ui/releases/download/v0.4.0/parity-ui-0.4.0.pkg)
 
-[Linux](https://github.com/energywebfoundation/energyweb-ui/releases/download/v0.4.0/latest-linux.yml) insertlink***
+[Linux](https://github.com/energywebfoundation/energyweb-ui/releases/download/v0.4.0/latest-linux.yml)
 
 [Release history](https://github.com/energywebfoundation/energyweb-ui/releases)
 
