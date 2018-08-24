@@ -2,13 +2,13 @@
 
 To quickly get started just download the binary for your OS and install the software.
 
-[Windows](***) insertlink***
+[Windows](https://github.com/energywebfoundation/energyweb-ui/releases/download/v0.4.0/parity-ui-setup-0.4.0.exe)
 
-[Mac](***) insertlink***
+[Mac](https://github.com/energywebfoundation/energyweb-ui/releases/download/v0.4.0/parity-ui-0.4.0.pkg)
 
-[Linux](***) insertlink***
+[Linux](https://github.com/energywebfoundation/energyweb-ui/releases/download/v0.4.0/latest-linux.yml) insertlink***
 
-[Release history](***) insertlink***
+[Release history](https://github.com/energywebfoundation/energyweb-ui/releases)
 
 [![GPLv3](https://img.shields.io/badge/license-GPL%20v3-green.svg)](https://www.gnu.org/licenses/gpl-3.0.en.html)
 
