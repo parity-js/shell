@@ -11,11 +11,15 @@ By default EWF UI will try connect to a Tobalaba using Websocket port 8546.
 
 ## Download Binaries
 
+To quickly get started just download the binary for your OS and install the software.
+
 [Windows](***) insertlink***
+
 [Mac](***) insertlink***
+
 [Linux](***) insertlink***
 
-[Relase history] () insert link***
+[Relase history](***) insert link***
 
 ## Build from source
 
@@ -50,5 +54,3 @@ Get in touch with Parity on Gitter:
 
 Or join the Parity community on Matrix:
 [![Riot: +Parity](https://img.shields.io/badge/riot-%2Bparity%3Amatrix.parity.io-orange.svg)](https://riot.im/app/#/group/+parity:matrix.parity.io)
-
-Check the [Parity Wiki](https://wiki.parity.io/Parity-Wallet) for more information.
