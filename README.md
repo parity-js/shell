@@ -6,8 +6,16 @@
 
 ## About Energy Web Client UI
 
-The Energy Web Client UI (EWF UI) is a User Interface desktop application for the [Parity Ethereum Client](https://github.com/paritytech/parity/blob/master/README.md) >=v1.10. It features a Wallet supporting Ether and ERC-20 Tokens, a Contract development environment, and so much more. EWF UI UI will download and run [Parity Ethereum Client](https://github.com/paritytech/parity/blob/master/README.md) in the background if it is not found on the system. 
+The Energy Web Client UI (EWF UI) is a User Interface desktop application for the [Parity Ethereum Client](https://github.com/paritytech/parity/blob/master/README.md) >=v1.10. It features a Wallet supporting Ether and ERC-20 Tokens, a Contract development environment, and so much more. EWF UI will download and run [Parity Ethereum Client](https://github.com/paritytech/parity/blob/master/README.md) in the background if it is not found on the system. 
 By default EWF UI will try connect to a Tobalaba using Websocket port 8546. 
+
+## Download Binaries
+
+[Windows] () insertlink***
+[Mac] () insertlink***
+[Linux] () insertlink***
+
+[Relase history] () insert link***
 
 ## Build from source
 
@@ -29,13 +37,13 @@ npm run release
 This command may take some time. Once finished, you will see binaries for your OS in the `dist/` folder.
 
 ### EWF Client usage
-Visit our Wiki (insert link***) for high level, or Parity's Wiki (insert link***) for in depth information.
+Visit our [EWF Wiki] (https://energyweb.atlassian.net/wiki/spaces/EWF/pages/544374788/Setting+Up+a+Node) for high level, or Parity's [Wiki] (https://wiki.parity.io/) for in depth information.
 
-### Any issues?
-Get in contact with EWF (insert link***) or (insert link***). Client related issues are best filed in the Parity Github repository (insert link***).
+### Any issues with the client itself?
+Client related issues are best filed in the [Parity Repo] (https://github.com/paritytech/parity-ethereum). 
 
 ### How to get in touch?
-Get in touch with EWF (insert link***).
+[Get in touch] (https://energyweb.org/contact-us/) with EWF.
 
 Get in touch with Parity on Gitter:
 [![Gitter: Parity](https://img.shields.io/badge/gitter-parity-4AB495.svg)](https://gitter.im/paritytech/parity)
