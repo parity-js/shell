@@ -11,9 +11,9 @@ By default EWF UI will try connect to a Tobalaba using Websocket port 8546.
 
 ## Download Binaries
 
-[Windows] () insertlink***
-[Mac] () insertlink***
-[Linux] () insertlink***
+[Windows](***) insertlink***
+[Mac](***) insertlink***
+[Linux](***) insertlink***
 
 [Relase history] () insert link***
 
@@ -37,13 +37,13 @@ npm run release
 This command may take some time. Once finished, you will see binaries for your OS in the `dist/` folder.
 
 ### EWF Client usage
-Visit our [EWF Wiki] (https://energyweb.atlassian.net/wiki/spaces/EWF/pages/544374788/Setting+Up+a+Node) for high level, or Parity's [Wiki] (https://wiki.parity.io/) for in depth information.
+Visit our [EWF Wiki](https://energyweb.atlassian.net/wiki/spaces/EWF/pages/544374788/Setting+Up+a+Node) for high level, or Parity's [Wiki](https://wiki.parity.io/) for in depth information.
 
 ### Any issues with the client itself?
-Client related issues are best filed in the [Parity Repo] (https://github.com/paritytech/parity-ethereum). 
+Client related issues are best filed in the [Parity Repo](https://github.com/paritytech/parity-ethereum). 
 
 ### How to get in touch?
-[Get in touch] (https://energyweb.org/contact-us/) with EWF.
+[Get in touch](https://energyweb.org/contact-us/) with EWF.
 
 Get in touch with Parity on Gitter:
 [![Gitter: Parity](https://img.shields.io/badge/gitter-parity-4AB495.svg)](https://gitter.im/paritytech/parity)
