@@ -15,7 +15,7 @@ To quickly get started just download the binary for your OS and install the soft
 ## About Energy Web Client UI
 
 The Energy Web Client UI (EWF UI) is a User Interface desktop application for the [Parity Ethereum Client](https://github.com/paritytech/parity/blob/master/README.md) >=v1.10. It features a Wallet supporting Ether and ERC-20 Tokens, a contract development environment, and so much more. EWF UI will download and run [Parity Ethereum Client](https://github.com/paritytech/parity/blob/master/README.md) in the background if it is not found on the system. 
-By default EWF UI will try connect to a Tobalaba using Websocket port 8546. 
+By default EWF UI will try connect to Tobalaba using Websocket port 8546. 
 
 ## Build from source
 
