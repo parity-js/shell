@@ -1,7 +1,7 @@
 {
-  "name": "parity-ui",
-  "version": "0.4.2",
-  "description": "The Electron app for Parity UI",
+  "name": "energyweb-ui",
+  "version": "0.4.3",
+  "description": "The Electron app for EnergyWeb UI",
   "main": ".build/electron.js",
   "jsnext:main": ".build/electron.js",
   "author": {
@@ -22,7 +22,9 @@
   },
   "keywords": [
     "Ethereum",
-    "Parity"
+    "Parity",
+    "EWF",
+    "Tobalaba"
   ],
   "parity": {
     "channel": "v1.11.11"

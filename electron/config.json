@@ -1,11 +1,11 @@
 {
-  "appId": "io.parity.ui",
+  "appId": "io.ewf.ui",
   "directories": {
     "buildResources": "./"
   },
   "linux": {
     "category": "Utility",
-    "icon": "./assets/icon/small-white-512x512.png",
+    "icon": "./assets/icon/EWF-Brandmark-white512px.png",
     "target": [
       "AppImage",
       "snap",
@@ -15,7 +15,7 @@
   },
   "mac": {
     "category": "public.app-category.productivity",
-    "icon": "./assets/icon/small-white-512x512.png",
+    "icon": "./assets/icon/EWF-Brandmark-white512px.png",
     "target": [
       "pkg"
     ]
@@ -29,11 +29,11 @@
     "allowAnywhere": false,
     "allowCurrentUserHome": false
   },
-  "productName": "Parity UI",
+  "productName": "EnergyWeb UI",
   "publish": "github",
   "win": {
-    "icon": "./assets/icon/small-white-512x512.png",
-    "publisherName": "Parity Technologies (UK) Ltd.",
+    "icon": "./assets/icon/EWF-Brandmark-white512px.png",
+    "publisherName": "Energy Web DevHub GmbH",
     "target": "nsis"
   }
 }

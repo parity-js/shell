@@ -1,7 +1,7 @@
 [Desktop Entry]
 Type=Application
 Encoding=UTF-8
-Name=parity-ui
-Comment=The Electron app for Parity UI
-Exec=parity-ui
+Name=energyweb-ui
+Comment=The Electron app for EnergyWeb UI
+Exec=energyweb-ui
 Terminal=true

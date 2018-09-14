@@ -275,7 +275,7 @@ class Connection extends Component {
       <div className={ styles.info }>
         <FormattedMessage
           id='connection.incorrectVersion'
-          defaultMessage='We found parity version {version} running. Parity UI requires parity >=1.10 to run. Please visit {link} to install Parity 1.10 first.'
+          defaultMessage='We found parity version {version} running. EnergyWeb UI requires parity >=1.11 to run. Please visit {link} to install Parity 1.11 first.'
           values={ {
             link: <a href='#' onClick={ this.handleOpenWebsite }>https://parity.io</a>,
             version: `${major}.${minor}.${patch}`
