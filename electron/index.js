@@ -161,7 +161,7 @@ function createWindow () {
         const sanitizedUrl = details.url.replace(/'/, '');
 
         if (!webContents.isDestroyed()) {
-          webContents.executeJavaScript(`console.warn('Parity UI blocked a request to access ${sanitizedUrl}')`);
+          webContents.executeJavaScript(`console.warn('EnergyWeb UI blocked a request to access ${sanitizedUrl}')`);
         }
 
         callback({ cancel: true });

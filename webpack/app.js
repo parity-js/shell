@@ -173,7 +173,7 @@ module.exports = {
 
         new HtmlWebpackPlugin({
           csp: rendererCsp.join(' '),
-          title: 'Parity UI',
+          title: 'EnergyWeb UI',
           filename: 'index.html',
           template: './index.parity.ejs',
           favicon: FAVICON,
