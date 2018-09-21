@@ -12,6 +12,10 @@ To quickly get started just download the binary for your OS and install the soft
 
 [![GPLv3](https://img.shields.io/badge/license-GPL%20v3-green.svg)](https://www.gnu.org/licenses/gpl-3.0.en.html)
 
+
+!!!!!IMPORTANT!!!!!
+EWF is conducting a hardfork on Tobalaba at block 7,250,000 (around 1st October 2018). Please update your old EWF client by downloading the binary above. Alternatively, you can run any Parity client with this chainspec [file](https://github.com/paritytech/parity-ethereum/blob/master/ethcore/res/ethereum/tobalaba.json).
+
 ## About Energy Web Client UI
 
 The Energy Web Client UI (EWF UI) is a User Interface desktop application for the [Parity Ethereum Client](https://github.com/paritytech/parity/blob/master/README.md) >=v1.10. It features a Wallet supporting Ether and ERC-20 Tokens, a contract development environment, and so much more. EWF UI will download and run [Parity Ethereum Client](https://github.com/paritytech/parity/blob/master/README.md) in the background if it is not found on the system. 
