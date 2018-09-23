@@ -1,5 +1,5 @@
 # Parity UI
-## This project is not actively maintained by Parity Technologies anymore. This is a community maintained project.
+## This project is not actively maintained by Parity Technologies anymore. It is currently only compatible with Parity Ethereum <v2.0. This is a community maintained project.
 
 ### [Download the latest release](https://github.com/parity-js/shell/releases/latest)
 
