@@ -1,5 +1,5 @@
 # Parity UI
-## This project is not actively maintained by Parity Technologies anymore. It is currently only compatible with Parity Ethereum <v2.0. This is a community maintained project.
+## This project is not actively maintained by Parity Technologies anymore. It is currently only compatible with Parity Ethereum <v2.0. This is a community maintained project. Read about [possible alternatives here](#parity-ui-alternatives).
 
 ### [Download the latest release](https://github.com/parity-js/shell/releases/latest)
 
@@ -22,6 +22,22 @@ Parity UI is a User Interface desktop application for [Parity Ethereum Client](h
 By default Parity UI will try connect to a Parity Ethereum node using Websocket port 8546. You can use alternative ports, see [CLI Options](#cli-options) below.
 
 You can download Parity UI [here](https://github.com/parity-js/shell/releases/latest) or follow the instructions below to build from source.
+
+## Parity UI alternatives
+
+### View and send Ether and tokens
+
+As Parity UI is not working properly with Parity Ethereum >2.0, we suggest to use [MyCrypto Desktop app](https://download.mycrypto.com/) connected to a local full node. Follow [these steps](https://support.mycrypto.com/networks/run-your-own-node-with-mycrypto.html) to connect Parity Ethereum local node. Parity UI accounts JSON keystore files can be found at the following location:
+
+- Mac OS X: `~/Library/Application\ Support/io.parity.ethereum/keys/ethereum/`
+- Linux: `$HOME/.local/share/io.parity.ethereum/keys`
+- Windows 7/10: `%HOMEPATH%/AppData/Roaming/Parity/Ethereum/keys`
+
+Import your accounts to MyCrypto by selecting the JSON keystore file and using your account's password (originally setup with Parity UI).
+
+### Smart contract development
+
+We suggest to use Remix connected to a local full node 
 
 ## Install from the snap store
 
