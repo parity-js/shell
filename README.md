@@ -1,5 +1,5 @@
 # Parity UI
-## This project is not actively maintained by Parity Technologies anymore. This is a community maintained project.
+## This project is not actively maintained by Parity Technologies anymore. It is currently only compatible with Parity Ethereum <v2.0. This is a community maintained project.
 
 ### [Download the latest release](https://github.com/parity-js/shell/releases/latest)
 
@@ -56,7 +56,7 @@ You should see the Electron app popping up.
 
 ### Build the binary (Optional)
 
-One further, albeit optional step is to create an OS-spefific binary. This is done with the following command:
+One further, albeit optional step is to create an OS-specific binary. This is done with the following command:
 
 ```bash
 npm run release
@@ -75,7 +75,7 @@ npm start
 
 A new browser tab will open on `http://localhost:3000` with the UI, and this tab will refresh on any code change. This DX allows fast iterations.
 
-If you want to test the rendering in an Electron window, run parallely with the previous command:
+If you want to test the rendering in an Electron window, run the following command in parallel with the previous command:
 
 ```bash
 npm run electron:dev
