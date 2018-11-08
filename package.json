@@ -128,7 +128,7 @@
     "postcss-loader": "2.0.6",
     "postcss-nested": "2.1.0",
     "postcss-simple-vars": "4.0.0",
-    "progress": "1.1.8",
+    "progress": "2.0.1",
     "promise-worker": "1.1.1",
     "raw-loader": "0.5.1",
     "react-addons-perf": "15.4.2",
