@@ -167,7 +167,7 @@
     "@parity/shared": "2.2.28",
     "@parity/ui": "3.1.9",
     "axios": "0.18.0",
-    "command-exists": "1.2.2",
+    "command-exists": "1.2.8",
     "commander": "2.19.0",
     "electron-dl": "1.11.0",
     "follow-redirects": "1.5.0",
