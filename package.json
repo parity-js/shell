@@ -185,7 +185,7 @@
     "prop-types": "15.6.2",
     "query-string": "5.0.1",
     "react": "16.6.0",
-    "react-dom": "16.1.1",
+    "react-dom": "16.7.0",
     "react-intl": "2.4.0",
     "react-markdown": "3.0.2",
     "react-progress-bar.js": "0.2.3",
