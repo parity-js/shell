@@ -34,8 +34,6 @@ import '@parity/shared/lib/environment';
 import '@parity/shared/assets/fonts/Roboto/font.css';
 import '@parity/shared/assets/fonts/RobotoMono/font.css';
 
-injectTapEventPlugin();
-
 import ParityBar from './ParityBar';
 
 // Test transport (std transport should be provided as global object)

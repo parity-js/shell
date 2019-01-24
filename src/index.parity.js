@@ -38,8 +38,6 @@ import { setupProviderFilters } from './DappRequests';
 // import { injectExternalScript } from './ShellExtend';
 import SecureApi from './secureApi';
 
-injectTapEventPlugin();
-
 window.React = window.React || React;
 
 // FIXME

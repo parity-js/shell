@@ -25,8 +25,7 @@ import { DoneIcon } from '@parity/ui/lib/Icons';
 import Store from './store';
 import TnC from './TnC';
 
-@observer
-export default class FirstRun extends Component {
+export default @observer class FirstRun extends Component {
   state = {
     hasAcceptedTnc: false
   }

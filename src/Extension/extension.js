@@ -24,8 +24,7 @@ import { CloseIcon, CheckIcon } from '@parity/ui/lib/Icons';
 import Store from '@parity/shared/lib/mobx/extensionStore';
 import styles from './extension.css';
 
-@observer
-export default class Extension extends Component {
+export default @observer class Extension extends Component {
   store = Store.get();
 
   render () {

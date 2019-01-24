@@ -26,8 +26,7 @@ import Popup from 'semantic-ui-react/dist/commonjs/modules/Popup';
 import methodGroups from '../../methodGroups';
 import styles from './RequestGroupSubItem.css';
 
-@injectIntl
-export default class RequestGroupSubItem extends PureComponent {
+export default @injectIntl class RequestGroupSubItem extends PureComponent {
   handleApprove = () => this.props.onApprove(this.props.requests, this.props.groupId)
 
   handleReject = () => this.props.onReject(this.props.requests)
