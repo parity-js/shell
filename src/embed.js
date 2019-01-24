@@ -20,8 +20,6 @@ import React from 'react';
 import ReactDOM from 'react-dom';
 import { AppContainer } from 'react-hot-loader';
 
-import injectTapEventPlugin from 'react-tap-event-plugin';
-
 import ContractInstances from '@parity/shared/lib/contracts';
 import { initStore } from '@parity/shared/lib/redux';
 import { setApi } from '@parity/shared/lib/redux/providers/apiActions';

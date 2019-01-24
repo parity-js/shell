@@ -46,8 +46,8 @@ const isProd = ENV === 'production';
 const isEmbed = EMBED === '1' || EMBED === 'true';
 
 const entry = isEmbed
-  ? { embed: ['babel-polyfill', './embed.js'] }
-  : { bundle: ['babel-polyfill', './index.parity.js'] };
+  ? { embed: ['@babel/polyfill', './embed.js'] }
+  : { bundle: ['@babel/polyfill', './index.parity.js'] };
 
 module.exports = {
   cache: !isProd,
