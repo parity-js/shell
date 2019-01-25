@@ -170,7 +170,7 @@ describe('Dapps/DappStore', () => {
       it('loads visibility from storage', () => {
         expect(store.displayApps).to.deep.equal(
           Object.assign({}, defaultDapps, initialDapps
-        ));
+          ));
       });
 
       it('saves visibility to storage', () => {

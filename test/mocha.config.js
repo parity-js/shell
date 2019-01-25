@@ -20,9 +20,6 @@ import 'mock-local-storage';
 import es6Promise from 'es6-promise';
 es6Promise.polyfill();
 
-import injectTapEventPlugin from 'react-tap-event-plugin';
-injectTapEventPlugin();
-
 import Enzyme from 'enzyme';
 import Adapter from 'enzyme-adapter-react-16';
 import chai from 'chai';

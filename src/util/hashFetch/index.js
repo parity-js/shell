@@ -95,7 +95,7 @@ function unzipThroughTo (tempPath, extractPath, finalPath) {
         const rootFolderPath = files[0].filePath;
 
         return move(rootFolderPath, finalPath)
-            .then(() => remove(extractPath));
+          .then(() => remove(extractPath));
       } else {
         // No root folder: extractPath contains the dapp
         return move(extractPath, finalPath);
@@ -154,18 +154,18 @@ function hashDownload (hash, url, zip = false) {
   const finalPath = path.join(getHashFetchPath(), 'files', hash);
 
   return download(url, tempPath)
-      .then(() => checkHashMatch(hash, tempPath))
-      // @TODO Don't register a failed attempt if the download failed becuse the user was offline.
-      .catch(e => registerFailedAttemptAndThrow(hash, url, e))
-      .then(() => { // Hashes match
-        if (!zip) {
-          return move(tempPath, finalPath);
-        } else {
-          const extractPath = path.join(getHashFetchPath(), 'partial-extract', tempFilename);
+    .then(() => checkHashMatch(hash, tempPath))
+  // @TODO Don't register a failed attempt if the download failed becuse the user was offline.
+    .catch(e => registerFailedAttemptAndThrow(hash, url, e))
+    .then(() => { // Hashes match
+      if (!zip) {
+        return move(tempPath, finalPath);
+      } else {
+        const extractPath = path.join(getHashFetchPath(), 'partial-extract', tempFilename);
 
-          return unzipThroughTo(tempPath, extractPath, finalPath);
-        }
-      });
+        return unzipThroughTo(tempPath, extractPath, finalPath);
+      }
+    });
 }
 
 function queryRegistryAndDownload (api, hash, expected) {

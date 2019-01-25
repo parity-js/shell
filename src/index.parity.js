@@ -19,7 +19,6 @@ import 'whatwg-fetch';
 import React from 'react';
 import ReactDOM from 'react-dom';
 
-import injectTapEventPlugin from 'react-tap-event-plugin';
 import { IndexRoute, Redirect, Route, Router, hashHistory } from 'react-router';
 import isElectron from 'is-electron';
 
@@ -38,8 +37,6 @@ import Dapps from './Dapps';
 import { setupProviderFilters } from './DappRequests';
 // import { injectExternalScript } from './ShellExtend';
 import SecureApi from './secureApi';
-
-injectTapEventPlugin();
 
 window.React = window.React || React;
 

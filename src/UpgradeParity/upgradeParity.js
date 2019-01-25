@@ -26,8 +26,7 @@ import { CancelIcon, DoneIcon, ErrorIcon, NextIcon, UpdateIcon, UpdateWaitIcon }
 
 import styles from './upgradeParity.css';
 
-@observer
-export default class UpgradeParity extends Component {
+export default @observer class UpgradeParity extends Component {
   static contextTypes = {
     api: PropTypes.object.isRequired
   };
@@ -62,16 +61,19 @@ export default class UpgradeParity extends Component {
             defaultMessage='upgrading parity'
           />,
           upgradeStore.error
-            ? <FormattedMessage
-              id='upgradeParity.step.error'
-              key='error'
-              defaultMessage='error'
+            ? (
+              <FormattedMessage
+                id='upgradeParity.step.error'
+                key='error'
+                defaultMessage='error'
               />
-            : <FormattedMessage
-              id='upgradeParity.step.completed'
-              key='completed'
-              defaultMessage='upgrade completed'
+            ) : (
+              <FormattedMessage
+                id='upgradeParity.step.completed'
+                key='completed'
+                defaultMessage='upgrade completed'
               />
+            )
         ] }
       >
         { this.renderStep() }

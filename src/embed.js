@@ -20,8 +20,6 @@ import React from 'react';
 import ReactDOM from 'react-dom';
 import { AppContainer } from 'react-hot-loader';
 
-import injectTapEventPlugin from 'react-tap-event-plugin';
-
 import ContractInstances from '@parity/shared/lib/contracts';
 import { initStore } from '@parity/shared/lib/redux';
 import { setApi } from '@parity/shared/lib/redux/providers/apiActions';
@@ -35,8 +33,6 @@ import './ShellExtend';
 import '@parity/shared/lib/environment';
 import '@parity/shared/assets/fonts/Roboto/font.css';
 import '@parity/shared/assets/fonts/RobotoMono/font.css';
-
-injectTapEventPlugin();
 
 import ParityBar from './ParityBar';
 

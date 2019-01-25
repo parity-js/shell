@@ -30,8 +30,7 @@ import RequestsStore from '../DappRequests/store';
 
 import styles from './dapp.css';
 
-@observer
-export default class Dapp extends Component {
+export default @observer class Dapp extends Component {
   static contextTypes = {
     api: PropTypes.object.isRequired
   };
@@ -139,15 +138,17 @@ export default class Dapp extends Component {
     )}`;
 
     // https://electronjs.org/docs/tutorial/security#3-enable-context-isolation-for-remote-content
-    return <webview
-      className={ styles.frame }
-      id='dappFrame'
-      preload={ preload }
-      ref={ this.handleWebview }
-      src={ `${src}${hash}` }
-      partition={ `persist:${this.state.app.id}` }
-      webpreferences='contextIsolation'
-           />;
+    return (
+      <webview
+        className={ styles.frame }
+        id='dappFrame'
+        preload={ preload }
+        ref={ this.handleWebview }
+        src={ `${src}${hash}` }
+        partition={ `persist:${this.state.app.id}` }
+        webpreferences='contextIsolation'
+      />
+    );
   }
 
   render () {
