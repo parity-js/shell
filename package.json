@@ -1,6 +1,6 @@
 {
   "name": "energyweb-ui",
-  "version": "0.4.4",
+  "version": "0.4.5",
   "description": "The Electron app for EnergyWeb UI",
   "main": ".build/electron.js",
   "jsnext:main": ".build/electron.js",
@@ -27,7 +27,7 @@
     "Tobalaba"
   ],
   "parity": {
-    "channel": "v2.3.0"
+    "channel": "v2.3.2"
   },
   "scripts": {
     "build": "npm run build:inject && npm run build:app && npm run build:electron && npm run build:embed",
