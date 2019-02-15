@@ -2,11 +2,11 @@
 
 To quickly get started just download the binary for your OS and install the software.
 
-[Windows](https://github.com/energywebfoundation/energyweb-ui/releases/download/v0.4.4/energyweb-ui-setup-0.4.4.exe)
+[Windows](https://github.com/energywebfoundation/energyweb-ui/releases/download/v0.4.6/energyweb-ui-setup-0.4.6.exe)
           
-[Mac](https://github.com/energywebfoundation/energyweb-ui/releases/download/v0.4.4/energyweb-ui-0.4.4.pkg)
+[Mac](https://github.com/energywebfoundation/energyweb-ui/releases/download/v0.4.6/energyweb-ui-0.4.6.pkg)
       
-[Linux](https://github.com/energywebfoundation/energyweb-ui/releases/download/v0.4.4/energyweb-ui_0.4.4_amd64.deb)
+[Linux](https://github.com/energywebfoundation/energyweb-ui/releases/download/v0.4.6/energyweb-ui_0.4.6_amd64.deb)
 
 [Release history](https://github.com/energywebfoundation/energyweb-ui/releases)
 
