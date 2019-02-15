@@ -27,7 +27,7 @@
     "Tobalaba"
   ],
   "parity": {
-    "channel": "v2.3.2"
+    "channel": "v2.3.3"
   },
   "scripts": {
     "build": "npm run build:inject && npm run build:app && npm run build:electron && npm run build:embed",
