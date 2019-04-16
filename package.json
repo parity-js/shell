@@ -207,7 +207,7 @@
     "react-redux": "^5.0.6",
     "react-router": "3.2.0",
     "react-router-redux": "4.0.8",
-    "react-transition-group": "2.2.1",
+    "react-transition-group": "2.9.0",
     "redux": "3.7.2",
     "semantic-ui-react": "0.77.0",
     "solc": "ngotchac/solc-js",
