@@ -211,7 +211,7 @@
     "redux": "3.7.2",
     "semantic-ui-react": "0.77.0",
     "solc": "ngotchac/solc-js",
-    "store": "1.3.20",
+    "store": "2.0.12",
     "unzipper": "0.9.7",
     "util.promisify": "1.0.0"
   }
