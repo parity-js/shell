@@ -189,7 +189,7 @@
     "fs-extra": "6.0.1",
     "is-electron": "2.2.0",
     "js-sha3": "0.7.0",
-    "keythereum": "1.0.2",
+    "keythereum": "1.0.4",
     "lodash.flatten": "4.4.0",
     "lodash.omitby": "4.6.0",
     "lodash.throttle": "4.1.1",
