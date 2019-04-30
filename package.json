@@ -130,7 +130,7 @@
     "http-proxy-middleware": "0.19.1",
     "istanbul": "1.0.0-alpha.2",
     "jsdom": "9.11.0",
-    "json-loader": "0.5.4",
+    "json-loader": "0.5.7",
     "markdown-loader": "2.0.1",
     "marked": "0.5.1",
     "mocha": "6.1.3",
