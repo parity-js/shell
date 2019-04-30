@@ -185,7 +185,7 @@
     "core-js": "^2.6.3",
     "electron-dl": "1.11.0",
     "eslint": "5.12.1",
-    "follow-redirects": "1.5.0",
+    "follow-redirects": "1.7.0",
     "fs-extra": "6.0.1",
     "is-electron": "2.2.0",
     "js-sha3": "0.8.0",
