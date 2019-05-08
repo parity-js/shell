@@ -97,7 +97,7 @@
     "babel-eslint": "^10.0.1",
     "babel-loader": "^8.0.0",
     "babel-plugin-react-intl": "2.3.1",
-    "babel-plugin-transform-react-remove-prop-types": "0.3.2",
+    "babel-plugin-transform-react-remove-prop-types": "0.4.24",
     "babel-plugin-webpack-alias": "2.1.2",
     "chai": "4.2.0",
     "chai-as-promised": "7.1.1",
