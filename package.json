@@ -147,7 +147,7 @@
     "react-addons-perf": "15.4.2",
     "react-addons-test-utils": "15.6.2",
     "react-hot-loader": "4.8.4",
-    "react-intl-aggregate-webpack-plugin": "0.0.1",
+    "react-intl-aggregate-webpack-plugin": "1.0.1",
     "rimraf": "2.6.3",
     "serviceworker-webpack-plugin": "0.2.3",
     "sinon": "1.17.7",
