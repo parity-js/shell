@@ -178,7 +178,7 @@
     "@parity/plugin-signer-hardware": "github:parity-js/plugin-signer-hardware#e8b8a4e67adc37870e370d22805632d08012b9ee",
     "@parity/plugin-signer-qr": "github:parity-js/plugin-signer-qr#c275ba13524e9f6759079fabd10faf49cc00cfc0",
     "@parity/shared": "2.2.28",
-    "@parity/ui": "3.1.9",
+    "@parity/ui": "3.1.24",
     "axios": "0.18.0",
     "command-exists": "1.2.8",
     "commander": "2.19.0",
