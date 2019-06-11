@@ -95,7 +95,7 @@
     "@parity/dapp-tokenreg": "parity-js/dapp-tokenreg#9750a2c10a934f9ae0e6e7fd6fa5b9e25a7b0785",
     "@parity/dapp-wallet": "github:js-dist-paritytech/dapp-wallet#bdcaa0a94bc669b74103fce9073e5216d29e2f3e",
     "babel-eslint": "^10.0.1",
-    "babel-loader": "^8.0.0",
+    "babel-loader": "^8.0.6",
     "babel-plugin-react-intl": "3.2.0",
     "babel-plugin-transform-react-remove-prop-types": "0.4.24",
     "babel-plugin-webpack-alias": "2.1.2",
