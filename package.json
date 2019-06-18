@@ -181,7 +181,7 @@
     "@parity/ui": "3.1.9",
     "axios": "0.18.1",
     "command-exists": "1.2.8",
-    "commander": "2.19.0",
+    "commander": "2.20.0",
     "core-js": "^2.6.3",
     "electron-dl": "1.14.0",
     "eslint": "5.16.0",
