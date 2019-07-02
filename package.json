@@ -132,7 +132,7 @@
     "jsdom": "9.11.0",
     "json-loader": "0.5.7",
     "markdown-loader": "5.0.0",
-    "marked": "0.6.2",
+    "marked": "0.6.3",
     "mocha": "6.1.4",
     "mock-local-storage": "1.1.8",
     "mock-socket": "8.0.5",
