@@ -80,7 +80,7 @@
     "@babel/preset-env": "^7.5.5",
     "@babel/preset-flow": "^7.0.0",
     "@babel/preset-react": "^7.0.0",
-    "@babel/register": "^7.4.4",
+    "@babel/register": "^7.5.5",
     "@parity/dapp-console": "parity-js/dapp-console#6a48e07ce930443c72f93032c45186db7753db33",
     "@parity/dapp-dapp-methods": "github:js-dist-paritytech/dapp-dapp-methods#14c85948eb2036658f3d269ed435a9bb079d23f8",
     "@parity/dapp-dapp-visible": "github:js-dist-paritytech/dapp-dapp-visible#0104368c00d5dca7309e2dc882b90f082df4a4c4",
