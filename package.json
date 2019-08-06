@@ -182,7 +182,7 @@
     "axios": "0.19.0",
     "command-exists": "1.2.8",
     "commander": "2.20.0",
-    "core-js": "^2.6.3",
+    "core-js": "^3.1.4",
     "electron-dl": "1.14.0",
     "eslint": "5.16.0",
     "follow-redirects": "1.7.0",
