@@ -184,7 +184,7 @@
     "commander": "3.0.0",
     "core-js": "^2.6.3",
     "electron-dl": "1.14.0",
-    "eslint": "5.16.0",
+    "eslint": "6.2.2",
     "follow-redirects": "1.7.0",
     "fs-extra": "8.1.0",
     "is-electron": "2.2.0",
