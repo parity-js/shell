@@ -131,7 +131,7 @@
     "istanbul": "1.0.0-alpha.2",
     "jsdom": "9.11.0",
     "json-loader": "0.5.7",
-    "markdown-loader": "5.0.0",
+    "markdown-loader": "5.1.0",
     "marked": "0.7.0",
     "mocha": "6.2.0",
     "mock-local-storage": "1.1.8",
