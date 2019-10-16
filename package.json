@@ -79,7 +79,7 @@
     "@babel/polyfill": "^7.6.0",
     "@babel/preset-env": "^7.6.2",
     "@babel/preset-flow": "^7.0.0",
-    "@babel/preset-react": "^7.0.0",
+    "@babel/preset-react": "^7.6.3",
     "@babel/register": "^7.5.5",
     "@parity/dapp-console": "parity-js/dapp-console#6a48e07ce930443c72f93032c45186db7753db33",
     "@parity/dapp-dapp-methods": "github:js-dist-paritytech/dapp-dapp-methods#14c85948eb2036658f3d269ed435a9bb079d23f8",
