@@ -112,7 +112,7 @@
     "electron-builder": "20.44.4",
     "empty-module": "0.0.2",
     "enzyme": "3.10.0",
-    "enzyme-adapter-react-16": "1.14.0",
+    "enzyme-adapter-react-16": "1.15.1",
     "eslint-config-semistandard": "7.0.0",
     "eslint-config-standard": "6.2.1",
     "eslint-config-standard-react": "4.2.0",
