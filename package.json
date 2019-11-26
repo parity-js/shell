@@ -146,7 +146,7 @@
     "raw-loader": "0.5.1",
     "react-addons-perf": "15.4.2",
     "react-addons-test-utils": "15.6.2",
-    "react-hot-loader": "4.12.15",
+    "react-hot-loader": "4.12.18",
     "react-intl-aggregate-webpack-plugin": "1.0.1",
     "rimraf": "3.0.0",
     "serviceworker-webpack-plugin": "0.2.3",
