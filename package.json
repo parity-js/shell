@@ -166,7 +166,7 @@
     "webpack-dev-server": "3.10.1",
     "webpack-error-notification": "0.1.8",
     "webpack-hot-middleware": "2.25.0",
-    "websocket": "1.0.30",
+    "websocket": "1.0.31",
     "worker-loader": "2.0.0",
     "yauzl": "2.10.0"
   },
