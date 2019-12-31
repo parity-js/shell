@@ -183,7 +183,7 @@
     "command-exists": "1.2.8",
     "commander": "3.0.2",
     "core-js": "^2.6.3",
-    "electron-dl": "1.14.0",
+    "electron-dl": "2.0.0",
     "eslint": "5.16.0",
     "follow-redirects": "1.9.0",
     "fs-extra": "8.1.0",
