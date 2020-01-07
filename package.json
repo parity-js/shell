@@ -133,7 +133,7 @@
     "json-loader": "0.5.7",
     "markdown-loader": "5.1.0",
     "marked": "0.8.0",
-    "mocha": "6.2.2",
+    "mocha": "7.0.0",
     "mock-local-storage": "1.1.11",
     "mock-socket": "9.0.2",
     "nock": "11.7.0",
