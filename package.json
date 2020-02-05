@@ -212,7 +212,7 @@
     "semantic-ui-react": "0.77.0",
     "solc": "ngotchac/solc-js",
     "store": "2.0.12",
-    "unzipper": "0.10.5",
+    "unzipper": "0.10.7",
     "util.promisify": "1.0.0"
   }
 }
