@@ -179,7 +179,7 @@
     "@parity/plugin-signer-qr": "github:parity-js/plugin-signer-qr#c275ba13524e9f6759079fabd10faf49cc00cfc0",
     "@parity/shared": "2.2.28",
     "@parity/ui": "3.1.9",
-    "axios": "0.19.0",
+    "axios": "0.19.2",
     "command-exists": "1.2.8",
     "commander": "4.1.1",
     "core-js": "^2.6.3",
