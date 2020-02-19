@@ -135,7 +135,7 @@
     "marked": "0.8.0",
     "mocha": "7.0.0",
     "mock-local-storage": "1.1.11",
-    "mock-socket": "9.0.2",
+    "mock-socket": "9.0.3",
     "nock": "12.0.0",
     "postcss-import": "12.0.1",
     "postcss-loader": "3.0.0",
