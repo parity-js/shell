@@ -205,7 +205,7 @@
     "react-markdown": "4.3.1",
     "react-progress-bar.js": "0.2.3",
     "react-redux": "^5.0.6",
-    "react-router": "3.2.0",
+    "react-router": "5.1.2",
     "react-router-redux": "4.0.8",
     "react-transition-group": "2.9.0",
     "redux": "3.7.2",
