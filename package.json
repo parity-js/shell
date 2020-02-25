@@ -213,6 +213,6 @@
     "solc": "ngotchac/solc-js",
     "store": "2.0.12",
     "unzipper": "0.10.7",
-    "util.promisify": "1.0.0"
+    "util.promisify": "1.0.1"
   }
 }
