@@ -171,7 +171,7 @@
     "yauzl": "2.10.0"
   },
   "dependencies": {
-    "@parity/api": "2.1.24",
+    "@parity/api": "5.1.19",
     "@parity/mobx": "1.1.4",
     "@parity/plugin-signer-account": "github:parity-js/plugin-signer-account#05294dce59b7cd7c4f1b26dc604fc6a04dd02bc8",
     "@parity/plugin-signer-default": "github:parity-js/plugin-signer-default#dcf8cf23bb050070b6a691413b974b5c2d7d1ce6",
